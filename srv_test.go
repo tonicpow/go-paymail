@@ -8,7 +8,7 @@ import (
 
 // TestClient_GetSRVRecord will test the method GetSRVRecord()
 func TestClient_GetSRVRecord(t *testing.T) {
-	t.Parallel()
+	// t.Parallel() (turned off - race condition)
 
 	client, err := newTestClient()
 	if err != nil {
@@ -75,7 +75,7 @@ func BenchmarkClient_GetSRVRecord(b *testing.B) {
 // TestClient_ValidateSRVRecord will test the method ValidateSRVRecord()
 func TestClient_ValidateSRVRecord(t *testing.T) {
 
-	t.Parallel()
+	// t.Parallel() (turned off - race condition)
 
 	client, err := newTestClient()
 	if err != nil {
