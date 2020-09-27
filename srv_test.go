@@ -28,6 +28,7 @@ func TestClient_GetSRVRecord(t *testing.T) {
 		{"", DefaultProtocol, "domain.com", true, true},
 		{DefaultServiceName, "", "domain.com", true, true},
 		{"", "", "", true, true},
+		{DefaultServiceName, DefaultProtocol, "", true, true},
 		{"bogus", DefaultProtocol, "moneybutton.com", true, true},
 		{DefaultServiceName, DefaultProtocol, "moneybutton.com", false, false},
 		{DefaultServiceName, DefaultProtocol, "relayx.io", false, false},
@@ -91,6 +92,7 @@ func TestClient_ValidateSRVRecord(t *testing.T) {
 		expectedError bool
 	}{
 		{&net.SRV{Target: "domain.com", Port: DefaultPort, Priority: DefaultPriority, Weight: DefaultWeight}, DefaultPort, DefaultPriority, DefaultWeight, false},
+		{&net.SRV{Target: "domain.com", Port: DefaultPort, Priority: DefaultPriority, Weight: DefaultWeight}, 0, 0, 0, false},
 		{&net.SRV{Target: "", Port: DefaultPort, Priority: DefaultPriority, Weight: DefaultWeight}, DefaultPort, DefaultPriority, DefaultWeight, true},
 		{&net.SRV{Target: "domain", Port: DefaultPort, Priority: DefaultPriority, Weight: DefaultWeight}, DefaultPort, DefaultPriority, DefaultWeight, true},
 		{&net.SRV{Target: "domain.com", Port: 123, Priority: DefaultPriority, Weight: DefaultWeight}, DefaultPort, DefaultPriority, DefaultWeight, true},

@@ -90,12 +90,15 @@ func (c *Client) ValidateSRVRecord(srv *net.SRV, port, priority, weight uint16) 
 	// Check the parameters
 	if srv == nil {
 		return fmt.Errorf("invalid parameter: srv is missing or nil")
-	} else if port <= 0 { // Use the default(s) from paymail specs
-		port = DefaultPort
-	} else if priority <= 0 {
-		priority = DefaultPriority
-	} else if weight <= 0 {
-		weight = DefaultWeight
+	}
+	if port <= 0 { // Use the default(s) from paymail specs
+		port = uint16(DefaultPort)
+	}
+	if priority <= 0 {
+		priority = uint16(DefaultPriority)
+	}
+	if weight <= 0 {
+		weight = uint16(DefaultWeight)
 	}
 
 	// Check the basics of the SRV record

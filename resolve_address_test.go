@@ -455,7 +455,7 @@ func TestClient_ResolveAddressMissingOutput(t *testing.T) {
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
-			`{"output"": ""}`,
+			`{"output": ""}`,
 		),
 	)
 
@@ -493,7 +493,45 @@ func TestClient_ResolveAddressInvalidOutput(t *testing.T) {
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
-			`{"output"": "12345678"}`,
+			`{"output": "12345678"}`,
+		),
+	)
+
+	// Sender Request
+	senderRequest := &SenderRequest{
+		Dt:           time.Now().UTC().Format(time.RFC3339), // UTC is assumed
+		SenderHandle: "mrz@moneybutton.com",
+		SenderName:   "MrZ",
+	}
+
+	// Fire the request
+	var resolution *Resolution
+	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if resolution == nil {
+		t.Fatalf("resolution should have not been nil")
+	} else if resolution.StatusCode != http.StatusOK {
+		t.Fatalf("StatusCode was: %d and not: %d", resolution.StatusCode, http.StatusOK)
+	}
+}
+
+// TestClient_ResolveAddressInvalidHex will test the method ResolveAddress()
+func TestClient_ResolveAddressInvalidHex(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create valid response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+		httpmock.NewStringResponder(
+			http.StatusOK,
+			`{"output": "7e00bb007d4960727eb11d92a052502c"}`,
 		),
 	)
 
