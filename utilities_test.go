@@ -1,0 +1,189 @@
+package paymail
+
+import (
+	"fmt"
+	"testing"
+)
+
+// TestSanitizePaymail will test the method SanitizePaymail()
+func TestSanitizePaymail(t *testing.T) {
+
+	t.Parallel()
+
+	// Create the list of tests
+	var tests = []struct {
+		input           string
+		expectedAlias   string
+		expectedDomain  string
+		expectedPaymail string
+	}{
+		{"test@domain.com", "test", "domain.com", "test@domain.com"},
+		{"TEST@domain.com", "test", "domain.com", "test@domain.com"},
+		{"TEST@Domain.com", "test", "domain.com", "test@domain.com"},
+		{"TEST@DomaiN.COM", "test", "domain.com", "test@domain.com"},
+		{"@DomaiN.COM", "", "domain.com", ""},
+		{"test@", "test", "", ""},
+		{"test@domain", "test", "domain", "test@domain"},
+	}
+
+	// Test all
+	for _, test := range tests {
+		if outputAlias, outputDomain, outputPaymail := SanitizePaymail(test.input); outputAlias != test.expectedAlias {
+			t.Errorf("%s Failed: [%s] inputted and [%s] expected, received: [%s]", t.Name(), test.input, test.expectedAlias, outputAlias)
+		} else if outputDomain != test.expectedDomain {
+			t.Errorf("%s Failed: [%s] inputted and [%s] expected, received: [%s]", t.Name(), test.input, test.expectedDomain, outputDomain)
+		} else if outputPaymail != test.expectedPaymail {
+			t.Errorf("%s Failed: [%s] inputted and [%s] expected, received: [%s]", t.Name(), test.input, test.expectedPaymail, outputPaymail)
+		}
+	}
+}
+
+// ExampleSanitizePaymail example using SanitizePaymail()
+func ExampleSanitizePaymail() {
+	alias, domain, address := SanitizePaymail("Paymail@Domain.com")
+	fmt.Printf("alias: %s domain: %s address: %s", alias, domain, address)
+	// Output:alias: paymail domain: domain.com address: paymail@domain.com
+}
+
+// BenchmarkSanitizePaymail benchmarks the method SanitizePaymail()
+func BenchmarkSanitizePaymail(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _, _ = SanitizePaymail("paymail@domain.com")
+	}
+}
+
+// TestValidatePaymail will test the method ValidatePaymail()
+func TestValidatePaymail(t *testing.T) {
+
+	t.Parallel()
+
+	// Create the list of tests
+	var tests = []struct {
+		input         string
+		expectedError bool
+	}{
+		{"test@domain.com", false},
+		{"test@example", true},
+		{"@example", true},
+		{"example", true},
+		{"test@.", true},
+		{"test@.com", true},
+		{"test@.com..", true},
+		{"test@.com.", true},
+	}
+
+	// Test all
+	for _, test := range tests {
+		if err := ValidatePaymail(test.input); err != nil && !test.expectedError {
+			t.Errorf("%s Failed: [%s] inputted and error not expected but got: %s", t.Name(), test.input, err.Error())
+		} else if err == nil && test.expectedError {
+			t.Errorf("%s Failed: [%s] inputted and error was expected", t.Name(), test.input)
+		}
+	}
+}
+
+// ExampleValidatePaymail example using ValidatePaymail()
+func ExampleValidatePaymail() {
+	err := ValidatePaymail("bad@paymail")
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		fmt.Println("example failed")
+	}
+	// Output:paymail address failed format validation: email is not a valid address format
+}
+
+// BenchmarkValidatePaymail benchmarks the method ValidatePaymail()
+func BenchmarkValidatePaymail(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = ValidatePaymail("paymail@domain.com")
+	}
+}
+
+// TestValidateDomain will test the method ValidateDomain()
+func TestValidateDomain(t *testing.T) {
+
+	t.Parallel()
+
+	// Create the list of tests
+	var tests = []struct {
+		input         string
+		expectedError bool
+	}{
+		{"domain", true},
+		{"example.com", false},
+		{"google.com", false},
+		{"test@domain.com", true},
+		{"example..", true},
+		{"example.c", false},
+	}
+
+	// Test all
+	for _, test := range tests {
+		if err := ValidateDomain(test.input); err != nil && !test.expectedError {
+			t.Errorf("%s Failed: [%s] inputted and error not expected but got: %s", t.Name(), test.input, err.Error())
+		} else if err == nil && test.expectedError {
+			t.Errorf("%s Failed: [%s] inputted and error was expected", t.Name(), test.input)
+		}
+	}
+}
+
+// ExampleValidateDomain example using ValidateDomain()
+func ExampleValidateDomain() {
+	err := ValidateDomain("domain")
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		fmt.Println("example failed")
+	}
+	// Output:domain name is invalid: domain
+}
+
+// BenchmarkValidateDomain benchmarks the method ValidateDomain()
+func BenchmarkValidateDomain(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = ValidateDomain("domain.com")
+	}
+}
+
+// TestConvertHandle will test the method ConvertHandle()
+func TestConvertHandle(t *testing.T) {
+	t.Parallel()
+
+	// Create the list of tests
+	var tests = []struct {
+		input    string
+		beta     bool
+		expected string
+	}{
+		{"$mr-z", false, "mr-z@handcash.io"},
+		{"$MR-Z", false, "mr-z@handcash.io"},
+		{"invalid$mr-z", false, "invalid$mr-z"},
+		{"$", false, "@handcash.io"},
+		{"$", true, "@beta.handcash.io"},
+		{"1handle", false, "handle@relayx.io"},
+		{"1PN7K19Jmj7QQCpUg37WHpSRUw5gKhJVRa", false, "1PN7K19Jmj7QQCpUg37WHpSRUw5gKhJVRa"},
+		{"$misterz", true, "misterz@beta.handcash.io"},
+	}
+
+	// Test all
+	for _, test := range tests {
+		if output := ConvertHandle(test.input, test.beta); output != test.expected {
+			t.Errorf("%s Failed: [%s] inputted and [%s] expected, received: [%s]", t.Name(), test.input, test.expected, output)
+		}
+	}
+}
+
+// ExampleConvertHandle example using the method ConvertHandle()
+func ExampleConvertHandle() {
+	paymail := ConvertHandle("$mr-z", false)
+	fmt.Println(paymail)
+	// Output:mr-z@handcash.io
+}
+
+// BenchmarkConvertHandle benchmarks the method ConvertHandle()
+func BenchmarkConvertHandle(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = ConvertHandle("$mr-z", false)
+	}
+}

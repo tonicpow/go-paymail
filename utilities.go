@@ -1,0 +1,84 @@
+package paymail
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/mrz1836/go-sanitize"
+	"github.com/mrz1836/go-validate"
+)
+
+// SanitizePaymail will take an input and return the sanitized version (alias@domain.tld)
+//
+// Alias is the first part of the address (alias @)
+// Domain is the lowercase sanitized version (domain.tld)
+// Address is the full sanitized paymail address (alias@domain.tld)
+func SanitizePaymail(paymailAddress string) (alias, domain, address string) {
+
+	// Sanitize the paymail address
+	address = sanitize.Email(paymailAddress, false)
+
+	// Split the email parts (alias @ domain)
+	parts := strings.Split(address, "@")
+
+	// Sanitize the domain name (force to lowercase, remove www.)
+	domain, _ = sanitize.Domain(parts[1], false, true)
+
+	// Set the alias (lowercase, no spaces)
+	alias = strings.TrimSpace(strings.ToLower(parts[0]))
+
+	// Paymail address does not meet the basic requirement of an email address
+	// Since we don't return an error, we will return an empty result
+	if len(alias) == 0 || len(domain) == 0 {
+		address = ""
+	}
+
+	return
+}
+
+// ValidatePaymail will do a basic validation on the paymail format (email address format)
+//
+// This will not check to see if the paymail address is active via the provider
+func ValidatePaymail(paymailAddress string) error {
+
+	// Validate the format for the paymail address (paymail addresses follow conventional email requirements)
+	if ok, err := validate.IsValidEmail(paymailAddress, false); err != nil {
+		return fmt.Errorf("paymail address failed format validation: %s", err.Error())
+	} else if !ok {
+		return fmt.Errorf("paymail address failed format validation: %s", "unknown reason")
+	}
+
+	return nil
+}
+
+// ValidateDomain will do a basic validation on the domain format
+//
+// This will not check to see if the domain is an active paymail provider
+// This will not check DNS records to make sure the domain is active
+func ValidateDomain(domain string) error {
+
+	// Check for a real domain (require at least one period)
+	if !strings.Contains(domain, ".") {
+		return fmt.Errorf("domain name is invalid: %s", domain)
+	} else if !validate.IsValidHost(domain) { // Basic DNS check (not a REAL domain name check)
+		return fmt.Errorf("domain name failed host check: %s", domain)
+	}
+
+	return nil
+}
+
+// ConvertHandle will convert a $handle or 1handle to a paymail address
+//
+// For HandCash: $handle = handle@handcash.io or handle@beta.handcash.io
+// For RelayX:   1handle = handle@relayx.io
+func ConvertHandle(handle string, isBeta bool) string {
+	if strings.HasPrefix(handle, "$") {
+		if isBeta {
+			return strings.ToLower(strings.Replace(handle, "$", "", -1)) + "@beta.handcash.io"
+		}
+		return strings.ToLower(strings.Replace(handle, "$", "", -1)) + "@handcash.io"
+	} else if strings.HasPrefix(handle, "1") && len(handle) < 25 {
+		return strings.ToLower(strings.Replace(handle, "1", "", -1)) + "@relayx.io"
+	}
+	return handle
+}
