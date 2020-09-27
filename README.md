@@ -46,7 +46,8 @@ View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-pay
 - [Generate, Validate & Load Additional BRFC Specifications](brfc.go)
 - [Fetch, Get and Has Capabilities](capabilities.go)
 - [Get Public Key Information - PKI](pki.go)
-- [Basic Address Resolution](address_resolution.go)
+- [Basic Address Resolution](resolve_address.go)
+- [Verify PubKey & Handle](verify_pubkey.go)
 
 <details>
 <summary><strong><code>Library Deployment</code></strong></summary>
