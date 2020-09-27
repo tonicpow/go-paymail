@@ -149,9 +149,6 @@ func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderReque
 	var address *bsvutil.LegacyAddressPubKeyHash
 	if address, err = bsvutil.NewLegacyAddressPubKeyHash(addresses[0].ScriptAddress(), &chaincfg.MainNetParams); err != nil {
 		return
-	} else if address == nil {
-		err = fmt.Errorf("failed in NewLegacyAddressPubKeyHash, address was nil")
-		return
 	}
 
 	// Use the encoded version of the address
