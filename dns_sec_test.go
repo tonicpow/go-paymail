@@ -21,10 +21,13 @@ func TestClient_CheckDNSSEC(t *testing.T) {
 		expectedError bool
 	}{
 		{"", true},
+		{"---", true},
+		{"---.---", true},
 		{"moneybutton", true},
 		{"asdfadfasdfasdfasdf10909.com", true},
 		{"google.com", false},
 		{"moneybutton.com", false},
+		{"relayx.io", false},
 		{"handcash-cloud-production.herokuapp.com", true},
 	}
 

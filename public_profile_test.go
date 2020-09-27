@@ -216,7 +216,36 @@ func TestClient_GetPublicProfileBadRequest(t *testing.T) {
 
 	// Get profile
 	var profile *PublicProfile
-	profile, err = client.GetPublicProfile("https://test.com/api/v1/bsvalias/public-profile/{alias}@{domain.tld}", "mrz", "")
+	profile, err = client.GetPublicProfile("https://test.com/api/v1/bsvalias/public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if profile != nil && profile.StatusCode != http.StatusBadRequest {
+		t.Fatalf("StatusCode was: %d and not: %d", profile.StatusCode, http.StatusBadRequest)
+	}
+}
+
+// TestClient_GetPublicProfileBadError will test the method GetPublicProfile()
+func TestClient_GetPublicProfileBadError(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create valid response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
+		httpmock.NewStringResponder(
+			http.StatusBadRequest,
+			`{"message": request failed}`,
+		),
+	)
+
+	// Get profile
+	var profile *PublicProfile
+	profile, err = client.GetPublicProfile("https://test.com/api/v1/bsvalias/public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if profile != nil && profile.StatusCode != http.StatusBadRequest {
