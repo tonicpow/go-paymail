@@ -31,6 +31,12 @@ type PKI struct {
 // Specs: http://bsvalias.org/03-public-key-infrastructure.html
 func (c *Client) GetPKI(pkiURL, alias, domain string) (response *PKI, err error) {
 
+	// Require a valid url
+	if len(pkiURL) == 0 || !strings.Contains(pkiURL, "https://") {
+		err = fmt.Errorf("invalid url: %s", pkiURL)
+		return
+	}
+
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request
 	// https://<host-discovery-target>/{alias}@{domain.tld}/id
 	reqURL := strings.Replace(strings.Replace(pkiURL, "{alias}", alias, -1), "{domain.tld}", domain, -1)
