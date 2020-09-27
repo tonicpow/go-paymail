@@ -51,6 +51,19 @@ View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-pay
 - [Get Public Profile](public_profile.go)
 
 <details>
+<summary><strong><code>Package Dependencies</code></strong></summary>
+<br/>
+
+- [bitcoinsv/bsvd](https://github.com/bitcoinsv/bsvd)
+- [bitcoinsv/bsvutil](https://github.com/bitcoinsv/bsvutil)
+- [go-resty/resty](https://github.com/go-resty/resty/v2)
+- [jarcoal/httpmock](https://github.com/jarcoal/httpmock)
+- [miekg/dns](https://github.com/miekg/dns)
+- [mrz1836/go-sanitize](https://github.com/mrz1836/go-sanitize)
+- [mrz1836/go-validate](https://github.com/mrz1836/go-validate)
+</details>
+
+<details>
 <summary><strong><code>Library Deployment</code></strong></summary>
 <br/>
 
