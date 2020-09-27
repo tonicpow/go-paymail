@@ -70,7 +70,7 @@ func ExampleClient_VerifyPubKey() {
 	var verification *Verification
 	verification, err = client.VerifyPubKey("https://www.moneybutton.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
 	if err != nil {
-		fmt.Printf("error getting pki: " + err.Error())
+		fmt.Printf("error getting verification: " + err.Error())
 		return
 	}
 	fmt.Printf("verified %s handle with pubkey: %s", verification.Handle, verification.PubKey)
