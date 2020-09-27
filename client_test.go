@@ -23,6 +23,7 @@ func newTestClient() (*Client, error) {
 
 	// Set test options
 	options.RequestTracing = true
+	options.DNSTimeout = 15
 
 	// Return the mocking client with default options
 	return NewClient(options, client)
