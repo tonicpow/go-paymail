@@ -26,19 +26,19 @@ Example:
 }
 */
 
-// ResolutionRequest is the request body for the basic address resolution
+// SenderRequest is the request body for the basic address resolution
 //
 // This is required to make a basic resolution request, and Dt and SenderHandle are required
-type ResolutionRequest struct {
+type SenderRequest struct {
 	Amount       uint64 `json:"amount,omitempty"`     // The amount, in Satoshis, that the sender intends to transfer to the receiver
 	Dt           string `json:"dt"`                   // (required) ISO-8601 formatted timestamp; see notes
 	Purpose      string `json:"purpose,omitempty"`    // Human-readable description of the purpose of the payment
 	SenderHandle string `json:"senderHandle"`         // (required) Sender's paymail handle
 	SenderName   string `json:"senderName,omitempty"` // Human-readable sender display name
-	Signature    string `json:"signature,omitempty"`  // Compact Bitcoin message signature; see notes
+	Signature    string `json:"signature,omitempty"`  // Compact Bitcoin message signature; http://bsvalias.org/04-01-basic-address-resolution.html#signature-field
 }
 
-// Resolution is the response frm the request
+// Resolution is the response from the ResolveAddress() request
 type Resolution struct {
 	StandardResponse
 	Address   string `json:"address"`             // Legacy BSV address derived from the output script
@@ -49,7 +49,13 @@ type Resolution struct {
 // ResolveAddress will return a hex-encoded Bitcoin script if successful
 //
 // Specs: http://bsvalias.org/04-01-basic-address-resolution.html
-func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderRequest *ResolutionRequest) (response *Resolution, err error) {
+func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderRequest *SenderRequest) (response *Resolution, err error) {
+
+	// Require a valid url
+	if len(resolutionURL) == 0 || !strings.Contains(resolutionURL, "https://") {
+		err = fmt.Errorf("invalid url: %s", resolutionURL)
+		return
+	}
 
 	// Basic requirements for resolution request
 	if senderRequest == nil {
@@ -101,7 +107,9 @@ func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderReque
 			err = fmt.Errorf("paymail address not found")
 		} else {
 			je := &JSONError{}
-			_ = json.Unmarshal(resp.Body(), je)
+			if err = json.Unmarshal(resp.Body(), je); err != nil {
+				return
+			}
 			err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, je.Message)
 		}
 

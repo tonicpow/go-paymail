@@ -2,10 +2,10 @@
 > Paymail library for Golang
 
 [![Release](https://img.shields.io/github/release-pre/tonicpow/go-paymail.svg?logo=github&style=flat&v=1)](https://github.com/tonicpow/go-paymail/releases)
-[![Build Status](https://travis-ci.com/tonicpow/go-paymail.svg?branch=master)](https://travis-ci.com/tonicpow/go-paymail)
+[![Build Status](https://travis-ci.com/tonicpow/go-paymail.svg?branch=master&v=1)](https://travis-ci.com/tonicpow/go-paymail)
 [![Report](https://goreportcard.com/badge/github.com/tonicpow/go-paymail?style=flat&v=1)](https://goreportcard.com/report/github.com/tonicpow/go-paymail)
-[![codecov](https://codecov.io/gh/tonicpow/go-paymail/branch/master/graph/badge.svg)](https://codecov.io/gh/tonicpow/go-paymail)
-[![Go](https://img.shields.io/github/go-mod/go-version/tonicpow/go-paymail)](https://golang.org/)
+[![codecov](https://codecov.io/gh/tonicpow/go-paymail/branch/master/graph/badge.svg?v=1)](https://codecov.io/gh/tonicpow/go-paymail)
+[![Go](https://img.shields.io/github/go-mod/go-version/tonicpow/go-paymail?v=1)](https://golang.org/)
 
 <br/>
 
@@ -46,6 +46,7 @@ View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-pay
 - [Generate, Validate & Load Additional BRFC Specifications](brfc.go)
 - [Fetch, Get and Has Capabilities](capabilities.go)
 - [Get Public Key Information - PKI](pki.go)
+- [Basic Address Resolution](address_resolution.go)
 
 <details>
 <summary><strong><code>Library Deployment</code></strong></summary>
