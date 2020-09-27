@@ -7,7 +7,7 @@ import (
 
 // TestClient_CheckSSL will test the method CheckSSL()
 func TestClient_CheckSSL(t *testing.T) {
-	t.Parallel()
+	// t.Parallel() (turned off - race condition)
 
 	client, err := newTestClient()
 	if err != nil {

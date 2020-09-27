@@ -8,7 +8,7 @@ import (
 // TestClient_CheckDNSSEC will test the method CheckDNSSEC()
 func TestClient_CheckDNSSEC(t *testing.T) {
 
-	t.Parallel()
+	// t.Parallel() (turned off - race condition)
 
 	client, err := newTestClient()
 	if err != nil {
