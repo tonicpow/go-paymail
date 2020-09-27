@@ -1,11 +1,11 @@
 # go-paymail
 > Paymail library for Golang
 
-[![Release](https://img.shields.io/github/release-pre/tonicpow/go-paymail.svg?logo=github&style=flat&v=1)](https://github.com/tonicpow/go-paymail/releases)
-[![Build Status](https://travis-ci.com/tonicpow/go-paymail.svg?branch=master&v=1)](https://travis-ci.com/tonicpow/go-paymail)
-[![Report](https://goreportcard.com/badge/github.com/tonicpow/go-paymail?style=flat&v=1)](https://goreportcard.com/report/github.com/tonicpow/go-paymail)
-[![codecov](https://codecov.io/gh/tonicpow/go-paymail/branch/master/graph/badge.svg?v=1)](https://codecov.io/gh/tonicpow/go-paymail)
-[![Go](https://img.shields.io/github/go-mod/go-version/tonicpow/go-paymail?v=1)](https://golang.org/)
+[![Release](https://img.shields.io/github/release-pre/tonicpow/go-paymail.svg?logo=github&style=flat&v=2)](https://github.com/tonicpow/go-paymail/releases)
+[![Build Status](https://travis-ci.com/tonicpow/go-paymail.svg?branch=master&v=2)](https://travis-ci.com/tonicpow/go-paymail)
+[![Report](https://goreportcard.com/badge/github.com/tonicpow/go-paymail?style=flat&v=2)](https://goreportcard.com/report/github.com/tonicpow/go-paymail)
+[![codecov](https://codecov.io/gh/tonicpow/go-paymail/branch/master/graph/badge.svg?v=2)](https://codecov.io/gh/tonicpow/go-paymail)
+[![Go](https://img.shields.io/github/go-mod/go-version/tonicpow/go-paymail?v=2)](https://golang.org/)
 
 <br/>
 
@@ -48,6 +48,7 @@ View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-pay
 - [Get Public Key Information - PKI](pki.go)
 - [Basic Address Resolution](resolve_address.go)
 - [Verify PubKey & Handle](verify_pubkey.go)
+- [Get Public Profile](public_profile.go)
 
 <details>
 <summary><strong><code>Library Deployment</code></strong></summary>
@@ -153,4 +154,4 @@ or by making a [**bitcoin donation**](https://tonicpow.com/?af=go-paymail) to en
 
 ## License
 
-![License](https://img.shields.io/github/license/tonicpow/go-paymail.svg?style=flat&v=1)
+![License](https://img.shields.io/github/license/tonicpow/go-paymail.svg?style=flat&v=2)
