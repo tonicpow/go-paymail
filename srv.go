@@ -50,25 +50,15 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 	var records []*net.SRV
 	if cname, records, err = c.Resolver.LookupSRV(context.Background(), service, protocol, domainName); err != nil {
 		return
-	}
-
-	// No SRV record found
-	if len(records) == 0 {
+	} else if len(records) == 0 {
+		// todo: this check might not be needed if an error is always returned
 		err = fmt.Errorf("zero SRV records found using cname: %s", cnameCheck)
 		return
 	}
 
-	// More than X records (spec calls for 1 record only) (validation step)
-	// todo: log a warning?
-	/*
-		if len(records) > maxSRVRecords {
-			err = fmt.Errorf("only %d SRV record(s) should exist, found %d records", maxSRVRecords, len(records))
-			return
-		}
-	*/
-
 	//  Basic CNAME check (sanity check!)
 	if cname != cnameCheck {
+		// todo: this check might not be needed if the cname is always the same as the resolved result
 		err = fmt.Errorf("srv cname was invalid or not found using: %s and expected: %s", cnameCheck, cname)
 		return
 	}

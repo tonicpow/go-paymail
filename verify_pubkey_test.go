@@ -384,6 +384,37 @@ func TestClient_VerifyPubKeyMissingHandle(t *testing.T) {
 	}
 }
 
+// TestClient_VerifyPubKeyMissingBsvAlias will test the method VerifyPubKey()
+func TestClient_VerifyPubKeyMissingBsvAlias(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+		httpmock.NewStringResponder(
+			http.StatusOK,
+			`{"bsvalias": "","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10","match": true}`,
+		),
+	)
+
+	// Fire the request
+	var verification *Verification
+	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if verification == nil {
+		t.Fatalf("verification should not be nil")
+	} else if verification.StatusCode != http.StatusOK {
+		t.Fatalf("StatusCode was: %d and not: %d", verification.StatusCode, http.StatusOK)
+	}
+}
+
 // TestClient_VerifyPubKeyMissingPubKeyResponse will test the method VerifyPubKey()
 func TestClient_VerifyPubKeyMissingPubKeyResponse(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)

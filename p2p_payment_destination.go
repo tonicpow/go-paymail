@@ -117,7 +117,8 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 
 		// No script returned
 		if len(out.Script) == 0 {
-			continue
+			err = fmt.Errorf("script was missing from output: %d", index)
+			return
 		}
 
 		// Extract the address

@@ -42,10 +42,8 @@ func SanitizePaymail(paymailAddress string) (alias, domain, address string) {
 func ValidatePaymail(paymailAddress string) error {
 
 	// Validate the format for the paymail address (paymail addresses follow conventional email requirements)
-	if ok, err := validate.IsValidEmail(paymailAddress, false); err != nil {
+	if _, err := validate.IsValidEmail(paymailAddress, false); err != nil {
 		return fmt.Errorf("paymail address failed format validation: %s", err.Error())
-	} else if !ok {
-		return fmt.Errorf("paymail address failed format validation: %s", "unknown reason")
 	}
 
 	return nil

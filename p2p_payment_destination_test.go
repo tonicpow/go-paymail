@@ -553,6 +553,40 @@ func TestClient_GetP2PPaymentDestinationInvalidScript(t *testing.T) {
 	}
 }
 
+// TestClient_GetP2PPaymentDestinationEmptyScript will test the method GetP2PPaymentDestination()
+func TestClient_GetP2PPaymentDestinationEmptyScript(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
+		httpmock.NewStringResponder(
+			http.StatusOK,
+			`{"outputs": [{"script": "","satoshis": 100}],"reference": "12345678"}`,
+		),
+	)
+
+	// Payment Request
+	paymentRequest := &PaymentRequest{Satoshis: 100}
+
+	// Fire the request
+	var destination *PaymentDestination
+	destination, err = client.GetP2PPaymentDestination("https://test.com/api/v1/bsvalias/p2p-payment-destination/{alias}@{domain.tld}", "mrz", "moneybutton.com", paymentRequest)
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if destination == nil {
+		t.Fatalf("destination should not be nil")
+	} else if destination.StatusCode != http.StatusOK {
+		t.Fatalf("StatusCode was: %d and not: %d", destination.StatusCode, http.StatusOK)
+	}
+}
+
 // TestClient_GetP2PPaymentDestinationInvalidHex will test the method GetP2PPaymentDestination()
 func TestClient_GetP2PPaymentDestinationInvalidHex(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
