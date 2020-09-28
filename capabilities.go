@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-
-	"github.com/go-resty/resty/v2"
 )
 
 /*
@@ -82,33 +80,19 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 	// https://<host-discovery-target>:<host-discovery-port>/.well-known/bsvalias
 	reqURL := fmt.Sprintf("https://%s:%d/.well-known/%s", target, port, DefaultServiceName)
 
-	// Set the user agent
-	req := c.Resty.R().SetHeader("User-Agent", c.Options.UserAgent)
-
-	// Enable tracing
-	if c.Options.RequestTracing {
-		req.EnableTrace()
-	}
-
-	// Fire the request
-	var resp *resty.Response
-	if resp, err = req.Get(reqURL); err != nil {
+	// Fire the GET request
+	var resp StandardResponse
+	if resp, err = c.getRequest(reqURL); err != nil {
 		return
 	}
 
-	// Start new response
-	response = new(Capabilities)
-
-	// Tracing enabled?
-	if c.Options.RequestTracing {
-		response.Tracing = resp.Request.TraceInfo()
-	}
+	// Start the response
+	response = &Capabilities{StandardResponse: resp}
 
 	// Test the status code (200 or 304 is valid)
-	response.StatusCode = resp.StatusCode()
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {
 		je := &JSONError{}
-		if err = json.Unmarshal(resp.Body(), je); err != nil {
+		if err = json.Unmarshal(resp.Body, je); err != nil {
 			return
 		}
 		err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, je.Message)
@@ -116,13 +100,13 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 	}
 
 	// Decode the body of the response
-	if err = json.Unmarshal(resp.Body(), &response); err != nil {
+	if err = json.Unmarshal(resp.Body, &response); err != nil {
 
 		// Invalid character (sometimes quote related: U+0022 vs U+201C)
 		if strings.Contains(err.Error(), "invalid character") {
 
 			// Replace any invalid quotes
-			bodyString := strings.Replace(strings.Replace(string(resp.Body()), `“`, `"`, -1), `”`, `"`, -1)
+			bodyString := strings.Replace(strings.Replace(string(resp.Body), `“`, `"`, -1), `”`, `"`, -1)
 
 			// Parse again after fixing quotes
 			if err = json.Unmarshal([]byte(bodyString), &response); err != nil {

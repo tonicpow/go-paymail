@@ -96,3 +96,68 @@ func NewClient(clientOptions *ClientOptions, customClient *resty.Client) (client
 
 	return
 }
+
+// getRequest is a standard GET request for all outgoing HTTP requests
+func (c *Client) getRequest(requestURL string) (response StandardResponse, err error) {
+
+	// Set the user agent
+	req := c.Resty.R().SetHeader("User-Agent", c.Options.UserAgent)
+
+	// Enable tracing
+	if c.Options.RequestTracing {
+		req.EnableTrace()
+	}
+
+	// Fire the request
+	var resp *resty.Response
+	if resp, err = req.Get(requestURL); err != nil {
+		return
+	}
+
+	// Tracing enabled?
+	if c.Options.RequestTracing {
+		response.Tracing = resp.Request.TraceInfo()
+	}
+
+	// Set the status code
+	response.StatusCode = resp.StatusCode()
+
+	// Set the body
+	response.Body = resp.Body()
+
+	return
+}
+
+// postRequest is a standard PORT request for all outgoing HTTP requests
+func (c *Client) postRequest(requestURL string, data interface{}) (response StandardResponse, err error) {
+
+	// Set POST defaults
+	c.Resty.SetTimeout(time.Duration(c.Options.PostTimeout) * time.Second)
+
+	// Set the user agent
+	req := c.Resty.R().SetBody(data).SetHeader("User-Agent", c.Options.UserAgent)
+
+	// Enable tracing
+	if c.Options.RequestTracing {
+		req.EnableTrace()
+	}
+
+	// Fire the request
+	var resp *resty.Response
+	if resp, err = req.Post(requestURL); err != nil {
+		return
+	}
+
+	// Tracing enabled?
+	if c.Options.RequestTracing {
+		response.Tracing = resp.Request.TraceInfo()
+	}
+
+	// Set the status code
+	response.StatusCode = resp.StatusCode()
+
+	// Set the body
+	response.Body = resp.Body()
+
+	return
+}

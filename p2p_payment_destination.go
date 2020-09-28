@@ -1,17 +1,10 @@
 package paymail
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
-	"time"
-
-	"github.com/bitcoinsv/bsvd/chaincfg"
-	"github.com/bitcoinsv/bsvd/txscript"
-	"github.com/bitcoinsv/bsvutil"
-	"github.com/go-resty/resty/v2"
 )
 
 /*
@@ -70,33 +63,16 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 	// https://<host-discovery-target>/api/p2p-payment-destination/{alias}@{domain.tld}
 	reqURL := strings.Replace(strings.Replace(p2pURL, "{alias}", alias, -1), "{domain.tld}", domain, -1)
 
-	// Set POST defaults
-	c.Resty.SetTimeout(time.Duration(c.Options.PostTimeout) * time.Second)
-
-	// Set the user agent
-	req := c.Resty.R().SetBody(paymentRequest).SetHeader("User-Agent", c.Options.UserAgent)
-
-	// Enable tracing
-	if c.Options.RequestTracing {
-		req.EnableTrace()
-	}
-
-	// Fire the request
-	var resp *resty.Response
-	if resp, err = req.Post(reqURL); err != nil {
+	// Fire the POST request
+	var resp StandardResponse
+	if resp, err = c.postRequest(reqURL, paymentRequest); err != nil {
 		return
 	}
 
-	// Start response
-	response = new(PaymentDestination)
-
-	// Tracing enabled?
-	if c.Options.RequestTracing {
-		response.Tracing = resp.Request.TraceInfo()
-	}
+	// Start the response
+	response = &PaymentDestination{StandardResponse: resp}
 
 	// Test the status code
-	response.StatusCode = resp.StatusCode()
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {
 
 		// Paymail address not found?
@@ -104,7 +80,7 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 			err = fmt.Errorf("paymail address not found")
 		} else {
 			je := &JSONError{}
-			if err = json.Unmarshal(resp.Body(), je); err != nil {
+			if err = json.Unmarshal(resp.Body, je); err != nil {
 				return
 			}
 			err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, je.Message)
@@ -114,7 +90,7 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 	}
 
 	// Decode the body of the response
-	if err = json.Unmarshal(resp.Body(), &response); err != nil {
+	if err = json.Unmarshal(resp.Body, &response); err != nil {
 		return
 	}
 
@@ -138,32 +114,10 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 			continue
 		}
 
-		// Decode the hex string into bytes
-		var script []byte
-		if script, err = hex.DecodeString(out.Script); err != nil {
+		// Extract the address
+		if response.Outputs[index].Address, err = extractAddressFromScript(out.Script); err != nil {
 			return
 		}
-
-		// Extract the components from the script
-		var addresses []bsvutil.Address
-		if _, addresses, _, err = txscript.ExtractPkScriptAddrs(script, &chaincfg.MainNetParams); err != nil {
-			return
-		}
-
-		// Missing an address?
-		if len(addresses) == 0 {
-			err = fmt.Errorf("invalid output script, missing an address")
-			return
-		}
-
-		// Extract the address from the pubkey hash
-		var address *bsvutil.LegacyAddressPubKeyHash
-		if address, err = bsvutil.NewLegacyAddressPubKeyHash(addresses[0].ScriptAddress(), &chaincfg.MainNetParams); err != nil {
-			return
-		}
-
-		// Use the encoded version of the address
-		response.Outputs[index].Address = address.EncodeAddress()
 	}
 
 	return
