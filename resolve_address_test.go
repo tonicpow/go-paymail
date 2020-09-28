@@ -19,7 +19,7 @@ func TestClient_ResolveAddress(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -113,7 +113,7 @@ func TestClient_ResolveAddressStatusNotModified(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -161,7 +161,7 @@ func TestClient_ResolveAddressInvalidURL(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -197,7 +197,7 @@ func TestClient_ResolveAddressSenderRequestNil(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -226,7 +226,7 @@ func TestClient_ResolveAddressSenderRequestDt(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -262,7 +262,7 @@ func TestClient_ResolveAddressSenderRequestHandle(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -298,7 +298,7 @@ func TestClient_ResolveAddressBadRequest(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -326,6 +326,39 @@ func TestClient_ResolveAddressBadRequest(t *testing.T) {
 	}
 }
 
+// TestClient_ResolveAddressHTTPError will test the method ResolveAddress()
+func TestClient_ResolveAddressHTTPError(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+		httpmock.NewErrorResponder(fmt.Errorf("error in request")),
+	)
+
+	// Sender Request
+	senderRequest := &SenderRequest{
+		Dt:           time.Now().UTC().Format(time.RFC3339), // UTC is assumed
+		SenderHandle: "mrz@moneybutton.com",
+		SenderName:   "MrZ",
+	}
+
+	// Fire the request
+	var resolution *Resolution
+	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if resolution != nil {
+		t.Fatalf("resolution should be nil")
+	}
+}
+
 // TestClient_ResolveAddressBadError will test the method ResolveAddress()
 func TestClient_ResolveAddressBadError(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
@@ -336,7 +369,7 @@ func TestClient_ResolveAddressBadError(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -374,7 +407,7 @@ func TestClient_ResolveAddressPaymailNotFound(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -412,7 +445,7 @@ func TestClient_ResolveAddressBadJSON(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -450,7 +483,7 @@ func TestClient_ResolveAddressMissingOutput(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -488,7 +521,7 @@ func TestClient_ResolveAddressInvalidOutput(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -526,7 +559,7 @@ func TestClient_ResolveAddressInvalidHex(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -564,7 +597,7 @@ func TestClient_ResolveAddressInvalidHexLength(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(

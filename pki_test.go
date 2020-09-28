@@ -18,7 +18,7 @@ func TestClient_GetPKI(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -84,7 +84,7 @@ func TestClient_GetPKIStatusNotModified(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -117,7 +117,7 @@ func TestClient_GetPKIBadRequest(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -146,7 +146,7 @@ func TestClient_GetPKIBadError(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -175,7 +175,7 @@ func TestClient_GetPKIInvalidAlias(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -204,7 +204,7 @@ func TestClient_GetPKIInvalidJSON(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -233,7 +233,7 @@ func TestClient_GetPKIInvalidHandle(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -264,7 +264,7 @@ func TestClient_GetPKIMissingPubKey(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -293,7 +293,7 @@ func TestClient_GetPKIInvalidPubKeyLength(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -322,7 +322,7 @@ func TestClient_GetPKIInvalidURL(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -351,7 +351,7 @@ func TestClient_GetPKIHTTPError(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
 		httpmock.NewErrorResponder(fmt.Errorf("error in request")),

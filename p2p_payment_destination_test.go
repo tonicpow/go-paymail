@@ -18,7 +18,7 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -105,7 +105,7 @@ func TestClient_GetP2PPaymentDestinationStatusNotModified(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -139,7 +139,7 @@ func TestClient_GetP2PPaymentDestinationBadURL(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -171,7 +171,7 @@ func TestClient_GetP2PPaymentDestinationPaymentNil(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -200,7 +200,7 @@ func TestClient_GetP2PPaymentDestinationMissingSatoshis(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -232,7 +232,7 @@ func TestClient_GetP2PPaymentDestinationBadRequest(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -256,6 +256,35 @@ func TestClient_GetP2PPaymentDestinationBadRequest(t *testing.T) {
 	}
 }
 
+// TestClient_GetP2PPaymentDestinationHTTPError will test the method GetP2PPaymentDestination()
+func TestClient_GetP2PPaymentDestinationHTTPError(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
+		httpmock.NewErrorResponder(fmt.Errorf("error in request")),
+	)
+
+	// Set the payment request
+	paymentRequest := &PaymentRequest{Satoshis: 100}
+
+	// Fire the request
+	var destination *PaymentDestination
+	destination, err = client.GetP2PPaymentDestination("https://test.com/api/v1/bsvalias/p2p-payment-destination/{alias}@{domain.tld}", "mrz", "moneybutton.com", paymentRequest)
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if destination != nil {
+		t.Fatalf("destination should be nil")
+	}
+}
+
 // TestClient_GetP2PPaymentDestinationAddressNotFound will test the method GetP2PPaymentDestination()
 func TestClient_GetP2PPaymentDestinationAddressNotFound(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
@@ -266,7 +295,7 @@ func TestClient_GetP2PPaymentDestinationAddressNotFound(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -300,7 +329,7 @@ func TestClient_GetP2PPaymentDestinationBadErrorJSON(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -334,7 +363,7 @@ func TestClient_GetP2PPaymentDestinationBadJSON(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -368,7 +397,7 @@ func TestClient_GetP2PPaymentDestinationMissingReference(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -402,7 +431,7 @@ func TestClient_GetP2PPaymentDestinationMissingOutputs(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -436,7 +465,7 @@ func TestClient_GetP2PPaymentDestinationInvalidScript(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -470,7 +499,7 @@ func TestClient_GetP2PPaymentDestinationInvalidHex(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
 		httpmock.NewStringResponder(

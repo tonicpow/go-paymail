@@ -18,7 +18,7 @@ func TestClient_VerifyPubKey(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
@@ -95,7 +95,7 @@ func TestClient_VerifyPubKeyStatusNotModified(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
@@ -128,7 +128,7 @@ func TestClient_VerifyPubKeyMissingURL(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
@@ -157,7 +157,7 @@ func TestClient_VerifyPubKeyMissingAlias(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
@@ -186,7 +186,7 @@ func TestClient_VerifyPubKeyMissingDomain(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
@@ -215,7 +215,7 @@ func TestClient_VerifyPubKeyMissingPubKey(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
@@ -244,7 +244,7 @@ func TestClient_VerifyPubKeyBadRequest(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
@@ -265,6 +265,32 @@ func TestClient_VerifyPubKeyBadRequest(t *testing.T) {
 	}
 }
 
+// TestClient_VerifyPubKeyHTTPError will test the method VerifyPubKey()
+func TestClient_VerifyPubKeyHTTPError(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+		httpmock.NewErrorResponder(fmt.Errorf("error in request")),
+	)
+
+	// Fire the request
+	var verification *Verification
+	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if verification != nil {
+		t.Fatalf("verification should be nil")
+	}
+}
+
 // TestClient_VerifyPubKeyBadError will test the method VerifyPubKey()
 func TestClient_VerifyPubKeyBadError(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
@@ -275,7 +301,7 @@ func TestClient_VerifyPubKeyBadError(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
@@ -306,7 +332,7 @@ func TestClient_VerifyPubKeyBadJSON(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
@@ -337,7 +363,7 @@ func TestClient_VerifyPubKeyMissingHandle(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
@@ -368,7 +394,7 @@ func TestClient_VerifyPubKeyMissingPubKeyResponse(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
@@ -399,7 +425,7 @@ func TestClient_VerifyPubKeyInvalidPubKey(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(

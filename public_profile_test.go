@@ -18,7 +18,7 @@ func TestClient_GetPublicProfile(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -87,7 +87,7 @@ func TestClient_GetPublicProfileStatusNotModified(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -118,7 +118,7 @@ func TestClient_GetPublicProfileMissingURL(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -147,7 +147,7 @@ func TestClient_GetPublicProfileMissingAlias(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -176,7 +176,7 @@ func TestClient_GetPublicProfileMissingDomain(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -205,7 +205,7 @@ func TestClient_GetPublicProfileBadRequest(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -224,6 +224,32 @@ func TestClient_GetPublicProfileBadRequest(t *testing.T) {
 	}
 }
 
+// TestClient_GetPublicProfileHTTPError will test the method GetPublicProfile()
+func TestClient_GetPublicProfileHTTPError(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
+		httpmock.NewErrorResponder(fmt.Errorf("error in request")),
+	)
+
+	// Get profile
+	var profile *PublicProfile
+	profile, err = client.GetPublicProfile("https://test.com/api/v1/bsvalias/public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if profile != nil {
+		t.Fatalf("profile should be nil")
+	}
+}
+
 // TestClient_GetPublicProfileBadError will test the method GetPublicProfile()
 func TestClient_GetPublicProfileBadError(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
@@ -234,7 +260,7 @@ func TestClient_GetPublicProfileBadError(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
@@ -263,7 +289,7 @@ func TestClient_GetPublicProfileBadJSON(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create valid response
+	// Create response
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
