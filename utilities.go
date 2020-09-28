@@ -22,7 +22,9 @@ func SanitizePaymail(paymailAddress string) (alias, domain, address string) {
 	parts := strings.Split(address, "@")
 
 	// Sanitize the domain name (force to lowercase, remove www.)
-	domain, _ = sanitize.Domain(parts[1], false, true)
+	if len(parts) > 1 {
+		domain, _ = sanitize.Domain(parts[1], false, true)
+	}
 
 	// Set the alias (lowercase, no spaces)
 	alias = strings.TrimSpace(strings.ToLower(parts[0]))
