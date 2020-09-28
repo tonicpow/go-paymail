@@ -366,3 +366,61 @@ func TestClient_GetPKIHTTPError(t *testing.T) {
 		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
 	}
 }
+
+// TestClient_GetPKIMissingAlias will test the method GetPKI()
+func TestClient_GetPKIMissingAlias(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+		httpmock.NewStringResponder(
+			http.StatusOK,
+			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
+		),
+	)
+
+	// Fire the request
+	var pki *PKI
+	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "", "moneybutton.com")
+	if err == nil {
+		t.Fatalf("error should have occurred in GetPKI")
+	} else if pki != nil && pki.StatusCode != http.StatusOK {
+		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
+	}
+}
+
+// TestClient_GetPKIMissingDomain will test the method GetPKI()
+func TestClient_GetPKIMissingDomain(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+		httpmock.NewStringResponder(
+			http.StatusOK,
+			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
+		),
+	)
+
+	// Fire the request
+	var pki *PKI
+	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "")
+	if err == nil {
+		t.Fatalf("error should have occurred in GetPKI")
+	} else if pki != nil && pki.StatusCode != http.StatusOK {
+		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
+	}
+}

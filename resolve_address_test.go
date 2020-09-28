@@ -288,6 +288,78 @@ func TestClient_ResolveAddressSenderRequestHandle(t *testing.T) {
 	}
 }
 
+// TestClient_ResolveAddressMissingAlias will test the method ResolveAddress()
+func TestClient_ResolveAddressMissingAlias(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+		httpmock.NewStringResponder(
+			http.StatusNotModified,
+			`{"output": "76a9147f11c8f67a2781df0400ebfb1f31b4c72a780b9d88ac"}`,
+		),
+	)
+
+	// Sender Request
+	senderRequest := &SenderRequest{
+		Dt:           time.Now().UTC().Format(time.RFC3339), // UTC is assumed
+		SenderHandle: "mrz@moneybutton.com",
+		SenderName:   "MrZ",
+	}
+
+	// Fire the request
+	var resolution *Resolution
+	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "", "moneybutton.com", senderRequest)
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if resolution != nil {
+		t.Fatalf("resolution should have been nil")
+	}
+}
+
+// TestClient_ResolveAddressMissingDomain will test the method ResolveAddress()
+func TestClient_ResolveAddressMissingDomain(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+		httpmock.NewStringResponder(
+			http.StatusNotModified,
+			`{"output": "76a9147f11c8f67a2781df0400ebfb1f31b4c72a780b9d88ac"}`,
+		),
+	)
+
+	// Sender Request
+	senderRequest := &SenderRequest{
+		Dt:           time.Now().UTC().Format(time.RFC3339), // UTC is assumed
+		SenderHandle: "mrz@moneybutton.com",
+		SenderName:   "MrZ",
+	}
+
+	// Fire the request
+	var resolution *Resolution
+	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "", senderRequest)
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if resolution != nil {
+		t.Fatalf("resolution should have been nil")
+	}
+}
+
 // TestClient_ResolveAddressBadRequest will test the method ResolveAddress()
 func TestClient_ResolveAddressBadRequest(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)

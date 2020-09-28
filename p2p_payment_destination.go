@@ -56,6 +56,12 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 	} else if paymentRequest.Satoshis == 0 {
 		err = fmt.Errorf("satoshis is required")
 		return
+	} else if len(alias) == 0 {
+		err = fmt.Errorf("missing alias")
+		return
+	} else if len(domain) == 0 {
+		err = fmt.Errorf("missing domain")
+		return
 	}
 
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request

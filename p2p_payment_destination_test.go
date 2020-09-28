@@ -190,6 +190,70 @@ func TestClient_GetP2PPaymentDestinationPaymentNil(t *testing.T) {
 	}
 }
 
+// TestClient_GetP2PPaymentDestinationMissingAlias will test the method GetP2PPaymentDestination()
+func TestClient_GetP2PPaymentDestinationMissingAlias(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
+		httpmock.NewStringResponder(
+			http.StatusOK,
+			`{"outputs": [{"script": "76a9143e2d1d795f8acaa7957045cc59376177eb04a3c588ac","satoshis": 100}],"reference": "z0bac4ec-6f15-42de-9ef4-e60bfdabf4f7"}`,
+		),
+	)
+
+	// Set the payment request
+	paymentRequest := &PaymentRequest{Satoshis: 100}
+
+	// Fire the request
+	var destination *PaymentDestination
+	destination, err = client.GetP2PPaymentDestination("https://test.com/api/v1/bsvalias/p2p-payment-destination/{alias}@{domain.tld}", "", "moneybutton.com", paymentRequest)
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if destination != nil {
+		t.Fatalf("destination should be nil")
+	}
+}
+
+// TestClient_GetP2PPaymentDestinationMissingDomain will test the method GetP2PPaymentDestination()
+func TestClient_GetP2PPaymentDestinationMissingDomain(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/p2p-payment-destination/mrz@moneybutton.com",
+		httpmock.NewStringResponder(
+			http.StatusOK,
+			`{"outputs": [{"script": "76a9143e2d1d795f8acaa7957045cc59376177eb04a3c588ac","satoshis": 100}],"reference": "z0bac4ec-6f15-42de-9ef4-e60bfdabf4f7"}`,
+		),
+	)
+
+	// Set the payment request
+	paymentRequest := &PaymentRequest{Satoshis: 100}
+
+	// Fire the request
+	var destination *PaymentDestination
+	destination, err = client.GetP2PPaymentDestination("https://test.com/api/v1/bsvalias/p2p-payment-destination/{alias}@{domain.tld}", "mrz", "", paymentRequest)
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if destination != nil {
+		t.Fatalf("destination should be nil")
+	}
+}
+
 // TestClient_GetP2PPaymentDestinationMissingSatoshis will test the method GetP2PPaymentDestination()
 func TestClient_GetP2PPaymentDestinationMissingSatoshis(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)

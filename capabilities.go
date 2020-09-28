@@ -76,6 +76,15 @@ func (c *Capabilities) GetBool(brfcID, alternateID string) bool {
 // Specs: http://bsvalias.org/02-02-capability-discovery.html
 func (c *Client) GetCapabilities(target string, port int) (response *Capabilities, err error) {
 
+	// Basic requirements for the request
+	if len(target) == 0 {
+		err = fmt.Errorf("missing target")
+		return
+	} else if port == 0 {
+		err = fmt.Errorf("missing port")
+		return
+	}
+
 	// Set the base url and path
 	// https://<host-discovery-target>:<host-discovery-port>/.well-known/bsvalias
 	reqURL := fmt.Sprintf("https://%s:%d/.well-known/%s", target, port, DefaultServiceName)

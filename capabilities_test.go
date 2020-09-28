@@ -139,6 +139,64 @@ func TestClient_GetCapabilitiesBadRequest(t *testing.T) {
 	}
 }
 
+// TestClient_GetCapabilitiesMissingTarget will test the method GetCapabilities()
+func TestClient_GetCapabilitiesMissingTarget(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
+		httpmock.NewStringResponder(
+			http.StatusBadRequest,
+			`{"message": "request failed"}`,
+		),
+	)
+
+	// Fire the request
+	var capabilities *Capabilities
+	capabilities, err = client.GetCapabilities("", DefaultPort)
+	if err == nil {
+		t.Fatalf("error should have occurred in GetCapabilities")
+	} else if capabilities != nil && len(capabilities.Capabilities) > 0 {
+		t.Fatalf("capabilities should be empty: %v", capabilities.Capabilities)
+	}
+}
+
+// TestClient_GetCapabilitiesMissingPort will test the method GetCapabilities()
+func TestClient_GetCapabilitiesMissingPort(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
+		httpmock.NewStringResponder(
+			http.StatusBadRequest,
+			`{"message": "request failed"}`,
+		),
+	)
+
+	// Fire the request
+	var capabilities *Capabilities
+	capabilities, err = client.GetCapabilities("test.com", 0)
+	if err == nil {
+		t.Fatalf("error should have occurred in GetCapabilities")
+	} else if capabilities != nil && len(capabilities.Capabilities) > 0 {
+		t.Fatalf("capabilities should be empty: %v", capabilities.Capabilities)
+	}
+}
+
 // TestClient_GetCapabilitiesHTTPError will test the method GetCapabilities()
 func TestClient_GetCapabilitiesHTTPError(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)

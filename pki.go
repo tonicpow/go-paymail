@@ -35,6 +35,15 @@ func (c *Client) GetPKI(pkiURL, alias, domain string) (response *PKI, err error)
 		return
 	}
 
+	// Basic requirements for the request
+	if len(alias) == 0 {
+		err = fmt.Errorf("missing alias")
+		return
+	} else if len(domain) == 0 {
+		err = fmt.Errorf("missing domain")
+		return
+	}
+
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request
 	// https://<host-discovery-target>/{alias}@{domain.tld}/id
 	reqURL := strings.Replace(strings.Replace(pkiURL, "{alias}", alias, -1), "{domain.tld}", domain, -1)
