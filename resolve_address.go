@@ -64,7 +64,7 @@ func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderReque
 		return
 	}
 
-	// Basic requirements for resolution request
+	// Basic requirements for request
 	if senderRequest == nil {
 		err = fmt.Errorf("senderReqeuest cannot be nil")
 		return

@@ -50,6 +50,7 @@ View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-pay
 - [Verify PubKey & Handle](verify_pubkey.go)
 - [Get Public Profile](public_profile.go)
 - [P2P Payment Destination](p2p_payment_destination.go)
+- [P2P Send Transaction](p2p_send_transaction.go)
 
 <details>
 <summary><strong><code>Package Dependencies</code></strong></summary>

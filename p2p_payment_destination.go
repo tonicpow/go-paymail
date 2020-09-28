@@ -49,7 +49,7 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 		return
 	}
 
-	// Basic requirements for resolution request
+	// Basic requirements for request
 	if paymentRequest == nil {
 		err = fmt.Errorf("paymentRequest cannot be nil")
 		return

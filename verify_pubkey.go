@@ -37,7 +37,7 @@ func (c *Client) VerifyPubKey(verifyURL, alias, domain, pubKey string) (response
 		return
 	}
 
-	// Basic requirements for resolution request
+	// Basic requirements for request
 	if len(alias) == 0 {
 		err = fmt.Errorf("missing alias")
 		return

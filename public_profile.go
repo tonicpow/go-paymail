@@ -33,7 +33,7 @@ func (c *Client) GetPublicProfile(publicProfileURL, alias, domain string) (respo
 		return
 	}
 
-	// Basic requirements for resolution request
+	// Basic requirements for request
 	if len(alias) == 0 {
 		err = fmt.Errorf("missing alias")
 		return
