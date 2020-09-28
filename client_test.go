@@ -99,6 +99,29 @@ func TestNewClient(t *testing.T) {
 	}
 }
 
+// TestNewClientNoBRFCs will test the method NewClient()
+func TestNewClientNoBRFCs(t *testing.T) {
+	t.Parallel()
+
+	options, err := DefaultClientOptions()
+	if err != nil {
+		t.Fatalf("error occurred: %s", err.Error())
+	}
+
+	// Remove the specs (empty)
+	options.BRFCSpecs = nil
+
+	var client *Client
+	client, err = NewClient(options, nil)
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	if client == nil {
+		t.Fatal("failed to load client")
+	}
+}
+
 // TestDefaultClientOptions will test the method DefaultClientOptions()
 func TestDefaultClientOptions(t *testing.T) {
 	t.Parallel()

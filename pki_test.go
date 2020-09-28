@@ -340,3 +340,29 @@ func TestClient_GetPKIInvalidURL(t *testing.T) {
 		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
 	}
 }
+
+// TestClient_GetPKIHTTPError will test the method GetPKI()
+func TestClient_GetPKIHTTPError(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create valid response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+		httpmock.NewErrorResponder(fmt.Errorf("error in request")),
+	)
+
+	// Fire the request
+	var pki *PKI
+	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	if err == nil {
+		t.Fatalf("error should have occurred in GetPKI")
+	} else if pki != nil && pki.StatusCode != http.StatusOK {
+		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
+	}
+}
