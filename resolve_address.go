@@ -141,6 +141,8 @@ func extractAddressFromScript(script string) (string, error) {
 
 	// Missing an address?
 	if len(addresses) == 0 {
+		// This error case should not occur since the error above will occur when no address is found,
+		// however we ensure that we have an address for the NewLegacyAddressPubKeyHash() below
 		return "", fmt.Errorf("invalid output script, missing an address")
 	}
 

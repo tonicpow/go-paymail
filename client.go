@@ -71,6 +71,7 @@ func NewClient(clientOptions *ClientOptions, customClient *resty.Client) (client
 		// Check for specs (if not set, use the defaults)
 		if len(clientOptions.BRFCSpecs) == 0 {
 			if err = clientOptions.LoadBRFCs(""); err != nil {
+				// This error case should not occur since it's unmarshalling a JSON constant
 				return
 			}
 		}

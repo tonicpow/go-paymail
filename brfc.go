@@ -28,8 +28,9 @@ type BRFCSpec struct {
 // BRFCKnownSpecifications is a local constant of JSON to pre-load known BRFC ids
 func (c *ClientOptions) LoadBRFCs(additionalSpecifications string) (err error) {
 
-	// Load the default specs (should never error since the JSON is hardcoded)
+	// Load the default specs
 	if err = json.Unmarshal([]byte(BRFCKnownSpecifications), &c.BRFCSpecs); err != nil {
+		// This error case should never occur since the JSON is hardcoded, but good practice anyway
 		return
 	}
 
@@ -100,10 +101,13 @@ func (b *BRFCSpec) Generate() error {
 	hex.Encode(hexDoubleHash, doubleHash)
 
 	// Check that the ID length is valid
-	if len(hexDoubleHash) < 12 {
-		b.ID = ""
-		return fmt.Errorf("failed to generate a valid id, length was %d", len(hexDoubleHash))
-	}
+	// this error case was never hit as long as title is len() > 0
+	/*
+		if len(hexDoubleHash) < 12 {
+			b.ID = ""
+			return fmt.Errorf("failed to generate a valid id, length was %d", len(hexDoubleHash))
+		}
+	*/
 
 	// Extract the ID and set (first 12 characters)
 	b.ID = string(hexDoubleHash[:12])

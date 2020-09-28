@@ -698,3 +698,117 @@ func TestClient_ResolveAddressInvalidHexLength(t *testing.T) {
 		t.Fatalf("StatusCode was: %d and not: %d", resolution.StatusCode, http.StatusOK)
 	}
 }
+
+// TestClient_ResolveAddressInvalidScriptMultiSig will test the method ResolveAddress()
+func TestClient_ResolveAddressInvalidScriptMultiSig(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+		httpmock.NewStringResponder(
+			http.StatusOK,
+			`{"output": "514104cc71eb30d653c0c3163990c47b976f3fb3f37cccdcbedb169a1dfef58bbfbfaff7d8a473e7e2e6d317b87bafe8bde97e3cf8f065dec022b51d11fcdd0d348ac4410461cbdcc5409fb4b4d42b51d33381354d80e550078cb532a34bfa2fcfdeb7d76519aecc62770f5b0e4ef8551946d8a540911abe3e7854a26f39f58b25c15342af52ae"}`,
+		),
+	)
+
+	// Sender Request
+	senderRequest := &SenderRequest{
+		Dt:           time.Now().UTC().Format(time.RFC3339), // UTC is assumed
+		SenderHandle: "mrz@moneybutton.com",
+		SenderName:   "MrZ",
+	}
+
+	// Fire the request
+	var resolution *Resolution
+	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if resolution == nil {
+		t.Fatalf("resolution should have not been nil")
+	} else if resolution.StatusCode != http.StatusOK {
+		t.Fatalf("StatusCode was: %d and not: %d", resolution.StatusCode, http.StatusOK)
+	}
+}
+
+// TestClient_ResolveAddressInvalidScriptP2pk will test the method ResolveAddress()
+func TestClient_ResolveAddressInvalidScriptP2pk(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+		httpmock.NewStringResponder(
+			http.StatusOK,
+			`{"output": "410411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3"}`,
+		),
+	)
+
+	// Sender Request
+	senderRequest := &SenderRequest{
+		Dt:           time.Now().UTC().Format(time.RFC3339), // UTC is assumed
+		SenderHandle: "mrz@moneybutton.com",
+		SenderName:   "MrZ",
+	}
+
+	// Fire the request
+	var resolution *Resolution
+	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if resolution == nil {
+		t.Fatalf("resolution should have not been nil")
+	} else if resolution.StatusCode != http.StatusOK {
+		t.Fatalf("StatusCode was: %d and not: %d", resolution.StatusCode, http.StatusOK)
+	}
+}
+
+// TestClient_ResolveAddressInvalidScriptNonStandard will test the method ResolveAddress()
+func TestClient_ResolveAddressInvalidScriptNonStandard(t *testing.T) {
+	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
+
+	// Create a client with options
+	client, err := newTestClient()
+	if err != nil {
+		t.Fatalf("error loading client: %s", err.Error())
+	}
+
+	// Create response
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+		httpmock.NewStringResponder(
+			http.StatusOK,
+			`{"output": "47304402204e45e16932b8af514961a1d3a1a25fdf3f4f7732e9d624c6c61548ab5fb8cd410220181522ec8eca07de4860a4acdd12909d831cc56cbbac4622082221a8768d1d0901"}`,
+		),
+	)
+
+	// Sender Request
+	senderRequest := &SenderRequest{
+		Dt:           time.Now().UTC().Format(time.RFC3339), // UTC is assumed
+		SenderHandle: "mrz@moneybutton.com",
+		SenderName:   "MrZ",
+	}
+
+	// Fire the request
+	var resolution *Resolution
+	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	if err == nil {
+		t.Fatalf("error should have occurred")
+	} else if resolution == nil {
+		t.Fatalf("resolution should have not been nil")
+	} else if resolution.StatusCode != http.StatusOK {
+		t.Fatalf("StatusCode was: %d and not: %d", resolution.StatusCode, http.StatusOK)
+	}
+}

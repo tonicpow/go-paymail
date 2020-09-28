@@ -23,6 +23,7 @@ func TestClient_CheckDNSSEC(t *testing.T) {
 		{"", true},
 		{"---", true},
 		{"---.---", true},
+		{"*.---", true},
 		{"moneybutton", true},
 		{"asdfadfasdfasdfasdf10909.com", true},
 		{"google.com", false},
@@ -40,7 +41,7 @@ func TestClient_CheckDNSSEC(t *testing.T) {
 		}
 	}
 
-	// todo: test results, test using mock interfaces for dns resolving
+	// todo: test results, test using mock interfaces for DNS resolving
 }
 
 // ExampleClient_CheckDNSSEC example using CheckDNSSEC()
