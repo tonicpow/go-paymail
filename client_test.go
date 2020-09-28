@@ -110,7 +110,7 @@ func ExampleNewClient() {
 		return
 	}
 	fmt.Printf("loaded client: %s", client.Options.UserAgent)
-	// Output:loaded client: go-paymail: v0.0.3
+	// Output:loaded client: go-paymail: v0.0.4
 }
 
 // BenchmarkNewClient benchmarks the method NewClient()
@@ -216,7 +216,7 @@ func ExampleDefaultClientOptions() {
 		return
 	}
 	fmt.Printf("loaded options: %s", options.UserAgent)
-	// Output:loaded options: go-paymail: v0.0.3
+	// Output:loaded options: go-paymail: v0.0.4
 }
 
 // BenchmarkDefaultClientOptions benchmarks the method DefaultClientOptions()
