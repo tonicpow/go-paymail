@@ -44,6 +44,8 @@ func TestClient_CheckDNSSEC(t *testing.T) {
 }
 
 // ExampleClient_CheckDNSSEC example using CheckDNSSEC()
+//
+// See more examples in /examples/
 func ExampleClient_CheckDNSSEC() {
 	client, _ := NewClient(nil, nil)
 	results := client.CheckDNSSEC("moneybutton.com")

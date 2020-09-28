@@ -47,6 +47,8 @@ func TestClient_GetPKI(t *testing.T) {
 }
 
 // ExampleClient_GetPKI example using GetPKI()
+//
+// See more examples in /examples/
 func ExampleClient_GetPKI() {
 	// Load the client
 	client, err := NewClient(nil, nil)

@@ -50,6 +50,8 @@ func TestClient_GetPublicProfile(t *testing.T) {
 }
 
 // ExampleClient_GetPublicProfile example using GetPublicProfile()
+//
+// See more examples in /examples/
 func ExampleClient_GetPublicProfile() {
 	// Load the client
 	client, err := NewClient(nil, nil)

@@ -58,6 +58,8 @@ func TestClient_GetSRVRecord(t *testing.T) {
 }
 
 // ExampleClient_GetSRVRecord example using GetSRVRecord()
+//
+// See more examples in /examples/
 func ExampleClient_GetSRVRecord() {
 	client, _ := NewClient(nil, nil)
 	srv, _ := client.GetSRVRecord(DefaultServiceName, DefaultProtocol, "moneybutton.com")
@@ -113,6 +115,8 @@ func TestClient_ValidateSRVRecord(t *testing.T) {
 }
 
 // ExampleClient_ValidateSRVRecord example using ValidateSRVRecord()
+//
+// See more examples in /examples/
 func ExampleClient_ValidateSRVRecord() {
 	client, _ := NewClient(nil, nil)
 	err := client.ValidateSRVRecord(&net.SRV{

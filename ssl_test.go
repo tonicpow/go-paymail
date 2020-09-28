@@ -40,6 +40,8 @@ func TestClient_CheckSSL(t *testing.T) {
 }
 
 // ExampleClient_CheckSSL example using CheckSSL()
+//
+// See more examples in /examples/
 func ExampleClient_CheckSSL() {
 	client, _ := NewClient(nil, nil)
 	valid, _ := client.CheckSSL("moneybutton.com")

@@ -1,6 +1,7 @@
 package paymail
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/go-resty/resty/v2"
@@ -99,6 +100,26 @@ func TestNewClient(t *testing.T) {
 	}
 }
 
+// ExampleNewClient example using NewClient()
+//
+// See more examples in /examples/
+func ExampleNewClient() {
+	client, err := NewClient(nil, nil)
+	if err != nil {
+		fmt.Printf("error loading client: %s", err.Error())
+		return
+	}
+	fmt.Printf("loaded client: %s", client.Options.UserAgent)
+	// Output:loaded client: go-paymail: v0.0.2
+}
+
+// BenchmarkNewClient benchmarks the method NewClient()
+func BenchmarkNewClient(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _ = NewClient(nil, nil)
+	}
+}
+
 // TestNewClientNoBRFCs will test the method NewClient()
 func TestNewClientNoBRFCs(t *testing.T) {
 	t.Parallel()
@@ -183,4 +204,24 @@ func TestDefaultClientOptions(t *testing.T) {
 		t.Fatal("options.BRFCSpecs was less than 10 (missing default specs)")
 	}
 
+}
+
+// ExampleDefaultClientOptions example using DefaultClientOptions()
+//
+// See more examples in /examples/
+func ExampleDefaultClientOptions() {
+	options, err := DefaultClientOptions()
+	if err != nil {
+		fmt.Printf("error loading options: %s", err.Error())
+		return
+	}
+	fmt.Printf("loaded options: %s", options.UserAgent)
+	// Output:loaded options: go-paymail: v0.0.2
+}
+
+// BenchmarkDefaultClientOptions benchmarks the method DefaultClientOptions()
+func BenchmarkDefaultClientOptions(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _ = DefaultClientOptions()
+	}
 }

@@ -48,6 +48,8 @@ func TestClient_GetCapabilities(t *testing.T) {
 }
 
 // ExampleClient_GetCapabilities example using GetCapabilities()
+//
+// See more examples in /examples/
 func ExampleClient_GetCapabilities() {
 	// Load the client
 	client, err := NewClient(nil, nil)
@@ -407,6 +409,8 @@ func TestCapabilities_Has(t *testing.T) {
 }
 
 // ExampleCapabilities_Has example using Has()
+//
+// See more examples in /examples/
 func ExampleCapabilities_Has() {
 	capabilities := &Capabilities{
 		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
@@ -484,6 +488,8 @@ func TestCapabilities_GetBool(t *testing.T) {
 }
 
 // ExampleCapabilities_GetBool example using GetBool()
+//
+// See more examples in /examples/
 func ExampleCapabilities_GetBool() {
 	capabilities := &Capabilities{
 		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
@@ -562,6 +568,8 @@ func TestCapabilities_GetString(t *testing.T) {
 }
 
 // ExampleCapabilities_GetString example using GetString()
+//
+// See more examples in /examples/
 func ExampleCapabilities_GetString() {
 	capabilities := &Capabilities{
 		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},

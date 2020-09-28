@@ -39,6 +39,8 @@ func TestSanitizePaymail(t *testing.T) {
 }
 
 // ExampleSanitizePaymail example using SanitizePaymail()
+//
+// See more examples in /examples/
 func ExampleSanitizePaymail() {
 	alias, domain, address := SanitizePaymail("Paymail@Domain.com")
 	fmt.Printf("alias: %s domain: %s address: %s", alias, domain, address)
@@ -83,6 +85,8 @@ func TestValidatePaymail(t *testing.T) {
 }
 
 // ExampleValidatePaymail example using ValidatePaymail()
+//
+// See more examples in /examples/
 func ExampleValidatePaymail() {
 	err := ValidatePaymail("bad@paymail")
 	if err != nil {
@@ -129,6 +133,8 @@ func TestValidateDomain(t *testing.T) {
 }
 
 // ExampleValidateDomain example using ValidateDomain()
+//
+// See more examples in /examples/
 func ExampleValidateDomain() {
 	err := ValidateDomain("domain")
 	if err != nil {
@@ -175,6 +181,8 @@ func TestConvertHandle(t *testing.T) {
 }
 
 // ExampleConvertHandle example using the method ConvertHandle()
+//
+// See more examples in /examples/
 func ExampleConvertHandle() {
 	paymail := ConvertHandle("$mr-z", false)
 	fmt.Println(paymail)

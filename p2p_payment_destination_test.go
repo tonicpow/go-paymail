@@ -58,6 +58,8 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 }
 
 // ExampleClient_GetP2PPaymentDestination example using GetP2PPaymentDestination()
+//
+// See more examples in /examples/
 func ExampleClient_GetP2PPaymentDestination() {
 	// Load the client
 	client, err := NewClient(nil, nil)

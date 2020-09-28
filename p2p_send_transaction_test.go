@@ -49,6 +49,8 @@ func TestClient_SendP2PTransaction(t *testing.T) {
 }
 
 // ExampleClient_SendP2PTransaction example using SendP2PTransaction()
+//
+// See more examples in /examples/
 func ExampleClient_SendP2PTransaction() {
 	// Load the client // todo: using test client for mocking (unable to have a live SendP2PTransaction())
 	client, err := newTestClient()

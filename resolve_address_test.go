@@ -58,6 +58,8 @@ func TestClient_ResolveAddress(t *testing.T) {
 }
 
 // ExampleClient_ResolveAddress example using ResolveAddress()
+//
+// See more examples in /examples/
 func ExampleClient_ResolveAddress() {
 	// Load the client
 	client, err := NewClient(nil, nil)

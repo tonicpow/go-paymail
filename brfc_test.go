@@ -47,6 +47,8 @@ func TestBRFCSpec_Generate(t *testing.T) {
 }
 
 // ExampleBRFCSpec_Generate example using Generate()
+//
+// See more examples in /examples/
 func ExampleBRFCSpec_Generate() {
 	// Start with a new BRFC specification
 	newBRFC := &BRFCSpec{
@@ -112,6 +114,8 @@ func TestBRFCSpec_Validate(t *testing.T) {
 }
 
 // ExampleBRFCSpec_Validate example using Validate()
+//
+// See more examples in /examples/
 func ExampleBRFCSpec_Validate() {
 	// Start with an existing BRFC specification
 	newBRFC := &BRFCSpec{
@@ -174,6 +178,8 @@ func TestClientOptions_LoadBRFCs(t *testing.T) {
 }
 
 // ExampleClientOptions_LoadBRFCs example using LoadBRFCs()
+//
+// See more examples in /examples/
 func ExampleClientOptions_LoadBRFCs() {
 	// Create a client with options
 	client, err := NewClient(nil, nil)

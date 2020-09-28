@@ -58,6 +58,8 @@ func TestClient_VerifyPubKey(t *testing.T) {
 }
 
 // ExampleClient_VerifyPubKey example using VerifyPubKey()
+//
+// See more examples in /examples/
 func ExampleClient_VerifyPubKey() {
 	// Load the client
 	client, err := NewClient(nil, nil)
