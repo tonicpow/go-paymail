@@ -19,15 +19,18 @@ func Handlers() *httprouter.Router {
 	r.CrossOriginAllowCredentials = false
 	r.CrossOriginAllowOriginAll = false
 
-	// Register all actions
-	registerRoutes(r)
+	// Register basic server routes
+	registerBasicRoutes(r)
+
+	// Register paymail routes
+	registerPaymailRoutes(r)
 
 	// Return the router
 	return r.HTTPRouter
 }
 
-// registerRoutes register all the package specific routes
-func registerRoutes(router *apirouter.Router) {
+// registerBasicRoutes will register basic server related routes
+func registerBasicRoutes(router *apirouter.Router) {
 
 	// Set the main index page (navigating to slash)
 	router.HTTPRouter.GET("/", router.Request(index))
@@ -43,10 +46,20 @@ func registerRoutes(router *apirouter.Router) {
 
 	// Set the method not allowed
 	router.HTTPRouter.MethodNotAllowed = http.HandlerFunc(methodNotAllowed)
+}
+
+// registerPaymailRoutes will register all paymail related routes
+func registerPaymailRoutes(router *apirouter.Router) {
 
 	// Set the capabilities (service discovery)
 	router.HTTPRouter.GET("/.well-known/"+paymail.DefaultServiceName, router.Request(showCapabilities))
 
 	// Set the PKI request (public key information)
 	router.HTTPRouter.GET("/v1/"+paymail.DefaultServiceName+"/id/:paymailAddress", router.Request(showPKI))
+
+	// Set the Verify PubKey request (public key verification to paymail address)
+	router.HTTPRouter.GET("/v1/"+paymail.DefaultServiceName+"/verify-pubkey/:paymailAddress/:pubKey", router.Request(verifyPubKey))
+
+	// Set the Payment Destination request (address resolution)
+	router.HTTPRouter.POST("/v1/"+paymail.DefaultServiceName+"/address/:paymailAddress", router.Request(resolveAddress))
 }

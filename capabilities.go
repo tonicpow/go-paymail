@@ -100,7 +100,7 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 
 	// Test the status code (200 or 304 is valid)
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {
-		je := &JSONError{}
+		je := &ServerError{}
 		if err = json.Unmarshal(resp.Body, je); err != nil {
 			return
 		}

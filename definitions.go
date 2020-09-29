@@ -52,7 +52,16 @@ type StandardResponse struct {
 	Tracing    resty.TraceInfo `json:"-"` // Trace information if enabled on the request
 }
 
-// JSONError is the standard error response from a paymail server
-type JSONError struct {
+/*
+Example error response
+{
+    "code": "not-found",
+    "message": "Paymail not found: mrz@mneybutton.com"
+}
+*/
+
+// ServerError is the standard error response from a paymail server
+type ServerError struct {
+	Code    string `json:"code"`    // Shows the corresponding code
 	Message string `json:"message"` // Shows the error message returned by the server
 }

@@ -93,7 +93,7 @@ func (c *Client) SendP2PTransaction(p2pURL, alias, domain string, transaction *P
 		if response.StatusCode == http.StatusNotFound {
 			err = fmt.Errorf("paymail address not found")
 		} else {
-			je := &JSONError{}
+			je := &ServerError{}
 			if err = json.Unmarshal(resp.Body, je); err != nil {
 				return
 			}

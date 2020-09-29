@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -20,12 +19,10 @@ func health(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 
 // notFound handles all 404 requests
 func notFound(w http.ResponseWriter, req *http.Request) {
-	apirouter.ReturnResponse(w, req, http.StatusNotFound,
-		apirouter.ErrorFromRequest(req, fmt.Sprintf("%d occurred: %s", http.StatusNotFound, req.RequestURI), "request not found", http.StatusNotFound, http.StatusNotFound, req.RequestURI))
+	ErrorResponse(w, req, "request-404", "request not found", http.StatusNotFound)
 }
 
 // methodNotAllowed handles all 405 requests
 func methodNotAllowed(w http.ResponseWriter, req *http.Request) {
-	apirouter.ReturnResponse(w, req, http.StatusMethodNotAllowed,
-		apirouter.ErrorFromRequest(req, fmt.Sprintf("%d occurred: %s method: %s", http.StatusMethodNotAllowed, req.RequestURI, req.Method), "method not allowed", http.StatusMethodNotAllowed, http.StatusMethodNotAllowed, req.Method))
+	ErrorResponse(w, req, "method-405", "method "+req.Method+" not allowed", http.StatusMethodNotAllowed)
 }

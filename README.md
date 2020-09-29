@@ -54,6 +54,8 @@ View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-pay
 - [Paymail Server](server) (basic example for hosting your own paymail server)
     - [Example Showing Capabilities](server/capabilities.go) 
     - [Example Showing PKI](server/pki.go)
+    - [Example Verifying a PubKey](server/verify.go)
+    - [Example Address Resolution](server/resolve_address.go)
 - [Paymail Utilities](utilities.go) (handy methods)
     - [Sanitize & Validate Paymail Addresses](utilities.go)
     

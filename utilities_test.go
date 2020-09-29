@@ -196,3 +196,36 @@ func BenchmarkConvertHandle(b *testing.B) {
 		_ = ConvertHandle("$mr-z", false)
 	}
 }
+
+// TestValidateTimestamp will test the method ValidateTimestamp()
+func TestValidateTimestamp(t *testing.T) {
+	t.Parallel()
+
+	// Create the list of tests
+	var tests = []struct {
+		timestamp     string
+		expectedError bool
+	}{
+		{"2020-04-09T16:08:06.419Z", false},
+		{"2020-04-09 12:00", true},
+		{"2020-04-09 12:00B", true},
+		{"2020-04-09 12:00:00", true},
+		{"2020-04-09T12:00:00", true},
+		{"2020-04-09T12:00:00Z", false},
+		{"0000-00-00T00:00:00Z", true},
+		{"", true},
+		{"12345", true},
+		{"2017", true},
+		{"abcdef", true},
+		{"2018-01-01", true},
+	}
+
+	// Test all
+	for _, test := range tests {
+		if err := ValidateTimestamp(test.timestamp); err != nil && !test.expectedError {
+			t.Errorf("%s Failed: [%s] inputted and error not expected but got: %s", t.Name(), test.timestamp, err.Error())
+		} else if err == nil && test.expectedError {
+			t.Errorf("%s Failed: [%s] inputted and error was expected", t.Name(), test.timestamp)
+		}
+	}
+}

@@ -85,7 +85,7 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 		if response.StatusCode == http.StatusNotFound {
 			err = fmt.Errorf("paymail address not found")
 		} else {
-			je := &JSONError{}
+			je := &ServerError{}
 			if err = json.Unmarshal(resp.Body, je); err != nil {
 				return
 			}

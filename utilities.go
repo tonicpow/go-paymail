@@ -3,6 +3,7 @@ package paymail
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/mrz1836/go-sanitize"
 	"github.com/mrz1836/go-validate"
@@ -81,4 +82,20 @@ func ConvertHandle(handle string, isBeta bool) string {
 		return strings.ToLower(strings.Replace(handle, "1", "", -1)) + "@relayx.io"
 	}
 	return handle
+}
+
+// ValidateTimestamp will test if the timestamp is valid
+//
+// This is used to validate the "dt" parameter in resolve_address.go
+func ValidateTimestamp(timestamp string) error {
+
+	// Parse the time using the RFC3339 layout
+	dt, err := time.Parse(time.RFC3339, timestamp)
+	if err != nil {
+		return err
+	}
+	if dt.IsZero() {
+		return fmt.Errorf("timestamp: %s was zero", timestamp)
+	}
+	return nil
 }

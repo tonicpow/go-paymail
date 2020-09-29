@@ -18,7 +18,7 @@ type Capabilities struct {
 // activeCapabilities is used to display only the active capabilities of the Paymail server
 type activeCapabilities struct {
 	ForceSenderValidation bool   `json:"6745385c3fc0"`       // Will force sender to have a signature if enabled
-	PaymentDestination    string `json:"paymentDestination"` // Resolve an address - Alternate: 759684b1a19a
+	PaymentDestination    string `json:"paymentDestination"` // Resolve an address aka Payment Destination - Alternate: 759684b1a19a
 	PKI                   string `json:"pki"`                // Get public key information - Alternate: 0c4339ef99c2
 	PublicProfile         string `json:"f12f968c92d6"`       // Returns a public profile
 	VerifyPublicKey       string `json:"a9f510c16bde"`       // Verify a given pubkey
@@ -40,6 +40,8 @@ func createCapabilities() *Capabilities {
 
 // showCapabilities will return the service discovery results for the server
 // and list all active capabilities of the Paymail server
+//
+// Specs: http://bsvalias.org/02-02-capability-discovery.html
 func showCapabilities(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	apirouter.ReturnResponse(w, req, http.StatusOK, createCapabilities())
 }
