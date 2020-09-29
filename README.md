@@ -1,5 +1,5 @@
 # go-paymail
-> Paymail library for Golang
+> Paymail client & server library for Golang
 
 [![Release](https://img.shields.io/github/release-pre/tonicpow/go-paymail.svg?logo=github&style=flat&v=2)](https://github.com/tonicpow/go-paymail/releases)
 [![Build Status](https://travis-ci.com/tonicpow/go-paymail.svg?branch=master&v=2)](https://travis-ci.com/tonicpow/go-paymail)
@@ -37,25 +37,31 @@ View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-pay
 [![GoDoc](https://godoc.org/github.com/tonicpow/go-paymail?status.svg&style=flat)](https://pkg.go.dev/github.com/tonicpow/go-paymail)
 
 ### Features
-- Use a custom [Resty HTTP client](https://github.com/go-resty/resty)
-- Use custom [client options](client.go)
-- [Sanitize & Validate Paymail Addresses](utilities.go)
-- [Get & Validate SRV records](srv.go)
-- [Check SSL Certificates](ssl.go)
-- [Check & Validate DNNSEC](dns_sec.go)
-- [Generate, Validate & Load Additional BRFC Specifications](brfc.go)
-- [Fetch, Get and Has Capabilities](capabilities.go)
-- [Get Public Key Information - PKI](pki.go)
-- [Basic Address Resolution](resolve_address.go)
-- [Verify PubKey & Handle](verify_pubkey.go)
-- [Get Public Profile](public_profile.go)
-- [P2P Payment Destination](p2p_payment_destination.go)
-- [P2P Send Transaction](p2p_send_transaction.go)
-
+- [Paymail Client](client.go) (outgoing requests to other providers)
+    - Use a custom [Resty HTTP client](https://github.com/go-resty/resty)
+    - Use custom [client options](client.go)
+    - [Get & Validate SRV records](srv.go)
+    - [Check SSL Certificates](ssl.go)
+    - [Check & Validate DNNSEC](dns_sec.go)
+    - [Generate, Validate & Load Additional BRFC Specifications](brfc.go)
+    - [Fetch, Get and Has Capabilities](capabilities.go)
+    - [Get Public Key Information - PKI](pki.go)
+    - [Basic Address Resolution](resolve_address.go)
+    - [Verify PubKey & Handle](verify_pubkey.go)
+    - [Get Public Profile](public_profile.go)
+    - [P2P Payment Destination](p2p_payment_destination.go)
+    - [P2P Send Transaction](p2p_send_transaction.go)
+- [Paymail Server](server) (basic example for hosting your own paymail server)
+    - [Example Showing Capabilities](server/capabilities.go) 
+    - [Example Showing PKI](server/pki.go)
+- [Paymail Utilities](utilities.go) (handy methods)
+    - [Sanitize & Validate Paymail Addresses](utilities.go)
+    
 <details>
 <summary><strong><code>Package Dependencies</code></strong></summary>
 <br/>
 
+Client Packages:
 - [bitcoinsv/bsvd](https://github.com/bitcoinsv/bsvd)
 - [bitcoinsv/bsvutil](https://github.com/bitcoinsv/bsvutil)
 - [go-resty/resty](https://github.com/go-resty/resty/v2)
@@ -63,6 +69,11 @@ View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-pay
 - [miekg/dns](https://github.com/miekg/dns)
 - [mrz1836/go-sanitize](https://github.com/mrz1836/go-sanitize)
 - [mrz1836/go-validate](https://github.com/mrz1836/go-validate)
+
+Server Packages:
+- [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter)
+- [mrz1836/go-api-router](https://github.com/mrz1836/go-api-router)
+- [mrz1836/go-logger](https://github.com/mrz1836/go-logger)
 </details>
 
 <details>
