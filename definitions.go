@@ -47,9 +47,9 @@ const (
 
 // StandardResponse is the standard fields returned on all responses
 type StandardResponse struct {
-	Body       []byte          `json:"body"`        // Body of the response request
-	StatusCode int             `json:"status_code"` // Status code returned on the request
-	Tracing    resty.TraceInfo `json:"tracing"`     // Trace information if enabled on the request
+	Body       []byte          `json:"-"` // Body of the response request
+	StatusCode int             `json:"-"` // Status code returned on the request
+	Tracing    resty.TraceInfo `json:"-"` // Trace information if enabled on the request
 }
 
 // JSONError is the standard error response from a paymail server
