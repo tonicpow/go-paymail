@@ -71,6 +71,7 @@ Client Packages:
 - [miekg/dns](https://github.com/miekg/dns)
 - [mrz1836/go-sanitize](https://github.com/mrz1836/go-sanitize)
 - [mrz1836/go-validate](https://github.com/mrz1836/go-validate)
+- [rohenaz/go-bitcoin](https://github.com/rohenaz/go-bitcoin)
 
 Server Packages:
 - [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter)
