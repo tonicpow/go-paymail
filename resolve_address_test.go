@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/jarcoal/httpmock"
+	"github.com/rohenaz/go-bitcoin"
 )
 
 // TestClient_ResolveAddress will test the method ResolveAddress()
@@ -810,5 +811,38 @@ func TestClient_ResolveAddressInvalidScriptNonStandard(t *testing.T) {
 		t.Fatalf("resolution should have not been nil")
 	} else if resolution.StatusCode != http.StatusOK {
 		t.Fatalf("StatusCode was: %d and not: %d", resolution.StatusCode, http.StatusOK)
+	}
+}
+
+// TestSenderRequest_Sign will test the method Sign()
+func TestSenderRequest_Sign(t *testing.T) {
+
+	// Test wif key
+	key := "5JWB24HZhg4aWBEbxYEAgAJBnFEAd6TfRL6cPr3S2xGWow2weaa"
+
+	senderRequest := &SenderRequest{
+		Dt:           time.Now().UTC().Format(time.RFC3339), // UTC is assumed
+		SenderHandle: "mrz@moneybutton.com",
+		SenderName:   "MrZ",
+		Purpose:      "testing",
+	}
+
+	signature, err := senderRequest.Sign(key)
+	if err != nil {
+		t.Fatalf("error occured in sign: %s", err.Error())
+	} else if len(signature) == 0 {
+		t.Fatalf("signature was expected but empty")
+	}
+
+	// Get address
+	address := bitcoin.AddressFromPrivKey(key)
+
+	// todo: remove logs once verify is solved
+	t.Log(signature)
+	t.Log(address)
+
+	err = senderRequest.Verify(address, signature)
+	if err != nil {
+		t.Fatalf("error occurred: %s", err.Error())
 	}
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/bitcoinsv/bsvd/chaincfg"
 	"github.com/bitcoinsv/bsvd/txscript"
 	"github.com/bitcoinsv/bsvutil"
+	"github.com/rohenaz/go-bitcoin"
 )
 
 /*
@@ -57,11 +58,14 @@ func (s *SenderRequest) Verify(keyAddress, signature string) error {
 		return fmt.Errorf("missing a signature to verify")
 	}
 
-	// todo: verify the signature
+	// Concatenate the parts of the message
+	concatenated := fmt.Sprintf("%s%d%s%s", s.SenderHandle, s.Amount, s.Dt, s.Purpose)
 
-	// todo: should we sign and then compare?
-
-	// todo: add tests
+	// Verify the message
+	success := bitcoin.VerifyMessage(keyAddress, signature, concatenated)
+	if !success {
+		return fmt.Errorf("verification failed - unknown reason")
+	}
 
 	return nil
 }
@@ -77,13 +81,11 @@ func (s *SenderRequest) Sign(wifPrivateKey string) (string, error) {
 		return "", fmt.Errorf("missing private key")
 	}
 
-	// todo: concat the request parts, and sign
+	// Concatenate the parts of the message
 	concatenated := fmt.Sprintf("%s%d%s%s", s.SenderHandle, s.Amount, s.Dt, s.Purpose)
-	signature := "some signature from: " + concatenated
 
-	// todo: add tests
-
-	return signature, nil
+	// Return the signature
+	return bitcoin.SignMessage(wifPrivateKey, concatenated), nil
 }
 
 // ResolveAddress will return a hex-encoded Bitcoin script if successful
