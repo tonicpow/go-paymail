@@ -240,7 +240,7 @@ func TestValidateTimestamp(t *testing.T) {
 //
 // See more examples in /examples/
 func ExampleValidateTimestamp() {
-	err := ValidateTimestamp("2020-04-09T16:08:06.419Z")
+	err := ValidateTimestamp(time.Now().UTC().Format(time.RFC3339))
 	if err != nil {
 		fmt.Printf("error occurred: %s", err.Error())
 	} else {
@@ -251,7 +251,8 @@ func ExampleValidateTimestamp() {
 
 // BenchmarkValidateTimestamp benchmarks the method ValidateTimestamp()
 func BenchmarkValidateTimestamp(b *testing.B) {
+	timestamp := time.Now().UTC().Format(time.RFC3339)
 	for i := 0; i < b.N; i++ {
-		_ = ValidateTimestamp("2020-04-09T16:08:06.419Z")
+		_ = ValidateTimestamp(timestamp)
 	}
 }
