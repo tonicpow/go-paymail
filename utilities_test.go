@@ -3,6 +3,7 @@ package paymail
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 // TestSanitizePaymail will test the method SanitizePaymail()
@@ -206,18 +207,23 @@ func TestValidateTimestamp(t *testing.T) {
 		timestamp     string
 		expectedError bool
 	}{
-		{"2020-04-09T16:08:06.419Z", false},
-		{"2020-04-09 12:00", true},
-		{"2020-04-09 12:00B", true},
-		{"2020-04-09 12:00:00", true},
-		{"2020-04-09T12:00:00", true},
-		{"2020-04-09T12:00:00Z", false},
-		{"0000-00-00T00:00:00Z", true},
 		{"", true},
+		{"0000-00-00T00:00:00Z", true},
 		{"12345", true},
 		{"2017", true},
-		{"abcdef", true},
 		{"2018-01-01", true},
+		{"2020-04-09 12:00", true},
+		{"2020-04-09 12:00:00", true},
+		{"2020-04-09 12:00B", true},
+		{"2020-04-09T12:00:00", true},
+		{"abcdef", true},
+		{time.Now().UTC().Add(-1 * time.Minute).Format(time.RFC3339), false},
+		{time.Now().UTC().Add(-2 * time.Minute).Format(time.RFC3339), false},
+		{time.Now().UTC().Add(-4 * time.Minute).Format(time.RFC3339), true},
+		{time.Now().UTC().Add(1 * time.Minute).Format(time.RFC3339), false},
+		{time.Now().UTC().Add(2 * time.Minute).Format(time.RFC3339), false},
+		{time.Now().UTC().Add(4 * time.Minute).Format(time.RFC3339), true},
+		{time.Now().UTC().Format(time.RFC3339), false},
 	}
 
 	// Test all

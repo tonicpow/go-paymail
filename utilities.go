@@ -87,6 +87,7 @@ func ConvertHandle(handle string, isBeta bool) string {
 // ValidateTimestamp will test if the timestamp is valid
 //
 // This is used to validate the "dt" parameter in resolve_address.go
+// Allowing 3 minutes before/after for
 func ValidateTimestamp(timestamp string) error {
 
 	// Parse the time using the RFC3339 layout
@@ -94,8 +95,18 @@ func ValidateTimestamp(timestamp string) error {
 	if err != nil {
 		return err
 	}
+
+	// Is the time empty?
 	if dt.IsZero() {
-		return fmt.Errorf("timestamp: %s was zero", timestamp)
+		return fmt.Errorf("timestamp: %s was empty", timestamp)
 	}
+
+	// Timestamp cannot be more than X amount of minutes in the past
+	if dt.Before(time.Now().UTC().Add(-3 * time.Minute)) {
+		return fmt.Errorf("timestamp: %s is in the past", timestamp)
+	} else if dt.After(time.Now().UTC().Add(3 * time.Minute)) {
+		return fmt.Errorf("timestamp: %s is in the future", timestamp)
+	}
+
 	return nil
 }
