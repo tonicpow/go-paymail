@@ -58,6 +58,7 @@ View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-pay
     - [Example Address Resolution](server/resolve_address.go)
 - [Paymail Utilities](utilities.go) (handy methods)
     - [Sanitize & Validate Paymail Addresses](utilities.go)
+    - [Sign & Verify Sender Request](sender_request.go)
     
 <details>
 <summary><strong><code>Package Dependencies</code></strong></summary>
