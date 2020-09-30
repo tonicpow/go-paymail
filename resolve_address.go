@@ -7,35 +7,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/bitcoinschema/go-bitcoin"
 	"github.com/bitcoinsv/bsvd/chaincfg"
 	"github.com/bitcoinsv/bsvd/txscript"
 	"github.com/bitcoinsv/bsvutil"
 )
-
-/*
-Example:
-{
-    "senderName": "FirstName LastName",
-    "senderHandle": "<alias>@<domain.tld>",
-    "dt": "2013-10-21T13:28:06.419Z",
-    "amount": 550,
-    "purpose": "message to receiver",
-    "signature": "<compact Bitcoin message signature>"
-}
-*/
-
-// SenderRequest is the request body for the basic address resolution
-//
-// This is required to make a basic resolution request, and Dt and SenderHandle are required
-type SenderRequest struct {
-	Amount       uint64 `json:"amount,omitempty"`     // The amount, in Satoshis, that the sender intends to transfer to the receiver
-	Dt           string `json:"dt"`                   // (required) ISO-8601 formatted timestamp; see notes
-	Purpose      string `json:"purpose,omitempty"`    // Human-readable description of the purpose of the payment
-	SenderHandle string `json:"senderHandle"`         // (required) Sender's paymail handle
-	SenderName   string `json:"senderName,omitempty"` // Human-readable sender display name
-	Signature    string `json:"signature,omitempty"`  // Compact Bitcoin message signature; http://bsvalias.org/04-01-basic-address-resolution.html#signature-field
-}
 
 // Resolution is the response from the ResolveAddress() request
 type Resolution struct {
@@ -43,49 +18,6 @@ type Resolution struct {
 	Address   string `json:"address"`             // Legacy BSV address derived from the output script
 	Output    string `json:"output"`              // hex-encoded Bitcoin script, which the sender MUST use during the construction of a payment transaction
 	Signature string `json:"signature,omitempty"` // This is used if SenderValidation is enforced
-}
-
-// Verify will verify the given components in the ResolveAddress() request
-//
-// Source: https://github.com/moneybutton/paymail-client/blob/master/src/VerifiableMessage.js
-// Specs: http://bsvalias.org/04-01-basic-address-resolution.html#signature-field
-func (s *SenderRequest) Verify(keyAddress, signature string) error {
-
-	// Basic checks before trying the signature verification
-	if len(keyAddress) == 0 {
-		return fmt.Errorf("missing key address")
-	} else if len(signature) == 0 {
-		return fmt.Errorf("missing a signature to verify")
-	}
-
-	// Concatenate the parts of the message
-	concatenated := fmt.Sprintf("%s%d%s%s", s.SenderHandle, s.Amount, s.Dt, s.Purpose)
-
-	// Verify the message
-	err := bitcoin.VerifyMessage(keyAddress, signature, concatenated)
-	if err != nil {
-		return fmt.Errorf("verification failed: %s", err.Error())
-	}
-
-	return nil
-}
-
-// Sign will sign the given components in the ResolveAddress() request
-//
-// Source: https://github.com/moneybutton/paymail-client/blob/master/src/VerifiableMessage.js
-// Specs: http://bsvalias.org/04-01-basic-address-resolution.html#signature-field
-func (s *SenderRequest) Sign(wifPrivateKey string) (string, error) {
-
-	// Basic checks before trying to sign the request
-	if len(wifPrivateKey) == 0 {
-		return "", fmt.Errorf("missing private key")
-	}
-
-	// Concatenate the parts of the message
-	concatenated := fmt.Sprintf("%s%d%s%s", s.SenderHandle, s.Amount, s.Dt, s.Purpose)
-
-	// Return the signature
-	return bitcoin.SignMessage(wifPrivateKey, concatenated), nil
 }
 
 // ResolveAddress will return a hex-encoded Bitcoin script if successful
@@ -168,6 +100,7 @@ func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderReque
 }
 
 // extractAddressFromScript will take an output script and extract a standard bitcoin address
+// todo: move into go-bitcoin library?
 func extractAddressFromScript(script string) (string, error) {
 
 	// Decode the hex string into bytes

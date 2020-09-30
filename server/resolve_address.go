@@ -75,6 +75,8 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	if senderValidationEnabled {
 		if len(senderRequest.Signature) > 0 {
 
+			// todo: get pubkey of senderHandle, convert pubkey into address for signing
+
 			// todo: validate the signature against the message components (add real keyAddress)
 			if err := senderRequest.Verify("", senderRequest.Signature); err != nil {
 				ErrorResponse(w, req, "invalid-signature", "invalid signature: "+err.Error(), http.StatusBadRequest)
