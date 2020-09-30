@@ -15,9 +15,9 @@ require (
 	github.com/mrz1836/go-logger v0.2.0
 	github.com/mrz1836/go-sanitize v1.1.0
 	github.com/mrz1836/go-validate v0.2.0
+	github.com/piotrnar/gocoin v0.0.0-20200920172007-af9cf2799157 // indirect
 	github.com/rohenaz/go-bitcoin v0.0.3
-	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a // indirect
-	golang.org/x/net v0.0.0-20200927032502-5d4f70055728
-	golang.org/x/sys v0.0.0-20200926100807-9d91bd62050c // indirect
+	golang.org/x/net v0.0.0-20200930145003-4acb6c075d10
+	golang.org/x/sys v0.0.0-20200929083018-4d22bbb62b3c // indirect
 	golang.org/x/text v0.3.3 // indirect
 )

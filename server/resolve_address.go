@@ -59,7 +59,6 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	}
 
 	// Validate the timestamp
-	// todo: check that it's within X amount of time in the past and not in X amount into the future
 	if err := paymail.ValidateTimestamp(senderRequest.Dt); err != nil {
 		ErrorResponse(w, req, "invalid-dt", "invalid dt format: "+err.Error(), http.StatusBadRequest)
 		return
@@ -75,7 +74,8 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	// Only validate signatures if sender validation is enabled
 	if senderValidationEnabled {
 		if len(senderRequest.Signature) > 0 {
-			// todo: validate the signature against the message components
+
+			// todo: validate the signature against the message components (add real keyAddress)
 			if err := senderRequest.Verify("", senderRequest.Signature); err != nil {
 				ErrorResponse(w, req, "invalid-signature", "invalid signature: "+err.Error(), http.StatusBadRequest)
 				return
