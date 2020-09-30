@@ -6,6 +6,7 @@ github.com/bitcoinsv/bsvutil v0.0.0-20181216182056-1d77cf353ea9 h1:hFI8rT84FCA0F
 github.com/bitcoinsv/bsvutil v0.0.0-20181216182056-1d77cf353ea9/go.mod h1:p44KuNKUH5BC8uX4ONEODaHUR4+ibC8todEAOGQEJAM=
 github.com/cheekybits/is v0.0.0-20150225183255-68e9c0620927 h1:SKI1/fuSdodxmNNyVBR8d7X/HuLnRpvvFO0AgyQk764=
 github.com/cheekybits/is v0.0.0-20150225183255-68e9c0620927/go.mod h1:h/aW8ynjgkuj+NQRlZcDbAbM1ORAbXjXX77sX7T289U=
+github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-resty/resty/v2 v2.3.0 h1:JOOeAvjSlapTT92p8xiS19Zxev1neGikoHsXJeOq8So=
@@ -13,8 +14,11 @@ github.com/go-resty/resty/v2 v2.3.0/go.mod h1:UpN9CgLZNsv4e9XG50UU8xdI0F43UQ4Hmx
 github.com/gofrs/uuid v3.3.0+incompatible/go.mod h1:b2aQJv3Z4Fp6yNu3cdSllBxTCLRxnplIgP/c0N/04lM=
 github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
 github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
+github.com/itchyny/base58-go v0.1.0 h1:zF5spLDo956exUAD17o+7GamZTRkXOZlqJjRciZwd1I=
+github.com/itchyny/base58-go v0.1.0/go.mod h1:SrMWPE3DFuJJp1M/RUhu4fccp/y9AlB8AL3o3duPToU=
 github.com/jarcoal/httpmock v1.0.6 h1:e81vOSexXU3mJuJ4l//geOmKIt+Vkxerk1feQBC8D0g=
 github.com/jarcoal/httpmock v1.0.6/go.mod h1:ATjnClrvW/3tijVmpL/va5Z3aAyGvqU3gCT8nX0Txik=
+github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
 github.com/julienschmidt/httprouter v1.3.0 h1:U0609e9tgbseu3rBINet9P48AI/D3oJs4dN7jwJOQ1U=
 github.com/julienschmidt/httprouter v1.3.0/go.mod h1:JR6WtHb+2LUe8TCKY3cZOxFyyO8IZAc4RVcycCCAKdM=
 github.com/matryer/respond v1.0.1 h1:RSG07jdn32pH46t4UO1TnpnKlR/ayIpEa4aiK2f9k1U=
@@ -31,6 +35,13 @@ github.com/mrz1836/go-sanitize v1.1.0 h1:bCPJYP4DohJY8C/h0ZvBqdW9IabOdEYkQwm7IRQ
 github.com/mrz1836/go-sanitize v1.1.0/go.mod h1:PGBz3ysq/oO/Mt1fVWfScpnRLFLtHKT6bxRKfK3JR1U=
 github.com/mrz1836/go-validate v0.2.0 h1:F8AcgJRW0B/hUNFAXijrN/EGqYlAIkIIpMDkIMMRUho=
 github.com/mrz1836/go-validate v0.2.0/go.mod h1:IoGAb4rTAL6KgAxOiWL4ICwLqxGbKCKT1GyaSuE/4bk=
+github.com/piotrnar/gocoin v0.0.0-20200912093848-56d57d5b6be5 h1:7qMjDCz7USXw18S5feMCKjFtXTsv5yeK62TwFiP4nQE=
+github.com/piotrnar/gocoin v0.0.0-20200912093848-56d57d5b6be5/go.mod h1:sW6i99ojgdRHcz53PCjyEeoTEDFh9dfP5iiEIiNfcaM=
+github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/rohenaz/go-bitcoin v0.0.3 h1:VnqLfa06fI7d8Ao9l2ePxHFrAcWJ9VKGFkOoue0hCQs=
+github.com/rohenaz/go-bitcoin v0.0.3/go.mod h1:SeAs3+ATQZB0J6ysNWyspNAiZXPfistYrks7dGtPz5I=
+github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/ugorji/go v1.1.9 h1:SObrQTaSuP8WOv2WNCj8gECiNSJIUvk3Q7N26c96Gws=
 github.com/ugorji/go v1.1.9/go.mod h1:chLrngdsg43geAaeId+nXO57YsDdl5OZqd/QtBiD19g=
 github.com/ugorji/go/codec v1.1.9 h1:J/7hhpkQwgypRNvaeh/T5gzJ2gEI/l8S3qyRrdEa1fA=
