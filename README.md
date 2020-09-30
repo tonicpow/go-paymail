@@ -64,6 +64,7 @@ View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-pay
 <br/>
 
 Client Packages:
+- [BitcoinSchema/go-bitcoin](https://github.com/BitcoinSchema/go-bitcoin)
 - [bitcoinsv/bsvd](https://github.com/bitcoinsv/bsvd)
 - [bitcoinsv/bsvutil](https://github.com/bitcoinsv/bsvutil)
 - [go-resty/resty](https://github.com/go-resty/resty/v2)
@@ -71,7 +72,6 @@ Client Packages:
 - [miekg/dns](https://github.com/miekg/dns)
 - [mrz1836/go-sanitize](https://github.com/mrz1836/go-sanitize)
 - [mrz1836/go-validate](https://github.com/mrz1836/go-validate)
-- [rohenaz/go-bitcoin](https://github.com/rohenaz/go-bitcoin)
 
 Server Packages:
 - [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter)

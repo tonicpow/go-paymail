@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/bitcoinschema/go-bitcoin"
 	"github.com/bitcoinsv/bsvd/chaincfg"
 	"github.com/bitcoinsv/bsvd/txscript"
 	"github.com/bitcoinsv/bsvutil"
-	"github.com/rohenaz/go-bitcoin"
 )
 
 /*
@@ -62,9 +62,9 @@ func (s *SenderRequest) Verify(keyAddress, signature string) error {
 	concatenated := fmt.Sprintf("%s%d%s%s", s.SenderHandle, s.Amount, s.Dt, s.Purpose)
 
 	// Verify the message
-	success := bitcoin.VerifyMessage(keyAddress, signature, concatenated)
-	if !success {
-		return fmt.Errorf("verification failed - unknown reason")
+	err := bitcoin.VerifyMessage(keyAddress, signature, concatenated)
+	if err != nil {
+		return fmt.Errorf("verification failed: %s", err.Error())
 	}
 
 	return nil

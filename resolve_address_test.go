@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/bitcoinschema/go-bitcoin"
 	"github.com/jarcoal/httpmock"
-	"github.com/rohenaz/go-bitcoin"
 )
 
 // TestClient_ResolveAddress will test the method ResolveAddress()
@@ -835,7 +835,10 @@ func TestSenderRequest_Sign(t *testing.T) {
 	}
 
 	// Get address
-	address := bitcoin.AddressFromPrivKey(key)
+	address, err := bitcoin.AddressFromPrivateKey(key)
+	if err != nil {
+		t.Fatalf("error occurred: %s", err.Error())
+	}
 
 	// todo: remove logs once verify is solved
 	t.Log(signature)
