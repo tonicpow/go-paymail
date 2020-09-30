@@ -44,6 +44,48 @@ type Resolution struct {
 	Signature string `json:"signature,omitempty"` // This is used if SenderValidation is enforced
 }
 
+// Verify will verify the given components in the ResolveAddress() request
+//
+// Source: https://github.com/moneybutton/paymail-client/blob/master/src/VerifiableMessage.js
+// Specs: http://bsvalias.org/04-01-basic-address-resolution.html#signature-field
+func (s *SenderRequest) Verify(keyAddress, signature string) error {
+
+	// Basic checks before trying the signature verification
+	if len(keyAddress) == 0 {
+		return fmt.Errorf("missing key address")
+	} else if len(signature) == 0 {
+		return fmt.Errorf("missing a signature to verify")
+	}
+
+	// todo: verify the signature
+
+	// todo: should we sign and then compare?
+
+	// todo: add tests
+
+	return nil
+}
+
+// Sign will sign the given components in the ResolveAddress() request
+//
+// Source: https://github.com/moneybutton/paymail-client/blob/master/src/VerifiableMessage.js
+// Specs: http://bsvalias.org/04-01-basic-address-resolution.html#signature-field
+func (s *SenderRequest) Sign(wifPrivateKey string) (string, error) {
+
+	// Basic checks before trying to sign the request
+	if len(wifPrivateKey) == 0 {
+		return "", fmt.Errorf("missing private key")
+	}
+
+	// todo: concat the request parts, and sign
+	concatenated := fmt.Sprintf("%s%d%s%s", s.SenderHandle, s.Amount, s.Dt, s.Purpose)
+	signature := "some signature from: " + concatenated
+
+	// todo: add tests
+
+	return signature, nil
+}
+
 // ResolveAddress will return a hex-encoded Bitcoin script if successful
 //
 // Specs: http://bsvalias.org/04-01-basic-address-resolution.html

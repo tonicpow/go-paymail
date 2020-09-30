@@ -229,3 +229,23 @@ func TestValidateTimestamp(t *testing.T) {
 		}
 	}
 }
+
+// ExampleValidateTimestamp example using the method ValidateTimestamp()
+//
+// See more examples in /examples/
+func ExampleValidateTimestamp() {
+	err := ValidateTimestamp("2020-04-09T16:08:06.419Z")
+	if err != nil {
+		fmt.Printf("error occurred: %s", err.Error())
+	} else {
+		fmt.Printf("timestamp was valid!")
+	}
+	// Output:timestamp was valid!
+}
+
+// BenchmarkValidateTimestamp benchmarks the method ValidateTimestamp()
+func BenchmarkValidateTimestamp(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = ValidateTimestamp("2020-04-09T16:08:06.419Z")
+	}
+}

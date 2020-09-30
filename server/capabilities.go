@@ -29,7 +29,7 @@ func createCapabilities() *Capabilities {
 	return &Capabilities{
 		BsvAlias: paymail.DefaultBsvAliasVersion,
 		Capabilities: &activeCapabilities{
-			ForceSenderValidation: false,
+			ForceSenderValidation: senderValidationEnabled,
 			PaymentDestination:    serviceURL + "address/{alias}@{domain.tld}",
 			PKI:                   serviceURL + "id/{alias}@{domain.tld}",
 			PublicProfile:         serviceURL + "public-profile/{alias}@{domain.tld}",
