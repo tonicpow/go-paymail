@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/bitcoinschema/go-bitcoin"
+	"github.com/bitcoinsv/bsvd/bsvec"
+	"github.com/bitcoinsv/bsvutil"
 	"github.com/julienschmidt/httprouter"
 	apirouter "github.com/mrz1836/go-api-router"
 	"github.com/tonicpow/go-paymail"
@@ -75,10 +77,22 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	if senderValidationEnabled {
 		if len(senderRequest.Signature) > 0 {
 
-			// todo: get pubkey of senderHandle - PKI, convert pubkey into address for signing
+			// Get the pubKey from the corresponding sender paymail address
+			senderPubKey, err := getSenderPubKey(senderRequest.SenderHandle)
+			if err != nil {
+				ErrorResponse(w, req, ErrorInvalidSenderHandle, "invalid senderHandle: "+err.Error(), http.StatusBadRequest)
+				return
+			}
 
-			// todo: validate the signature against the message components (add real keyAddress)
-			if err := senderRequest.Verify("", senderRequest.Signature); err != nil {
+			// Derive address from pubKey
+			var rawAddress *bsvutil.LegacyAddressPubKeyHash
+			if rawAddress, err = bitcoin.AddressFromPubKey(senderPubKey); err != nil {
+				ErrorResponse(w, req, ErrorInvalidSenderHandle, "invalid senderHandle: "+err.Error(), http.StatusBadRequest)
+				return
+			}
+
+			// Verify the signature
+			if err = senderRequest.Verify(rawAddress.EncodeAddress(), senderRequest.Signature); err != nil {
 				ErrorResponse(w, req, ErrorInvalidSignature, "invalid signature: "+err.Error(), http.StatusBadRequest)
 				return
 			}
@@ -121,4 +135,36 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 
 	// Return the response
 	apirouter.ReturnResponse(w, req, http.StatusOK, response)
+}
+
+// getSenderPubKey will fetch the pubKey from a PKI request for the sender handle
+func getSenderPubKey(senderPaymailAddress string) (*bsvec.PublicKey, error) {
+
+	// Sanitize and break apart
+	alias, domain, _ := paymail.SanitizePaymail(senderPaymailAddress)
+
+	// Load the client
+	client, err := paymail.NewClient(nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the capabilities
+	// This is required first to get the corresponding PKI endpoint url
+	var capabilities *paymail.Capabilities
+	if capabilities, err = client.GetCapabilities(domain, paymail.DefaultPort); err != nil {
+		return nil, err
+	}
+
+	// Extract the PKI URL from the capabilities response
+	pkiURL := capabilities.GetString(paymail.BRFCPki, paymail.BRFCPkiAlternate)
+
+	// Get the actual PKI
+	var pki *paymail.PKI
+	if pki, err = client.GetPKI(pkiURL, alias, domain); err != nil {
+		return nil, err
+	}
+
+	// Convert the string pubKey to a bsvec.PublicKey
+	return bitcoin.PubKeyFromString(pki.PubKey)
 }
