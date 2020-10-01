@@ -101,10 +101,11 @@ func ValidateTimestamp(timestamp string) error {
 		return fmt.Errorf("timestamp: %s was empty", timestamp)
 	}
 
-	// Timestamp cannot be more than X amount of minutes in the past
-	if dt.Before(time.Now().UTC().Add(-3 * time.Minute)) {
+	// Timestamp cannot be more than 2 minutes in the past
+	// Specs: http://bsvalias.org/04-02-sender-validation.html
+	if dt.Before(time.Now().UTC().Add(-2 * time.Minute)) {
 		return fmt.Errorf("timestamp: %s is in the past", timestamp)
-	} else if dt.After(time.Now().UTC().Add(3 * time.Minute)) {
+	} else if dt.After(time.Now().UTC().Add(2 * time.Minute)) {
 		return fmt.Errorf("timestamp: %s is in the future", timestamp)
 	}
 
