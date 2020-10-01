@@ -19,7 +19,7 @@ func verifyPubKey(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
 	incomingPubKey := params.GetString("pubKey")
 
 	// Parse, sanitize and basic validation
-	_, domain, address := paymail.SanitizePaymail(incomingPaymail)
+	alias, domain, address := paymail.SanitizePaymail(incomingPaymail)
 	if len(address) == 0 {
 		ErrorResponse(w, req, "invalid-parameter", "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
 		return
@@ -38,14 +38,24 @@ func verifyPubKey(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
 
 	// todo: add caching for fast responses since the pubkey will not change
 
-	// todo: compare the incomingPubKey to the pubkey from the data-store
-	matched := true
+	// Find in mock database // todo: remove if using a real database ;)
+	foundPaymail := getPaymailByAlias(alias)
+	if foundPaymail == nil {
+		ErrorResponse(w, req, "not-found", "invalid signature: ", http.StatusNotFound)
+		return
+	}
+
+	// Compare the pubkey
+	matched := false
+	if foundPaymail.PubKey == incomingPubKey {
+		matched = true
+	}
 
 	// Return the response
 	apirouter.ReturnResponse(w, req, http.StatusOK, &paymail.Verification{
 		BsvAlias: paymail.DefaultBsvAliasVersion,
 		Handle:   address,
-		PubKey:   incomingPubKey, // todo: insert the pubkey
-		Match:    matched,        // todo: replace with a real comparison
+		PubKey:   incomingPubKey, // todo: should this be the incoming or found pubkey?
+		Match:    matched,
 	})
 }

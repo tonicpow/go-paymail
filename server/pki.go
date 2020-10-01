@@ -18,7 +18,7 @@ func showPKI(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	incomingPaymail := params.GetString("paymailAddress")
 
 	// Parse, sanitize and basic validation
-	_, domain, address := paymail.SanitizePaymail(incomingPaymail)
+	alias, domain, address := paymail.SanitizePaymail(incomingPaymail)
 	if len(address) == 0 {
 		ErrorResponse(w, req, "invalid-parameter", "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
 		return
@@ -31,10 +31,17 @@ func showPKI(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 	// todo: add caching for fast responses since the pubkey will not change
 
+	// Find in mock database // todo: remove if using a real database ;)
+	foundPaymail := getPaymailByAlias(alias)
+	if foundPaymail == nil {
+		ErrorResponse(w, req, "not-found", "invalid signature: ", http.StatusNotFound)
+		return
+	}
+
 	// Return the response
 	apirouter.ReturnResponse(w, req, http.StatusOK, &paymail.PKI{
 		BsvAlias: paymail.DefaultBsvAliasVersion,
 		Handle:   address,
-		PubKey:   "insert-pubkey-here", // todo: insert the pubkey
+		PubKey:   foundPaymail.PubKey,
 	})
 }

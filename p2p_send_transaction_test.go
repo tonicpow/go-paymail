@@ -52,14 +52,14 @@ func TestClient_SendP2PTransaction(t *testing.T) {
 //
 // See more examples in /examples/
 func ExampleClient_SendP2PTransaction() {
-	// Load the client // todo: using test client for mocking (unable to have a live SendP2PTransaction())
+	// Load the client (using a TestClient for this example since a live transaction is not possible)
 	client, err := newTestClient()
 	if err != nil {
 		fmt.Printf("error loading client: %s", err.Error())
 		return
 	}
 
-	// Create mock response // todo: using this for a mock response (unable to have a live SendP2PTransaction())
+	// Create mock response (Using a mocked response since a live transaction is not possible)
 	httpmock.Reset()
 	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusOK, `{"note":"test note","txid":"f3ddfabf7a7a84cfa20016e61df24dff32953d4023a3002cb5a98d6da4ef9bf1"}`))

@@ -89,7 +89,5 @@ func (c *Client) CheckSSL(host string) (valid bool, err error) {
 		}
 	}
 
-	// todo: Check a basic HTTPS request?
-
 	return
 }

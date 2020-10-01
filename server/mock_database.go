@@ -12,10 +12,12 @@ import (
 // paymailAddress is a mock table of paymail addresses for the example server
 type paymailAddress struct {
 	Alias       string `json:"alias"`        // Alias or handle of the paymail
+	Avatar      string `json:"avatar"`       // This is the url of the user (public profile)
 	ID          uint64 `json:"id"`           // Unique identifier
+	LastAddress string `json:"last_address"` // This is used as a temp address for now (should be via xPub)
+	Name        string `json:"name"`         // This is the name of the user (public profile)
 	PrivateKey  string `json:"private_key"`  // PrivateKey hex encoded
 	PubKey      string `json:"pubkey"`       // PublicKey hex encoded
-	LastAddress string `json:"last_address"` // This is used as a temp address for now (should be via xPub)
 }
 
 // paymailAddressTable is the mocked data for the example server (table: paymail_address)
@@ -23,11 +25,13 @@ var paymailAddressTable []*paymailAddress
 
 // Create the list of mock aliases to create on load
 var mockAliases = []struct {
-	alias string
-	id    uint64
+	alias  string
+	avatar string
+	id     uint64
+	name   string
 }{
-	{"mrz", 1},
-	{"satchmo", 2},
+	{"mrz", "https://github.com/mrz1836.png", 1, "MrZ"},
+	{"satchmo", "https://github.com/rohenaz.png", 2, "Satchmo"},
 }
 
 // init run on load
