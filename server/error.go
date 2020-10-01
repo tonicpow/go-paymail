@@ -7,6 +7,18 @@ import (
 	"github.com/tonicpow/go-paymail"
 )
 
+// Error codes for server response errors
+const (
+	ErrorInvalidDt           = "invalid-dt"
+	ErrorInvalidParameter    = "invalid-parameter"
+	ErrorInvalidPubKey       = "invalid-pubkey"
+	ErrorInvalidSenderHandle = "invalid-sender-handle"
+	ErrorInvalidSignature    = "invalid-signature"
+	ErrorPaymailNotFound     = "not-found"
+	ErrorScript              = "script-error"
+	ErrorUnknownDomain       = "unknown-domain"
+)
+
 // ErrorResponse is a standard way to return errors to the client
 //
 // Specs: http://bsvalias.org/99-01-recommendations.html

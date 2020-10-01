@@ -43,31 +43,31 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	// Parse, sanitize and basic validation
 	alias, domain, paymailAddress := paymail.SanitizePaymail(incomingPaymail)
 	if len(paymailAddress) == 0 {
-		ErrorResponse(w, req, "invalid-parameter", "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
+		ErrorResponse(w, req, ErrorInvalidParameter, "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
 		return
 	} else if domain != paymailDomain {
-		ErrorResponse(w, req, "unknown-domain", "domain unknown: "+domain, http.StatusBadRequest)
+		ErrorResponse(w, req, ErrorUnknownDomain, "domain unknown: "+domain, http.StatusBadRequest)
 		return
 	}
 
 	// Check for required fields
 	if len(senderRequest.SenderHandle) == 0 {
-		ErrorResponse(w, req, "missing-sender-handle", "missing required field: senderHandle", http.StatusBadRequest)
+		ErrorResponse(w, req, ErrorInvalidSenderHandle, "senderHandle is empty", http.StatusBadRequest)
 		return
 	} else if len(senderRequest.Dt) == 0 {
-		ErrorResponse(w, req, "missing-dt", "missing required field: dt", http.StatusBadRequest)
+		ErrorResponse(w, req, ErrorInvalidDt, "dt is empty", http.StatusBadRequest)
 		return
 	}
 
 	// Validate the timestamp
 	if err := paymail.ValidateTimestamp(senderRequest.Dt); err != nil {
-		ErrorResponse(w, req, "invalid-dt", "invalid dt format: "+err.Error(), http.StatusBadRequest)
+		ErrorResponse(w, req, ErrorInvalidDt, "invalid dt: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	// Basic validation on sender handle
 	if err := paymail.ValidatePaymail(senderRequest.SenderHandle); err != nil {
-		ErrorResponse(w, req, "invalid-sender-handle", "invalid senderHandle: "+err.Error(), http.StatusBadRequest)
+		ErrorResponse(w, req, ErrorInvalidSenderHandle, "invalid senderHandle: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -79,11 +79,11 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 
 			// todo: validate the signature against the message components (add real keyAddress)
 			if err := senderRequest.Verify("", senderRequest.Signature); err != nil {
-				ErrorResponse(w, req, "invalid-signature", "invalid signature: "+err.Error(), http.StatusBadRequest)
+				ErrorResponse(w, req, ErrorInvalidSignature, "invalid signature: "+err.Error(), http.StatusBadRequest)
 				return
 			}
 		} else {
-			ErrorResponse(w, req, "missing-signature", "missing required signature", http.StatusBadRequest)
+			ErrorResponse(w, req, ErrorInvalidSignature, "missing required signature", http.StatusBadRequest)
 			return
 		}
 	}
@@ -92,10 +92,10 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 
 	// todo: add caching for fast responses since the pubkey will not change
 
-	// Find in mock database // todo: remove if using a real database ;)
+	// Find in mock database
 	foundPaymail := getPaymailByAlias(alias)
 	if foundPaymail == nil {
-		ErrorResponse(w, req, "not-found", "invalid signature: ", http.StatusNotFound)
+		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return
 	}
 
@@ -106,7 +106,7 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	var err error
 	response.Output, err = bitcoin.ScriptFromAddress(foundPaymail.LastAddress)
 	if err != nil {
-		ErrorResponse(w, req, "script-error", "error generating script: "+err.Error(), http.StatusNotFound)
+		ErrorResponse(w, req, ErrorScript, "error generating script: "+err.Error(), http.StatusNotFound)
 		return
 	}
 
@@ -114,7 +114,7 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	if senderValidationEnabled {
 		response.Signature, err = bitcoin.SignMessage(foundPaymail.PrivateKey, response.Output)
 		if err != nil {
-			ErrorResponse(w, req, "signature-failed", "invalid signature: "+err.Error(), http.StatusUnprocessableEntity)
+			ErrorResponse(w, req, ErrorInvalidSignature, "invalid signature: "+err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
 	}

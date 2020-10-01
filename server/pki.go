@@ -20,10 +20,10 @@ func showPKI(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	// Parse, sanitize and basic validation
 	alias, domain, address := paymail.SanitizePaymail(incomingPaymail)
 	if len(address) == 0 {
-		ErrorResponse(w, req, "invalid-parameter", "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
+		ErrorResponse(w, req, ErrorInvalidParameter, "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
 		return
 	} else if domain != paymailDomain {
-		ErrorResponse(w, req, "unknown-domain", "domain unknown: "+domain, http.StatusBadRequest)
+		ErrorResponse(w, req, ErrorUnknownDomain, "domain unknown: "+domain, http.StatusBadRequest)
 		return
 	}
 
@@ -31,10 +31,10 @@ func showPKI(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 	// todo: add caching for fast responses since the pubkey will not change
 
-	// Find in mock database // todo: remove if using a real database ;)
+	// Find in mock database
 	foundPaymail := getPaymailByAlias(alias)
 	if foundPaymail == nil {
-		ErrorResponse(w, req, "not-found", "invalid signature: ", http.StatusNotFound)
+		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return
 	}
 
