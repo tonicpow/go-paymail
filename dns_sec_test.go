@@ -28,7 +28,7 @@ func TestClient_CheckDNSSEC(t *testing.T) {
 		{"asdfadfasdfasdfasdf10909.com", true},
 		{"google.com", false},
 		{"moneybutton.com", false},
-		{"relayx.io", false},
+		// {"relayx.io", false}, // Disabled for timeout issues
 		{"cloudflare.com", false},
 		{"mrz1836.com", false},
 		{"handcash-cloud-production.herokuapp.com", true},
