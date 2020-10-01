@@ -51,6 +51,7 @@ func (s *SenderRequest) Verify(keyAddress, signature string) error {
 //
 // Source: https://github.com/moneybutton/paymail-client/blob/master/src/VerifiableMessage.js
 // Specs: http://bsvalias.org/04-01-basic-address-resolution.html#signature-field
+// Additional Specs: http://bsvalias.org/04-02-sender-validation.html
 func (s *SenderRequest) Sign(privateKey string) (string, error) {
 
 	// Basic checks before trying to sign the request
