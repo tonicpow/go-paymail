@@ -1,5 +1,5 @@
-github.com/bitcoinschema/go-bitcoin v0.0.10 h1:Bx4IlBbwduhTbcdmmcdEfG4tnPKfddAt8G+sGpOy07Q=
-github.com/bitcoinschema/go-bitcoin v0.0.10/go.mod h1:LufGwzXzTjm4WdSesoPDotinDh0UWvw1z2paIdOgsUU=
+github.com/bitcoinschema/go-bitcoin v0.0.11 h1:cjDGzrHIuIstHAOvcacnVxayAsbZ26W8ZLH+zd3iQbE=
+github.com/bitcoinschema/go-bitcoin v0.0.11/go.mod h1:54r7+8ETFDAwn6xraXtyx2vNKKYEIXaCOEwJHkH2xQE=
 github.com/bitcoinsv/bsvd v0.0.0-20190609155523-4c29707f7173 h1:2yTIV9u7H0BhRDGXH5xrAwAz7XibWJtX2dNezMeNsUo=
 github.com/bitcoinsv/bsvd v0.0.0-20190609155523-4c29707f7173/go.mod h1:BZ1UcC9+tmcDEcdVXgpt13hMczwJxWzpAn68wNs7zRA=
 github.com/bitcoinsv/bsvlog v0.0.0-20181216181007-cb81b076bf2e h1:6f+gRvaPE/4h0g39dqTNPr9/P4mikw0aB+dhiExaWN8=
@@ -40,8 +40,6 @@ github.com/mrz1836/go-sanitize v1.1.0 h1:bCPJYP4DohJY8C/h0ZvBqdW9IabOdEYkQwm7IRQ
 github.com/mrz1836/go-sanitize v1.1.0/go.mod h1:PGBz3ysq/oO/Mt1fVWfScpnRLFLtHKT6bxRKfK3JR1U=
 github.com/mrz1836/go-validate v0.2.0 h1:F8AcgJRW0B/hUNFAXijrN/EGqYlAIkIIpMDkIMMRUho=
 github.com/mrz1836/go-validate v0.2.0/go.mod h1:IoGAb4rTAL6KgAxOiWL4ICwLqxGbKCKT1GyaSuE/4bk=
-github.com/piotrnar/gocoin v0.0.0-20200920172007-af9cf2799157 h1:evqZpI+lpcFQv7dEyquTJf5eyuuHJBtoRSq1d4nbUzk=
-github.com/piotrnar/gocoin v0.0.0-20200920172007-af9cf2799157/go.mod h1:sW6i99ojgdRHcz53PCjyEeoTEDFh9dfP5iiEIiNfcaM=
 github.com/piotrnar/gocoin v0.0.0-20201001091124-adad7a225eeb h1:zoASkOZwrUP9K6SeNBG7DSj33tqywMuq3LJgI/eyalU=
 github.com/piotrnar/gocoin v0.0.0-20201001091124-adad7a225eeb/go.mod h1:sW6i99ojgdRHcz53PCjyEeoTEDFh9dfP5iiEIiNfcaM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
