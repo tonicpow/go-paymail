@@ -1,23 +1,20 @@
 package paymail
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
 
-	"github.com/bitcoinsv/bsvd/chaincfg"
-	"github.com/bitcoinsv/bsvd/txscript"
-	"github.com/bitcoinsv/bsvutil"
+	"github.com/bitcoinschema/go-bitcoin"
 )
 
 // Resolution is the response from the ResolveAddress() request
 type Resolution struct {
 	StandardResponse
-	Address   string `json:"address"`             // Legacy BSV address derived from the output script
+	Address   string `json:"address,omitempty"`   // Legacy BSV address derived from the output script (custom for our Go package)
 	Output    string `json:"output"`              // hex-encoded Bitcoin script, which the sender MUST use during the construction of a payment transaction
-	Signature string `json:"signature,omitempty"` // This is used if SenderValidation is enforced
+	Signature string `json:"signature,omitempty"` // This is used if SenderValidation is enforced (signature of "output" value)
 }
 
 // ResolveAddress will return a hex-encoded Bitcoin script if successful
@@ -94,41 +91,7 @@ func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderReque
 	}
 
 	// Extract the address
-	response.Address, err = extractAddressFromScript(response.Output)
+	response.Address, err = bitcoin.AddressFromScript(response.Output)
 
 	return
-}
-
-// extractAddressFromScript will take an output script and extract a standard bitcoin address
-// todo: move into go-bitcoin library?
-func extractAddressFromScript(script string) (string, error) {
-
-	// Decode the hex string into bytes
-	scriptBytes, err := hex.DecodeString(script)
-	if err != nil {
-		return "", err
-	}
-
-	// Extract the components from the script
-	var addresses []bsvutil.Address
-	_, addresses, _, err = txscript.ExtractPkScriptAddrs(scriptBytes, &chaincfg.MainNetParams)
-	if err != nil {
-		return "", err
-	}
-
-	// Missing an address?
-	if len(addresses) == 0 {
-		// This error case should not occur since the error above will occur when no address is found,
-		// however we ensure that we have an address for the NewLegacyAddressPubKeyHash() below
-		return "", fmt.Errorf("invalid output script, missing an address")
-	}
-
-	// Extract the address from the pubkey hash
-	var address *bsvutil.LegacyAddressPubKeyHash
-	if address, err = bsvutil.NewLegacyAddressPubKeyHash(addresses[0].ScriptAddress(), &chaincfg.MainNetParams); err != nil {
-		return "", err
-	}
-
-	// Use the encoded version of the address
-	return address.EncodeAddress(), nil
 }

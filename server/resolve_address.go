@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	"github.com/bitcoinschema/go-bitcoin"
 	"github.com/julienschmidt/httprouter"
 	apirouter "github.com/mrz1836/go-api-router"
 	"github.com/tonicpow/go-paymail"
@@ -40,8 +41,8 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	}
 
 	// Parse, sanitize and basic validation
-	_, domain, address := paymail.SanitizePaymail(incomingPaymail)
-	if len(address) == 0 {
+	alias, domain, paymailAddress := paymail.SanitizePaymail(incomingPaymail)
+	if len(paymailAddress) == 0 {
 		ErrorResponse(w, req, "invalid-parameter", "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
 		return
 	} else if domain != paymailDomain {
@@ -65,17 +66,16 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	}
 
 	// Basic validation on sender handle
-	// todo: check that the sender handle is a real paymail address?
 	if err := paymail.ValidatePaymail(senderRequest.SenderHandle); err != nil {
 		ErrorResponse(w, req, "invalid-sender-handle", "invalid senderHandle: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Only validate signatures if sender validation is enabled
+	// Only validate signatures if sender validation is enabled (skip if disabled)
 	if senderValidationEnabled {
 		if len(senderRequest.Signature) > 0 {
 
-			// todo: get pubkey of senderHandle, convert pubkey into address for signing
+			// todo: get pubkey of senderHandle - PKI, convert pubkey into address for signing
 
 			// todo: validate the signature against the message components (add real keyAddress)
 			if err := senderRequest.Verify("", senderRequest.Signature); err != nil {
@@ -92,10 +92,33 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 
 	// todo: add caching for fast responses since the pubkey will not change
 
+	// Find in mock database // todo: remove if using a real database ;)
+	foundPaymail := getPaymailByAlias(alias)
+	if foundPaymail == nil {
+		ErrorResponse(w, req, "not-found", "invalid signature: ", http.StatusNotFound)
+		return
+	}
+
+	// Start the response
+	response := &paymail.Resolution{}
+
+	// Generate the script
+	var err error
+	response.Output, err = bitcoin.ScriptFromAddress(foundPaymail.LastAddress)
+	if err != nil {
+		ErrorResponse(w, req, "script-error", "error generating script: "+err.Error(), http.StatusNotFound)
+		return
+	}
+
+	// Create a signature of output if senderValidation is enabled
+	if senderValidationEnabled {
+		response.Signature, err = bitcoin.SignMessage(foundPaymail.PrivateKey, response.Output)
+		if err != nil {
+			ErrorResponse(w, req, "signature-failed", "invalid signature: "+err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+	}
+
 	// Return the response
-	apirouter.ReturnResponse(w, req, http.StatusOK, &paymail.Resolution{
-		Address:   address,
-		Output:    "insert-output-script-here", // todo: insert the actual script
-		Signature: "insert-signature-here",     // todo: insert the real signature if required (is this the previous signature from SenderRequest?)
-	})
+	apirouter.ReturnResponse(w, req, http.StatusOK, response)
 }
