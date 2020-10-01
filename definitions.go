@@ -16,7 +16,7 @@ const (
 	defaultSSLDeadline       = 10                       // Default deadline in seconds
 	defaultSSLTimeout        = 10                       // Default timeout in seconds
 	defaultUserAgent         = "go-paymail: " + version // Default user agent
-	version                  = "v0.0.5"                 // Go-Paymail version
+	version                  = "v0.0.6"                 // Go-Paymail version
 )
 
 // Public defaults for paymail specs
