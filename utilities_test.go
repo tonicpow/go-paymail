@@ -3,6 +3,7 @@ package paymail
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 // TestSanitizePaymail will test the method SanitizePaymail()
@@ -194,5 +195,67 @@ func ExampleConvertHandle() {
 func BenchmarkConvertHandle(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_ = ConvertHandle("$mr-z", false)
+	}
+}
+
+// TestValidateTimestamp will test the method ValidateTimestamp()
+func TestValidateTimestamp(t *testing.T) {
+	t.Parallel()
+
+	// Create the list of tests
+	var tests = []struct {
+		timestamp     string
+		expectedError bool
+	}{
+		{"", true},
+		{"0000-00-00T00:00:00Z", true},
+		{"12345", true},
+		{"2017", true},
+		{"2018-01-01", true},
+		{"2020-04-09 12:00", true},
+		{"2020-04-09 12:00:00", true},
+		{"2020-04-09 12:00B", true},
+		{"2020-04-09T12:00:00", true},
+		{"abcdef", true},
+		{time.Now().UTC().Add(-1 * time.Minute).Format(time.RFC3339), false},
+		{time.Now().UTC().Add(-118 * time.Second).Format(time.RFC3339), false},
+		{time.Now().UTC().Add(-122 * time.Second).Format(time.RFC3339), true},
+		{time.Now().UTC().Add(-3 * time.Minute).Format(time.RFC3339), true},
+		{time.Now().UTC().Add(-4 * time.Minute).Format(time.RFC3339), true},
+		{time.Now().UTC().Add(1 * time.Minute).Format(time.RFC3339), false},
+		{time.Now().UTC().Add(122 * time.Second).Format(time.RFC3339), true},
+		{time.Now().UTC().Add(3 * time.Minute).Format(time.RFC3339), true},
+		{time.Now().UTC().Add(4 * time.Minute).Format(time.RFC3339), true},
+		{time.Now().UTC().Format(time.RFC3339), false},
+	}
+
+	// Test all
+	for _, test := range tests {
+		if err := ValidateTimestamp(test.timestamp); err != nil && !test.expectedError {
+			t.Errorf("%s Failed: [%s] inputted and error not expected but got: %s", t.Name(), test.timestamp, err.Error())
+		} else if err == nil && test.expectedError {
+			t.Errorf("%s Failed: [%s] inputted and error was expected", t.Name(), test.timestamp)
+		}
+	}
+}
+
+// ExampleValidateTimestamp example using the method ValidateTimestamp()
+//
+// See more examples in /examples/
+func ExampleValidateTimestamp() {
+	err := ValidateTimestamp(time.Now().UTC().Format(time.RFC3339))
+	if err != nil {
+		fmt.Printf("error occurred: %s", err.Error())
+	} else {
+		fmt.Printf("timestamp was valid!")
+	}
+	// Output:timestamp was valid!
+}
+
+// BenchmarkValidateTimestamp benchmarks the method ValidateTimestamp()
+func BenchmarkValidateTimestamp(b *testing.B) {
+	timestamp := time.Now().UTC().Format(time.RFC3339)
+	for i := 0; i < b.N; i++ {
+		_ = ValidateTimestamp(timestamp)
 	}
 }

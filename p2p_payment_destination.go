@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/bitcoinschema/go-bitcoin"
 )
 
 /*
@@ -85,11 +87,11 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 		if response.StatusCode == http.StatusNotFound {
 			err = fmt.Errorf("paymail address not found")
 		} else {
-			je := &JSONError{}
-			if err = json.Unmarshal(resp.Body, je); err != nil {
+			serverError := &ServerError{}
+			if err = json.Unmarshal(resp.Body, serverError); err != nil {
 				return
 			}
-			err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, je.Message)
+			err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, serverError.Message)
 		}
 
 		return
@@ -122,7 +124,7 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 		}
 
 		// Extract the address
-		if response.Outputs[index].Address, err = extractAddressFromScript(out.Script); err != nil {
+		if response.Outputs[index].Address, err = bitcoin.AddressFromScript(out.Script); err != nil {
 			return
 		}
 	}

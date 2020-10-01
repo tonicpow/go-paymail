@@ -220,6 +220,11 @@ func (c *Client) CheckDNSSEC(domain string) (result *DNSCheckResult) {
 	return
 }
 
+/*
+Source: https://github.com/binaryfigments/dnscheck
+License: https://github.com/binaryfigments/dnscheck/blob/master/LICENSE
+*/
+
 // resolveOneNS will resolve one name server
 func resolveOneNS(domain, nameServer, dnsPort string) (string, error) {
 	var answer []string

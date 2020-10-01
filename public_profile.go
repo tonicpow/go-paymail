@@ -57,11 +57,11 @@ func (c *Client) GetPublicProfile(publicProfileURL, alias, domain string) (respo
 
 	// Test the status code (200 or 304 is valid)
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {
-		je := &JSONError{}
-		if err = json.Unmarshal(resp.Body, je); err != nil {
+		serverError := &ServerError{}
+		if err = json.Unmarshal(resp.Body, serverError); err != nil {
 			return
 		}
-		err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, je.Message)
+		err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, serverError.Message)
 		return
 	}
 

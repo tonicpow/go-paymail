@@ -17,8 +17,7 @@ func main() {
 
 	// Get the SRV record
 	var srv *net.SRV
-	srv, err = client.GetSRVRecord(paymail.DefaultServiceName, paymail.DefaultProtocol, "moneybutton.com")
-	if err != nil {
+	if srv, err = client.GetSRVRecord(paymail.DefaultServiceName, paymail.DefaultProtocol, "moneybutton.com"); err != nil {
 		log.Fatal("error getting SRV record: " + err.Error())
 	}
 	log.Println("found SRV record:", srv)

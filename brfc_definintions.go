@@ -17,7 +17,7 @@ const (
 
 // BRFCKnownSpecifications is a running list of all known BRFC specifications
 //
-// JSON file was converted into a go:var for binary shipment (todo: use a static file pkg app)
+// JSON file was converted into a go:var for binary shipment
 // Add your spec at runtime using LoadBRFCs()
 // Add your spec to the list below: https://github.com/tonicpow/go-paymail/issues/new/choose
 const BRFCKnownSpecifications = `

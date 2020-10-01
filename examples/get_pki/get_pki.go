@@ -17,8 +17,7 @@ func main() {
 	// Get the capabilities
 	// This is required first to get the corresponding PKI endpoint url
 	var capabilities *paymail.Capabilities
-	capabilities, err = client.GetCapabilities("moneybutton.com", paymail.DefaultPort)
-	if err != nil {
+	if capabilities, err = client.GetCapabilities("moneybutton.com", paymail.DefaultPort); err != nil {
 		log.Fatal("error getting capabilities: " + err.Error())
 	}
 	log.Println("found capabilities:", capabilities)
@@ -28,8 +27,7 @@ func main() {
 
 	// Get the actual PKI
 	var pki *paymail.PKI
-	pki, err = client.GetPKI(pkiURL, "mrz", "moneybutton.com")
-	if err != nil {
+	if pki, err = client.GetPKI(pkiURL, "mrz", "moneybutton.com"); err != nil {
 		log.Fatal("error getting pki: " + err.Error())
 	}
 	log.Println("found pki:", pki)

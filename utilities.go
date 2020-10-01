@@ -3,6 +3,7 @@ package paymail
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/mrz1836/go-sanitize"
 	"github.com/mrz1836/go-validate"
@@ -81,4 +82,32 @@ func ConvertHandle(handle string, isBeta bool) string {
 		return strings.ToLower(strings.Replace(handle, "1", "", -1)) + "@relayx.io"
 	}
 	return handle
+}
+
+// ValidateTimestamp will test if the timestamp is valid
+//
+// This is used to validate the "dt" parameter in resolve_address.go
+// Allowing 3 minutes before/after for
+func ValidateTimestamp(timestamp string) error {
+
+	// Parse the time using the RFC3339 layout
+	dt, err := time.Parse(time.RFC3339, timestamp)
+	if err != nil {
+		return err
+	}
+
+	// Is the time empty?
+	if dt.IsZero() {
+		return fmt.Errorf("timestamp: %s was empty", timestamp)
+	}
+
+	// Timestamp cannot be more than 2 minutes in the past
+	// Specs: http://bsvalias.org/04-02-sender-validation.html
+	if dt.Before(time.Now().UTC().Add(-2 * time.Minute)) {
+		return fmt.Errorf("timestamp: %s is in the past", timestamp)
+	} else if dt.After(time.Now().UTC().Add(2 * time.Minute)) {
+		return fmt.Errorf("timestamp: %s is in the future", timestamp)
+	}
+
+	return nil
 }
