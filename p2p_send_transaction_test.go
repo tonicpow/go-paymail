@@ -27,7 +27,7 @@ func TestClient_SendP2PTransaction(t *testing.T) {
 	rawTransaction := &P2PRawTransaction{Hex: "some-raw-hex", MetaData: &MetaData{Note: "test note", Sender: "someone@moneybutton.com"}, Reference: "1234567"}
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err != nil {
 		t.Fatalf("error occurred in SendP2PTransaction: %s", err.Error())
@@ -68,7 +68,7 @@ func ExampleClient_SendP2PTransaction() {
 	rawTransaction := &P2PRawTransaction{Hex: "some-raw-hex", MetaData: &MetaData{Note: "test note", Sender: "someone@moneybutton.com"}, Reference: "1234567"}
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err != nil {
 		fmt.Printf("error occurred in SendP2PTransaction: %s", err.Error())
@@ -114,7 +114,7 @@ func TestClient_SendP2PTransactionStatusNotModified(t *testing.T) {
 	rawTransaction := &P2PRawTransaction{Hex: "some-raw-hex", MetaData: &MetaData{Note: "test note", Sender: "someone@moneybutton.com"}, Reference: "1234567"}
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err != nil {
 		t.Fatalf("error occurred in SendP2PTransaction: %s", err.Error())
@@ -144,7 +144,7 @@ func TestClient_SendP2PTransactionStatusMissingURL(t *testing.T) {
 	rawTransaction := &P2PRawTransaction{Hex: "some-raw-hex", MetaData: &MetaData{Note: "test note", Sender: "someone@moneybutton.com"}, Reference: "1234567"}
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("invalid-url", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
@@ -172,7 +172,7 @@ func TestClient_SendP2PTransactionStatusMissingAlias(t *testing.T) {
 	rawTransaction := &P2PRawTransaction{Hex: "some-raw-hex", MetaData: &MetaData{Note: "test note", Sender: "someone@moneybutton.com"}, Reference: "1234567"}
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
@@ -200,7 +200,7 @@ func TestClient_SendP2PTransactionStatusMissingDomain(t *testing.T) {
 	rawTransaction := &P2PRawTransaction{Hex: "some-raw-hex", MetaData: &MetaData{Note: "test note", Sender: "someone@moneybutton.com"}, Reference: "1234567"}
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
@@ -225,7 +225,7 @@ func TestClient_SendP2PTransactionStatusNilTransaction(t *testing.T) {
 		httpmock.NewStringResponder(http.StatusNotModified, `{"note":"test note","txid":"f3ddfabf7a7a84cfa20016e61df24dff32953d4023a3002cb5a98d6da4ef9bf1"}`))
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", nil)
 	if err == nil {
 		t.Fatalf("error should have occurred")
@@ -253,7 +253,7 @@ func TestClient_SendP2PTransactionStatusMissingHex(t *testing.T) {
 	rawTransaction := &P2PRawTransaction{Hex: "", MetaData: &MetaData{Note: "test note", Sender: "someone@moneybutton.com"}, Reference: "1234567"}
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
@@ -281,7 +281,7 @@ func TestClient_SendP2PTransactionStatusMissingReference(t *testing.T) {
 	rawTransaction := &P2PRawTransaction{Hex: "some-raw-hex", MetaData: &MetaData{Note: "test note", Sender: "someone@moneybutton.com"}, Reference: ""}
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
@@ -309,7 +309,7 @@ func TestClient_SendP2PTransactionStatusHTTPError(t *testing.T) {
 	rawTransaction := &P2PRawTransaction{Hex: "some-raw-hex", MetaData: &MetaData{Note: "test note", Sender: "someone@moneybutton.com"}, Reference: "1234567"}
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
@@ -337,7 +337,7 @@ func TestClient_SendP2PTransactionStatusBadRequest(t *testing.T) {
 	rawTransaction := &P2PRawTransaction{Hex: "some-raw-hex", MetaData: &MetaData{Note: "test note", Sender: "someone@moneybutton.com"}, Reference: "1234567"}
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
@@ -365,7 +365,7 @@ func TestClient_SendP2PTransactionStatusPaymailNotFound(t *testing.T) {
 	rawTransaction := &P2PRawTransaction{Hex: "some-raw-hex", MetaData: &MetaData{Note: "test note", Sender: "someone@moneybutton.com"}, Reference: "1234567"}
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
@@ -395,7 +395,7 @@ func TestClient_SendP2PTransactionStatusBadErrorJSON(t *testing.T) {
 	rawTransaction := &P2PRawTransaction{Hex: "some-raw-hex", MetaData: &MetaData{Note: "test note", Sender: "someone@moneybutton.com"}, Reference: "1234567"}
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
@@ -423,7 +423,7 @@ func TestClient_SendP2PTransactionStatusBadJSON(t *testing.T) {
 	rawTransaction := &P2PRawTransaction{Hex: "some-raw-hex", MetaData: &MetaData{Note: "test note", Sender: "someone@moneybutton.com"}, Reference: "1234567"}
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
@@ -451,7 +451,7 @@ func TestClient_SendP2PTransactionStatusMissingTxID(t *testing.T) {
 	rawTransaction := &P2PRawTransaction{Hex: "some-raw-hex", MetaData: &MetaData{Note: "test note", Sender: "someone@moneybutton.com"}, Reference: "1234567"}
 
 	// Fire the request
-	var transaction *P2PTransaction
+	var transaction *P2PTransactionResponse
 	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")

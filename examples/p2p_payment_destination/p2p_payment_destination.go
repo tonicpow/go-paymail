@@ -28,7 +28,7 @@ func main() {
 	// Create the basic paymentRequest to achieve a payment destination (how many sats are you planning to send?)
 	paymentRequest := &paymail.PaymentRequest{Satoshis: 1000}
 
-	// Get the p2p destination
+	// Get the P2P destination
 	var destination *paymail.PaymentDestination
 	destination, err = client.GetP2PPaymentDestination(p2pURL, "mrz", "moneybutton.com", paymentRequest)
 	if err != nil {

@@ -36,8 +36,8 @@ type MetaData struct {
 	Signature string `json:"signature,omitempty"` // A signature of the tx id made by the sender
 }
 
-// P2PTransaction is the response to the request
-type P2PTransaction struct {
+// P2PTransactionResponse is the response to the request
+type P2PTransactionResponse struct {
 	StandardResponse
 	Note string `json:"note"` // Some human readable note
 	TxID string `json:"txid"` // The txid of the broadcasted tx
@@ -46,7 +46,7 @@ type P2PTransaction struct {
 // SendP2PTransaction will submit a transaction hex string (tx_hex) to a paymail provider
 //
 // Specs: https://docs.moneybutton.com/docs/paymail-06-p2p-transactions.html
-func (c *Client) SendP2PTransaction(p2pURL, alias, domain string, transaction *P2PRawTransaction) (response *P2PTransaction, err error) {
+func (c *Client) SendP2PTransaction(p2pURL, alias, domain string, transaction *P2PRawTransaction) (response *P2PTransactionResponse, err error) {
 
 	// Require a valid url
 	if len(p2pURL) == 0 || !strings.Contains(p2pURL, "https://") {
@@ -84,7 +84,7 @@ func (c *Client) SendP2PTransaction(p2pURL, alias, domain string, transaction *P
 	}
 
 	// Start the response
-	response = &P2PTransaction{StandardResponse: resp}
+	response = &P2PTransactionResponse{StandardResponse: resp}
 
 	// Test the status code
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {
