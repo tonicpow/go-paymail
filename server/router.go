@@ -65,4 +65,7 @@ func registerPaymailRoutes(router *apirouter.Router) {
 
 	// Set the Public Profile request (returns Name & Avatar)
 	router.HTTPRouter.GET("/v1/"+paymail.DefaultServiceName+"/public-profile/:paymailAddress", router.Request(publicProfile))
+
+	// Set the P2P Destination request (returns output & reference)
+	router.HTTPRouter.GET("/v1/"+paymail.DefaultServiceName+"/p2p-payment-destination/:paymailAddress", router.Request(p2pDestination))
 }

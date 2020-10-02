@@ -14,6 +14,7 @@ const (
 	ErrorInvalidPubKey       = "invalid-pubkey"
 	ErrorInvalidSenderHandle = "invalid-sender-handle"
 	ErrorInvalidSignature    = "invalid-signature"
+	ErrorMissingSatoshis     = "missing-satoshis"
 	ErrorPaymailNotFound     = "not-found"
 	ErrorScript              = "script-error"
 	ErrorUnknownDomain       = "unknown-domain"

@@ -26,15 +26,15 @@ type PaymentRequest struct {
 // The reference is unique for the payment destination request
 type PaymentDestination struct {
 	StandardResponse
-	Outputs   []*output `json:"outputs"`   // A list of outputs
-	Reference string    `json:"reference"` // A reference for the payment, created by the receiver of the transaction
+	Outputs   []*PaymentOutput `json:"outputs"`   // A list of outputs
+	Reference string           `json:"reference"` // A reference for the payment, created by the receiver of the transaction
 }
 
-// output is returned inside the payment destination response
+// PaymentOutput is returned inside the payment destination response
 //
 // There can be several outputs in one response based on the amount of satoshis being transferred and
 // the rules in place by the Paymail provider
-type output struct {
+type PaymentOutput struct {
 	Address  string `json:"address,omitempty"`  // Hex encoded locking script
 	Satoshis uint64 `json:"satoshis,omitempty"` // Number of satoshis for that output
 	Script   string `json:"script"`             // Hex encoded locking script

@@ -102,9 +102,7 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 		}
 	}
 
-	// todo: lookup the paymail address in a data-store, database, etc - get the PubKey (return 404 if not found)
-
-	// todo: add caching for fast responses since the pubkey will not change
+	// todo: lookup the paymail address in a data-store, database, etc (return 404 if not found)
 
 	// Find in mock database
 	foundPaymail := getPaymailByAlias(alias)
@@ -118,16 +116,14 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 
 	// Generate the script
 	var err error
-	response.Output, err = bitcoin.ScriptFromAddress(foundPaymail.LastAddress)
-	if err != nil {
+	if response.Output, err = bitcoin.ScriptFromAddress(foundPaymail.LastAddress); err != nil {
 		ErrorResponse(w, req, ErrorScript, "error generating script: "+err.Error(), http.StatusNotFound)
 		return
 	}
 
 	// Create a signature of output if senderValidation is enabled
 	if senderValidationEnabled {
-		response.Signature, err = bitcoin.SignMessage(foundPaymail.PrivateKey, response.Output)
-		if err != nil {
+		if response.Signature, err = bitcoin.SignMessage(foundPaymail.PrivateKey, response.Output); err != nil {
 			ErrorResponse(w, req, ErrorInvalidSignature, "invalid signature: "+err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
