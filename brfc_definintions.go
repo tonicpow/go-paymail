@@ -152,7 +152,7 @@ const BRFCKnownSpecifications = `
   },
   {
    "author": "nChain",
-   "id": "d534abdf761f",
+   "id": "a0a4c8b96133",
    "title": "spv_channels",
    "url": "https://github.com/bitcoin-sv-specs/brfc-spvchannels",
    "version": "1.0.0-beta"

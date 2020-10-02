@@ -97,7 +97,7 @@ func TestBRFCSpec_Validate(t *testing.T) {
 		{&BRFCSpec{Author: "", ID: "", Title: "", Version: ""}, "", true, false},
 		{&BRFCSpec{Author: "  andy (nChain)  ", ID: "0036f9b8860f", Title: "  bsvalias Integration with Simplified Payment Protocol  ", Version: "1"}, "0036f9b8860f", false, true},
 		{&BRFCSpec{Author: "andy (nChain)", ID: "0036f9b8860z", Title: "  bsvalias Integration with Simplified Payment Protocol  ", Version: "1"}, "0036f9b8860f", false, false},
-		{&BRFCSpec{Author: "nChain", ID: "d534abdf761f", Title: "spv_channels", Version: "0.1.0-beta"}, "d534abdf761f", false, true},
+		{&BRFCSpec{Author: "nChain", ID: "a0a4c8b96133", Title: "spv_channels", Version: "1.0.0-beta"}, "a0a4c8b96133", false, true},
 		{&BRFCSpec{Author: "nChain", ID: "b8930c2bbf5d", Title: "minerIdExt-blockBind", Version: "0.1"}, "b8930c2bbf5d", false, true},
 		{&BRFCSpec{Author: "nChain", ID: "a224052ad433", Title: "minerIdExt-blockInfo", Version: "0.1"}, "a224052ad433", false, true},
 		{&BRFCSpec{Author: "nChain", ID: "1b1d980b5b72", Title: "minerIdExt-minerParams", Version: "0.1"}, "1b1d980b5b72", false, true},
