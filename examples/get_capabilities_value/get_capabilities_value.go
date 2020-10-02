@@ -20,7 +20,7 @@ func main() {
 	if err != nil {
 		log.Fatal("error getting capabilities: " + err.Error())
 	}
-	log.Println("found capabilities:", capabilities)
+	log.Println("found capabilities: ", len(capabilities.Capabilities))
 
 	// Get the URL for a capability
 	endpoint := capabilities.GetString(paymail.BRFCPki, paymail.BRFCPkiAlternate)

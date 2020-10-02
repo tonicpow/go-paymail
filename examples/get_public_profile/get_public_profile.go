@@ -20,7 +20,7 @@ func main() {
 	if capabilities, err = client.GetCapabilities("moneybutton.com", paymail.DefaultPort); err != nil {
 		log.Fatal("error getting capabilities: " + err.Error())
 	}
-	log.Println("found capabilities:", capabilities)
+	log.Println("found capabilities: ", len(capabilities.Capabilities))
 
 	// Extract the PublicProfile URL from the capabilities response
 	publicProfileURL := capabilities.GetString(paymail.BRFCPublicProfile, "")
