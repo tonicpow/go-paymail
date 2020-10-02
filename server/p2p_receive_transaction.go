@@ -3,6 +3,8 @@ package server
 import (
 	"net/http"
 
+	"github.com/bitcoinschema/go-bitcoin"
+	"github.com/bitcoinsv/bsvutil"
 	"github.com/julienschmidt/httprouter"
 	apirouter "github.com/mrz1836/go-api-router"
 	"github.com/tonicpow/go-paymail"
@@ -58,28 +60,53 @@ func p2pReceiveTx(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
 		return
 	}
 
-	// Did we get get a raw hex transaction?
+	// Check for required fields
 	if len(p2pTransaction.Hex) == 0 {
 		ErrorResponse(w, req, ErrorMissingHex, "missing parameter: hex", http.StatusBadRequest)
 		return
-	}
-
-	// Did we get get required meta data fields?
-	if len(p2pTransaction.Reference) == 0 {
+	} else if len(p2pTransaction.Reference) == 0 {
 		ErrorResponse(w, req, ErrorMissingReference, "missing parameter: reference", http.StatusBadRequest)
 		return
-	} else if len(p2pTransaction.MetaData.Signature) == 0 {
-		ErrorResponse(w, req, ErrorInvalidSignature, "missing parameter: signature", http.StatusBadRequest)
-		return
-	} else if len(p2pTransaction.MetaData.PubKey) == 0 {
-		ErrorResponse(w, req, ErrorInvalidPubKey, "missing parameter: pubkey", http.StatusBadRequest)
+	}
+
+	// Convert the raw tx into a transaction
+	transaction, err := bitcoin.TxFromHex(p2pTransaction.Hex)
+	if err != nil {
+		ErrorResponse(w, req, ErrorInvalidParameter, "invalid parameter: hex", http.StatusBadRequest)
 		return
 	}
 
-	// todo: get the tx id from hex
-	txID := "some-tx-id-from-raw-hex"
+	// Start the final response
+	response := &paymail.P2PTransactionResponse{
+		Note: p2pTransaction.MetaData.Note,
+		TxID: transaction.GetTxID(),
+	}
 
-	// todo: validate the txID from signature & pubkey
+	// Check signature if: 1) sender validation enabled or 2) a signature was given (optional)
+	if senderValidationEnabled || len(p2pTransaction.MetaData.Signature) > 0 {
+
+		// Check required fields for signature validation
+		if len(p2pTransaction.MetaData.Signature) == 0 {
+			ErrorResponse(w, req, ErrorInvalidSignature, "missing parameter: signature", http.StatusBadRequest)
+			return
+		} else if len(p2pTransaction.MetaData.PubKey) == 0 {
+			ErrorResponse(w, req, ErrorInvalidPubKey, "missing parameter: pubkey", http.StatusBadRequest)
+			return
+		}
+
+		// Get the address from pubKey
+		var rawAddress *bsvutil.LegacyAddressPubKeyHash
+		if rawAddress, err = bitcoin.AddressFromPubKeyString(p2pTransaction.MetaData.PubKey); err != nil {
+			ErrorResponse(w, req, ErrorInvalidPubKey, "invalid pubkey: "+err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		// Validate the signature of the tx id
+		if err = bitcoin.VerifyMessage(rawAddress.EncodeAddress(), p2pTransaction.MetaData.Signature, response.TxID); err != nil {
+			ErrorResponse(w, req, ErrorInvalidSignature, "invalid signature: "+err.Error(), http.StatusBadRequest)
+			return
+		}
+	}
 
 	// todo: lookup the reference number in a data-store (get additional information)
 
@@ -97,8 +124,5 @@ func p2pReceiveTx(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
 	// todo: update the data-store with the reference number
 
 	// Return the response
-	apirouter.ReturnResponse(w, req, http.StatusOK, &paymail.P2PTransactionResponse{
-		Note: p2pTransaction.MetaData.Note,
-		TxID: txID,
-	})
+	apirouter.ReturnResponse(w, req, http.StatusOK, response)
 }
