@@ -149,6 +149,13 @@ const BRFCKnownSpecifications = `
    "title": "minerIdExt-blockBind",
    "url": "https://github.com/bitcoin-sv-specs/brfc-minerid/tree/master/extensions/blockbind",
    "version": "0.1"
+  },
+  {
+   "author": "nChain",
+   "id": "d534abdf761f",
+   "title": "spv_channels",
+   "url": "https://github.com/bitcoin-sv-specs/brfc-spvchannels",
+   "version": "1.0.0-beta"
   }
 ]
 `
