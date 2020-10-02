@@ -160,7 +160,7 @@ Read more about this Go project's [code standards](CODE_STANDARDS.md).
 <br/>
 
 ## Usage
-Checkout all the [examples](examples)!
+Checkout all the [client examples](examples/client) or [server examples](examples/server)!
 
 <br/>
 
