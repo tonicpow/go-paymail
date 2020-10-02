@@ -205,7 +205,7 @@ func ExampleClientOptions_LoadBRFCs() {
 	}
 	fmt.Printf("total specifications found: %d", len(client.Options.BRFCSpecs))
 
-	// Output:total specifications found: 19
+	// Output:total specifications found: 20
 }
 
 // BenchmarkClientOptions_LoadBRFCs benchmarks the method LoadBRFCs()
