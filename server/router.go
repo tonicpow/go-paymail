@@ -68,4 +68,7 @@ func registerPaymailRoutes(router *apirouter.Router) {
 
 	// Set the P2P Destination request (returns output & reference)
 	router.HTTPRouter.POST("/v1/"+paymail.DefaultServiceName+"/p2p-payment-destination/:paymailAddress", router.Request(p2pDestination))
+
+	// Set the P2P Receive Tx request (receives the P2P transaction, broadcasts, returns tx_id)
+	router.HTTPRouter.POST("/v1/"+paymail.DefaultServiceName+"/receive-transaction/:paymailAddress", router.Request(p2pReceiveTx))
 }

@@ -38,9 +38,9 @@ func main() {
 	log.Printf("destination returned reference: %s and outputs: %d", destination.Reference, len(destination.Outputs))
 
 	// Create a new P2P transaction
-	rawTransaction := &paymail.P2PRawTransaction{
+	rawTransaction := &paymail.P2PTransaction{
 		Hex: "replace-with-raw-transaction-hex", // todo: replace with a real transaction
-		MetaData: &paymail.MetaData{
+		MetaData: &paymail.P2PMetaData{
 			Note:      "Thanks for dinner Satchmo!",
 			Sender:    "mrz@moneybutton.com",
 			PubKey:    "insert-pubkey-for-sender", // todo: replace with a real pubkey for the Sender
