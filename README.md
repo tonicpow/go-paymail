@@ -56,6 +56,7 @@ View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-pay
     - [Example Showing PKI](server/pki.go)
     - [Example Verifying a PubKey](server/verify.go)
     - [Example Address Resolution](server/resolve_address.go)
+    - [Example P2P Payment Destination](server/p2p_payment_destination.go)
 - [Paymail Utilities](utilities.go) (handy methods)
     - [Sanitize & Validate Paymail Addresses](utilities.go)
     - [Sign & Verify Sender Request](sender_request.go)
