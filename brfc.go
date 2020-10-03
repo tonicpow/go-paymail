@@ -80,13 +80,13 @@ func (b *BRFCSpec) Generate() error {
 	h := sha256.New()
 
 	// Append all values (trim leading & trailing whitespace)
-	h.Write([]byte(strings.TrimSpace(b.Title) + strings.TrimSpace(b.Author) + strings.TrimSpace(b.Version)))
+	_, _ = h.Write([]byte(strings.TrimSpace(b.Title) + strings.TrimSpace(b.Author) + strings.TrimSpace(b.Version)))
 
 	// Start the double SHA256
 	h2 := sha256.New()
 
 	// Write the first SHA256 result
-	h2.Write(h.Sum(nil))
+	_, _ = h2.Write(h.Sum(nil))
 
 	// Create the final double SHA256
 	doubleHash := h2.Sum(nil)
