@@ -79,8 +79,8 @@ func (c *Client) CheckSSL(host string) (valid bool, err error) {
 					}
 
 					// Fail if less than 1 day for expiration
-					remainingValidity := cert.NotAfter.Sub(time.Now())
-					if remainingValidity > time.Duration(1)*24*time.Hour {
+					// remainingValidity := cert.NotAfter.Sub(time.Now())
+					if time.Until(cert.NotAfter) > time.Duration(1)*24*time.Hour {
 						valid = true
 					}
 				}

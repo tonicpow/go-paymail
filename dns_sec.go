@@ -52,20 +52,24 @@ type matching struct {
 }
 
 // domainDS struct
+//
+// DO NOT CHANGE ORDER - Optimized for memory (malign)
 type domainDS struct {
-	Algorithm  uint8  `json:"algorithm,omitempty"`
 	Digest     string `json:"digest,omitempty"`
-	DigestType uint8  `json:"digest_type,omitempty"`
 	KeyTag     uint16 `json:"key_tag,omitempty"`
+	Algorithm  uint8  `json:"algorithm,omitempty"`
+	DigestType uint8  `json:"digest_type,omitempty"`
 }
 
 // domainDNSKEY struct
+//
+// DO NOT CHANGE ORDER - Optimized for memory (malign)
 type domainDNSKEY struct {
-	Algorithm    uint8     `json:"algorithm,omitempty"`
+	PublicKey    string    `json:"public_key,omitempty"`
 	CalculatedDS *domainDS `json:"calculate_ds,omitempty"`
 	Flags        uint16    `json:"flags,omitempty"`
+	Algorithm    uint8     `json:"algorithm,omitempty"`
 	Protocol     uint8     `json:"protocol,omitempty"`
-	PublicKey    string    `json:"public_key,omitempty"`
 }
 
 // Domains that DO NOT work properly for DNSSEC validation
@@ -225,45 +229,55 @@ Source: https://github.com/binaryfigments/dnscheck
 License: https://github.com/binaryfigments/dnscheck/blob/master/LICENSE
 */
 
-// resolveOneNS will resolve one name server
-func resolveOneNS(domain, nameServer, dnsPort string) (string, error) {
-	var answer []string
+// newDNSMessage will create a new DNS message and fire the exchange request
+func newDNSMessage(domain, nameServer, dnsPort string, dnsType uint16) (*dns.Msg, error) {
 	m := new(dns.Msg)
-	m.SetQuestion(dns.Fqdn(domain), dns.TypeNS)
 	m.MsgHdr.RecursionDesired = true
-	m.SetEdns0(4096, true)
-	c := new(dns.Client)
-	in, _, err := c.Exchange(m, nameServer+":"+dnsPort)
-	if err != nil {
-		return "", err
-	}
-	for _, ain := range in.Answer {
-		if a, ok := ain.(*dns.NS); ok {
-			answer = append(answer, a.Ns)
-		}
-	}
-	if len(answer) < 1 || answer == nil {
-		return "", err
-	}
-	return answer[0], nil
-}
-
-// resolveDomainNSEC will resolve a domain NSEC
-func resolveDomainNSEC(domain, nameServer, dnsPort string) (*dns.NSEC, error) {
-	var answer *dns.NSEC
-	m := new(dns.Msg)
-	m.SetQuestion(dns.Fqdn(domain), dns.TypeNSEC)
-	m.MsgHdr.RecursionDesired = true
+	m.SetQuestion(dns.Fqdn(domain), dnsType)
 	m.SetEdns0(4096, true)
 	c := new(dns.Client)
 	in, _, err := c.Exchange(m, nameServer+":"+dnsPort)
 	if err != nil {
 		return nil, err
 	}
-	for _, ain := range in.Answer {
+	return in, nil
+}
+
+// resolveOneNS will resolve one name server
+func resolveOneNS(domain, nameServer, dnsPort string) (string, error) {
+
+	// Fire the request
+	msg, err := newDNSMessage(domain, nameServer, dnsPort, dns.TypeNS)
+	if err != nil {
+		return "", err
+	}
+
+	var ans []string
+	for _, ain := range msg.Answer {
+		if a, ok := ain.(*dns.NS); ok {
+			ans = append(ans, a.Ns)
+		}
+	}
+	if len(ans) < 1 || ans == nil {
+		return "", err
+	}
+	return ans[0], nil
+}
+
+// resolveDomainNSEC will resolve a domain NSEC
+func resolveDomainNSEC(domain, nameServer, dnsPort string) (*dns.NSEC, error) {
+
+	// Fire the request
+	msg, err := newDNSMessage(domain, nameServer, dnsPort, dns.TypeNSEC)
+	if err != nil {
+		return nil, err
+	}
+
+	var ans *dns.NSEC
+	for _, ain := range msg.Answer {
 		if a, ok := ain.(*dns.NSEC); ok {
-			answer = a
-			return answer, nil
+			ans = a
+			return ans, nil
 		}
 	}
 	return nil, nil
@@ -271,20 +285,18 @@ func resolveDomainNSEC(domain, nameServer, dnsPort string) (*dns.NSEC, error) {
 
 // resolveDomainNSEC3 will resolve a domain NSEC3
 func resolveDomainNSEC3(domain, nameServer, dnsPort string) (*dns.NSEC3, error) {
-	var answer *dns.NSEC3
-	m := new(dns.Msg)
-	m.SetQuestion(dns.Fqdn(domain), dns.TypeNSEC3)
-	m.MsgHdr.RecursionDesired = true
-	m.SetEdns0(4096, true)
-	c := new(dns.Client)
-	in, _, err := c.Exchange(m, nameServer+":"+dnsPort)
+
+	// Fire the request
+	msg, err := newDNSMessage(domain, nameServer, dnsPort, dns.TypeNSEC3)
 	if err != nil {
 		return nil, err
 	}
-	for _, ain := range in.Answer {
+
+	var ans *dns.NSEC3
+	for _, ain := range msg.Answer {
 		if a, ok := ain.(*dns.NSEC3); ok {
-			answer = a
-			return answer, nil
+			ans = a
+			return ans, nil
 		}
 	}
 	return nil, nil
@@ -292,20 +304,18 @@ func resolveDomainNSEC3(domain, nameServer, dnsPort string) (*dns.NSEC3, error) 
 
 // resolveDomainNSEC3PARAM will resolve a domain NSEC3PARAM
 func resolveDomainNSEC3PARAM(domain, nameServer, dnsPort string) (*dns.NSEC3PARAM, error) {
-	var answer *dns.NSEC3PARAM
-	m := new(dns.Msg)
-	m.SetQuestion(dns.Fqdn(domain), dns.TypeNSEC3PARAM)
-	m.MsgHdr.RecursionDesired = true
-	m.SetEdns0(4096, true)
-	c := new(dns.Client)
-	in, _, err := c.Exchange(m, nameServer+":"+dnsPort)
+
+	// Fire the request
+	msg, err := newDNSMessage(domain, nameServer, dnsPort, dns.TypeNSEC3PARAM)
 	if err != nil {
 		return nil, err
 	}
-	for _, ain := range in.Answer {
+
+	var ans *dns.NSEC3PARAM
+	for _, ain := range msg.Answer {
 		if a, ok := ain.(*dns.NSEC3PARAM); ok {
-			answer = a
-			return answer, nil
+			ans = a
+			return ans, nil
 		}
 	}
 	return nil, nil
@@ -314,16 +324,14 @@ func resolveDomainNSEC3PARAM(domain, nameServer, dnsPort string) (*dns.NSEC3PARA
 // resolveDomainDS will resolve a domain DS
 func resolveDomainDS(domain, nameServer, dnsPort string) ([]*domainDS, error) {
 	var ds []*domainDS
-	m := new(dns.Msg)
-	m.MsgHdr.RecursionDesired = true
-	m.SetQuestion(dns.Fqdn(domain), dns.TypeDS)
-	m.SetEdns0(4096, true)
-	c := new(dns.Client)
-	in, _, err := c.Exchange(m, nameServer+":"+dnsPort)
+
+	// Fire the request
+	msg, err := newDNSMessage(domain, nameServer, dnsPort, dns.TypeDS)
 	if err != nil {
 		return ds, err
 	}
-	for _, ain := range in.Answer {
+
+	for _, ain := range msg.Answer {
 		if a, ok := ain.(*dns.DS); ok {
 			readKey := &domainDS{
 				Algorithm:  a.Algorithm,
@@ -341,16 +349,13 @@ func resolveDomainDS(domain, nameServer, dnsPort string) ([]*domainDS, error) {
 func resolveDomainDNSKEY(domain, nameServer, dnsPort string) ([]*domainDNSKEY, error) {
 	var dnskey []*domainDNSKEY
 
-	m := new(dns.Msg)
-	m.MsgHdr.RecursionDesired = true
-	m.SetQuestion(dns.Fqdn(domain), dns.TypeDNSKEY)
-	m.SetEdns0(4096, true)
-	c := new(dns.Client)
-	in, _, err := c.Exchange(m, nameServer+":"+dnsPort)
+	// Fire the request
+	msg, err := newDNSMessage(domain, nameServer, dnsPort, dns.TypeDNSKEY)
 	if err != nil {
 		return dnskey, err
 	}
-	for _, ain := range in.Answer {
+
+	for _, ain := range msg.Answer {
 		if a, ok := ain.(*dns.DNSKEY); ok {
 			readKey := &domainDNSKEY{
 				Algorithm: a.Algorithm,
@@ -370,16 +375,13 @@ func resolveDomainDNSKEY(domain, nameServer, dnsPort string) ([]*domainDNSKEY, e
 func calculateDSRecord(domain, nameServer, dnsPort string, digest uint8) ([]*domainDS, error) {
 	var calculatedDS []*domainDS
 
-	m := new(dns.Msg)
-	m.SetQuestion(dns.Fqdn(domain), dns.TypeDNSKEY)
-	m.SetEdns0(4096, true)
-	m.MsgHdr.RecursionDesired = true
-	c := new(dns.Client)
-	in, _, err := c.Exchange(m, nameServer+":"+dnsPort)
+	// Fire the request
+	msg, err := newDNSMessage(domain, nameServer, dnsPort, dns.TypeDNSKEY)
 	if err != nil {
 		return calculatedDS, err
 	}
-	for _, ain := range in.Answer {
+
+	for _, ain := range msg.Answer {
 		if a, ok := ain.(*dns.DNSKEY); ok {
 			calculatedKey := &domainDS{
 				Algorithm:  a.ToDS(digest).Algorithm,
