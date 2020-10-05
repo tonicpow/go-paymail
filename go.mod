@@ -16,6 +16,6 @@ require (
 	github.com/mrz1836/go-validate v0.2.0
 	github.com/piotrnar/gocoin v0.0.0-20201004105208-19152002e94e // indirect
 	golang.org/x/net v0.0.0-20201002202402-0a1ea396d57c
-	golang.org/x/sys v0.0.0-20201005065044-765f4ea38db3 // indirect
+	golang.org/x/sys v0.0.0-20201005172224-997123666555 // indirect
 	golang.org/x/text v0.3.3 // indirect
 )
