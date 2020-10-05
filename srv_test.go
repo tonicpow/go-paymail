@@ -10,6 +10,11 @@ import (
 func TestClient_GetSRVRecord(t *testing.T) {
 	// t.Parallel() (turned off - race condition)
 
+	// Integration test (requires internet connection)
+	if testing.Short() {
+		t.Skip("skipping integration testing in short mode")
+	}
+
 	client, err := newTestClient()
 	if err != nil {
 		t.Fatalf("error loading client: %s", err.Error())
