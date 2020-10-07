@@ -349,6 +349,7 @@ linters:
     - nolintlint
     - gci
     - goconst
+    #- lll
   disable:
     - gocritic # use this for very opinionated linting
     - gochecknoglobals
@@ -388,6 +389,7 @@ issues:
         - dupl
         - gosec
         - goconst
+        - lll
 
     # Exclude known linters from partially hard-vendored code,
     # which is impossible to exclude via "nolint" comments.
