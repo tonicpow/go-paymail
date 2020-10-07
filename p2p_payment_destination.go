@@ -124,7 +124,7 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 		}
 
 		// Extract the address
-		if response.Outputs[index].Address, err = bitcoin.AddressFromScript(out.Script); err != nil {
+		if response.Outputs[index].Address, err = bitcoin.GetAddressFromScript(out.Script); err != nil {
 			return
 		}
 	}

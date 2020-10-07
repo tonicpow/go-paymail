@@ -96,7 +96,7 @@ func p2pReceiveTx(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
 
 		// Get the address from pubKey
 		var rawAddress *bsvutil.LegacyAddressPubKeyHash
-		if rawAddress, err = bitcoin.AddressFromPubKeyString(p2pTransaction.MetaData.PubKey); err != nil {
+		if rawAddress, err = bitcoin.GetAddressFromPubKeyString(p2pTransaction.MetaData.PubKey); err != nil {
 			ErrorResponse(w, req, ErrorInvalidPubKey, "invalid pubkey: "+err.Error(), http.StatusBadRequest)
 			return
 		}

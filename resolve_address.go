@@ -91,7 +91,7 @@ func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderReque
 	}
 
 	// Extract the address
-	response.Address, err = bitcoin.AddressFromScript(response.Output)
+	response.Address, err = bitcoin.GetAddressFromScript(response.Output)
 
 	return
 }
