@@ -18,8 +18,8 @@ type BRFCSpec struct {
 	Supersedes string `json:"supersedes,omitempty"` // A BRFC ID (or list of IDs) that this document supersedes
 	Title      string `json:"title"`                // Title of the brfc
 	URL        string `json:"url,omitempty"`        // Public URL to view the specification
-	Valid      bool   `json:"valid"`                // Validated the ID -> (title,author,version)
 	Version    string `json:"version"`              // No set format; could be a sequence number, publication date, or any other scheme
+	Valid      bool   `json:"valid"`                // Validated the ID -> (title,author,version)
 }
 
 // LoadBRFCs will load the known "default" specifications into structs from JSON
