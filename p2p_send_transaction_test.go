@@ -20,7 +20,7 @@ func TestClient_SendP2PTransaction(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusOK, `{"note":"test note","txid":"f3ddfabf7a7a84cfa20016e61df24dff32953d4023a3002cb5a98d6da4ef9bf1"}`))
 
 	// Raw TX
@@ -28,7 +28,7 @@ func TestClient_SendP2PTransaction(t *testing.T) {
 
 	// Fire the request
 	var transaction *P2PTransactionResponse
-	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
+	transaction, err = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err != nil {
 		t.Fatalf("error occurred in SendP2PTransaction: %s", err.Error())
 	} else if transaction == nil {
@@ -61,7 +61,7 @@ func ExampleClient_SendP2PTransaction() {
 
 	// Create mock response (Using a mocked response since a live transaction is not possible)
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusOK, `{"note":"test note","txid":"f3ddfabf7a7a84cfa20016e61df24dff32953d4023a3002cb5a98d6da4ef9bf1"}`))
 
 	// Raw TX
@@ -69,7 +69,7 @@ func ExampleClient_SendP2PTransaction() {
 
 	// Fire the request
 	var transaction *P2PTransactionResponse
-	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
+	transaction, err = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err != nil {
 		fmt.Printf("error occurred in SendP2PTransaction: %s", err.Error())
 		return
@@ -84,14 +84,14 @@ func BenchmarkClient_SendP2PTransaction(b *testing.B) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusOK, `{"note":"test note","txid":"f3ddfabf7a7a84cfa20016e61df24dff32953d4023a3002cb5a98d6da4ef9bf1"}`))
 
 	// Raw TX
 	transaction := &P2PTransaction{Hex: "some-raw-hex", MetaData: &P2PMetaData{Note: "test note", Sender: "mrz@moneybutton.com"}, Reference: "1234567"}
 
 	for i := 0; i < b.N; i++ {
-		_, _ = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", transaction)
+		_, _ = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", transaction)
 	}
 }
 
@@ -107,7 +107,7 @@ func TestClient_SendP2PTransactionStatusNotModified(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusNotModified, `{"note":"test note","txid":"f3ddfabf7a7a84cfa20016e61df24dff32953d4023a3002cb5a98d6da4ef9bf1"}`))
 
 	// Raw TX
@@ -115,7 +115,7 @@ func TestClient_SendP2PTransactionStatusNotModified(t *testing.T) {
 
 	// Fire the request
 	var transaction *P2PTransactionResponse
-	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
+	transaction, err = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err != nil {
 		t.Fatalf("error occurred in SendP2PTransaction: %s", err.Error())
 	} else if transaction == nil {
@@ -137,7 +137,7 @@ func TestClient_SendP2PTransactionStatusMissingURL(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusNotModified, `{"note":"test note","txid":"f3ddfabf7a7a84cfa20016e61df24dff32953d4023a3002cb5a98d6da4ef9bf1"}`))
 
 	// Raw TX
@@ -165,7 +165,7 @@ func TestClient_SendP2PTransactionStatusMissingAlias(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusNotModified, `{"note":"test note","txid":"f3ddfabf7a7a84cfa20016e61df24dff32953d4023a3002cb5a98d6da4ef9bf1"}`))
 
 	// Raw TX
@@ -173,7 +173,7 @@ func TestClient_SendP2PTransactionStatusMissingAlias(t *testing.T) {
 
 	// Fire the request
 	var transaction *P2PTransactionResponse
-	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "", "moneybutton.com", rawTransaction)
+	transaction, err = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if transaction != nil {
@@ -193,7 +193,7 @@ func TestClient_SendP2PTransactionStatusMissingDomain(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusNotModified, `{"note":"test note","txid":"f3ddfabf7a7a84cfa20016e61df24dff32953d4023a3002cb5a98d6da4ef9bf1"}`))
 
 	// Raw TX
@@ -201,7 +201,7 @@ func TestClient_SendP2PTransactionStatusMissingDomain(t *testing.T) {
 
 	// Fire the request
 	var transaction *P2PTransactionResponse
-	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "", rawTransaction)
+	transaction, err = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "mrz", "", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if transaction != nil {
@@ -221,12 +221,12 @@ func TestClient_SendP2PTransactionStatusNilTransaction(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusNotModified, `{"note":"test note","txid":"f3ddfabf7a7a84cfa20016e61df24dff32953d4023a3002cb5a98d6da4ef9bf1"}`))
 
 	// Fire the request
 	var transaction *P2PTransactionResponse
-	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", nil)
+	transaction, err = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", nil)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if transaction != nil {
@@ -246,7 +246,7 @@ func TestClient_SendP2PTransactionStatusMissingHex(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusNotModified, `{"note":"test note","txid":"f3ddfabf7a7a84cfa20016e61df24dff32953d4023a3002cb5a98d6da4ef9bf1"}`))
 
 	// Raw TX
@@ -254,7 +254,7 @@ func TestClient_SendP2PTransactionStatusMissingHex(t *testing.T) {
 
 	// Fire the request
 	var transaction *P2PTransactionResponse
-	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
+	transaction, err = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if transaction != nil {
@@ -274,7 +274,7 @@ func TestClient_SendP2PTransactionStatusMissingReference(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusNotModified, `{"note":"test note","txid":"f3ddfabf7a7a84cfa20016e61df24dff32953d4023a3002cb5a98d6da4ef9bf1"}`))
 
 	// Raw TX
@@ -282,7 +282,7 @@ func TestClient_SendP2PTransactionStatusMissingReference(t *testing.T) {
 
 	// Fire the request
 	var transaction *P2PTransactionResponse
-	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
+	transaction, err = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if transaction != nil {
@@ -302,7 +302,7 @@ func TestClient_SendP2PTransactionStatusHTTPError(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewErrorResponder(fmt.Errorf("error in request")))
 
 	// Raw TX
@@ -310,7 +310,7 @@ func TestClient_SendP2PTransactionStatusHTTPError(t *testing.T) {
 
 	// Fire the request
 	var transaction *P2PTransactionResponse
-	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
+	transaction, err = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if transaction != nil {
@@ -330,7 +330,7 @@ func TestClient_SendP2PTransactionStatusBadRequest(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusBadRequest, `{"message": "request failed"}`))
 
 	// Raw TX
@@ -338,7 +338,7 @@ func TestClient_SendP2PTransactionStatusBadRequest(t *testing.T) {
 
 	// Fire the request
 	var transaction *P2PTransactionResponse
-	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
+	transaction, err = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if transaction != nil && transaction.StatusCode != http.StatusBadRequest {
@@ -358,7 +358,7 @@ func TestClient_SendP2PTransactionStatusPaymailNotFound(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusNotFound, `{"message": "not found"}`))
 
 	// Raw TX
@@ -366,7 +366,7 @@ func TestClient_SendP2PTransactionStatusPaymailNotFound(t *testing.T) {
 
 	// Fire the request
 	var transaction *P2PTransactionResponse
-	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
+	transaction, err = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if transaction == nil {
@@ -388,7 +388,7 @@ func TestClient_SendP2PTransactionStatusBadErrorJSON(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusBadRequest, `{"message: request failed"}`))
 
 	// Raw TX
@@ -396,7 +396,7 @@ func TestClient_SendP2PTransactionStatusBadErrorJSON(t *testing.T) {
 
 	// Fire the request
 	var transaction *P2PTransactionResponse
-	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
+	transaction, err = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if transaction != nil && transaction.StatusCode != http.StatusBadRequest {
@@ -416,7 +416,7 @@ func TestClient_SendP2PTransactionStatusBadJSON(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusNotModified, `{"note:test note",txid":"f3ddfabf7a7a84cfa20016e61df24dff32953d4023a3002cb5a98d6da4ef9bf1"}`))
 
 	// Raw TX
@@ -424,7 +424,7 @@ func TestClient_SendP2PTransactionStatusBadJSON(t *testing.T) {
 
 	// Fire the request
 	var transaction *P2PTransactionResponse
-	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
+	transaction, err = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if transaction == nil {
@@ -444,7 +444,7 @@ func TestClient_SendP2PTransactionStatusMissingTxID(t *testing.T) {
 
 	// Create mock response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/receive-transaction/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"receive-transaction/mrz@moneybutton.com",
 		httpmock.NewStringResponder(http.StatusNotModified, `{"note":"test note","txid":""}`))
 
 	// Raw TX
@@ -452,7 +452,7 @@ func TestClient_SendP2PTransactionStatusMissingTxID(t *testing.T) {
 
 	// Fire the request
 	var transaction *P2PTransactionResponse
-	transaction, err = client.SendP2PTransaction("https://test.com/api/v1/bsvalias/receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
+	transaction, err = client.SendP2PTransaction(testServerURL+"receive-transaction/{alias}@{domain.tld}", "mrz", "moneybutton.com", rawTransaction)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if transaction == nil {

@@ -20,7 +20,7 @@ func TestClient_VerifyPubKey(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10","match": true}`,
@@ -29,7 +29,7 @@ func TestClient_VerifyPubKey(t *testing.T) {
 
 	// Fire the request
 	var verification *Verification
-	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
+	verification, err = client.VerifyPubKey(testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
 	if err != nil {
 		t.Fatalf("error occurred in VerifyPubKey: %s", err.Error())
 	} else if verification == nil {
@@ -99,7 +99,7 @@ func TestClient_VerifyPubKeyStatusNotModified(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
 			http.StatusNotModified,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10","match": true}`,
@@ -108,7 +108,7 @@ func TestClient_VerifyPubKeyStatusNotModified(t *testing.T) {
 
 	// Fire the request
 	var verification *Verification
-	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
+	verification, err = client.VerifyPubKey(testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
 	if err != nil {
 		t.Fatalf("error occurred in VerifyPubKey: %s", err.Error())
 	} else if verification == nil {
@@ -132,7 +132,7 @@ func TestClient_VerifyPubKeyMissingURL(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10","match": true}`,
@@ -161,7 +161,7 @@ func TestClient_VerifyPubKeyMissingAlias(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10","match": true}`,
@@ -170,7 +170,7 @@ func TestClient_VerifyPubKeyMissingAlias(t *testing.T) {
 
 	// Fire the request
 	var verification *Verification
-	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
+	verification, err = client.VerifyPubKey(testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}", "", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if verification != nil {
@@ -190,7 +190,7 @@ func TestClient_VerifyPubKeyMissingDomain(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10","match": true}`,
@@ -199,7 +199,7 @@ func TestClient_VerifyPubKeyMissingDomain(t *testing.T) {
 
 	// Fire the request
 	var verification *Verification
-	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
+	verification, err = client.VerifyPubKey(testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if verification != nil {
@@ -219,7 +219,7 @@ func TestClient_VerifyPubKeyMissingPubKey(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10","match": true}`,
@@ -228,7 +228,7 @@ func TestClient_VerifyPubKeyMissingPubKey(t *testing.T) {
 
 	// Fire the request
 	var verification *Verification
-	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "")
+	verification, err = client.VerifyPubKey(testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if verification != nil {
@@ -248,7 +248,7 @@ func TestClient_VerifyPubKeyBadRequest(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
 			http.StatusBadRequest,
 			`{"message": "request failed"}`,
@@ -257,7 +257,7 @@ func TestClient_VerifyPubKeyBadRequest(t *testing.T) {
 
 	// Fire the request
 	var verification *Verification
-	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
+	verification, err = client.VerifyPubKey(testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if verification == nil {
@@ -279,13 +279,13 @@ func TestClient_VerifyPubKeyHTTPError(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewErrorResponder(fmt.Errorf("error in request")),
 	)
 
 	// Fire the request
 	var verification *Verification
-	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
+	verification, err = client.VerifyPubKey(testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if verification != nil {
@@ -305,7 +305,7 @@ func TestClient_VerifyPubKeyBadError(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
 			http.StatusBadRequest,
 			`{"message": request failed}`,
@@ -314,7 +314,7 @@ func TestClient_VerifyPubKeyBadError(t *testing.T) {
 
 	// Fire the request
 	var verification *Verification
-	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
+	verification, err = client.VerifyPubKey(testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if verification == nil {
@@ -336,7 +336,7 @@ func TestClient_VerifyPubKeyBadJSON(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": 1.0,handle: mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10","match": true}`,
@@ -345,7 +345,7 @@ func TestClient_VerifyPubKeyBadJSON(t *testing.T) {
 
 	// Fire the request
 	var verification *Verification
-	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
+	verification, err = client.VerifyPubKey(testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if verification == nil {
@@ -367,7 +367,7 @@ func TestClient_VerifyPubKeyMissingHandle(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10","match": true}`,
@@ -376,7 +376,7 @@ func TestClient_VerifyPubKeyMissingHandle(t *testing.T) {
 
 	// Fire the request
 	var verification *Verification
-	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
+	verification, err = client.VerifyPubKey(testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if verification == nil {
@@ -398,7 +398,7 @@ func TestClient_VerifyPubKeyMissingBsvAlias(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10","match": true}`,
@@ -407,7 +407,7 @@ func TestClient_VerifyPubKeyMissingBsvAlias(t *testing.T) {
 
 	// Fire the request
 	var verification *Verification
-	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
+	verification, err = client.VerifyPubKey(testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if verification == nil {
@@ -429,7 +429,7 @@ func TestClient_VerifyPubKeyMissingPubKeyResponse(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "","match": true}`,
@@ -438,7 +438,7 @@ func TestClient_VerifyPubKeyMissingPubKeyResponse(t *testing.T) {
 
 	// Fire the request
 	var verification *Verification
-	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
+	verification, err = client.VerifyPubKey(testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if verification == nil {
@@ -460,7 +460,7 @@ func TestClient_VerifyPubKeyInvalidPubKey(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/mrz@moneybutton.com/02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "12345678","match": true}`,
@@ -469,7 +469,7 @@ func TestClient_VerifyPubKeyInvalidPubKey(t *testing.T) {
 
 	// Fire the request
 	var verification *Verification
-	verification, err = client.VerifyPubKey("https://test.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
+	verification, err = client.VerifyPubKey(testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if verification == nil {

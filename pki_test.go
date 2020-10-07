@@ -20,7 +20,7 @@ func TestClient_GetPKI(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
@@ -29,7 +29,7 @@ func TestClient_GetPKI(t *testing.T) {
 
 	// Fire the request
 	var pki *PKI
-	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err != nil {
 		t.Fatalf("error occurred in GetPKI: %s", err.Error())
 	} else if pki == nil {
@@ -88,7 +88,7 @@ func TestClient_GetPKIStatusNotModified(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusNotModified,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
@@ -97,7 +97,7 @@ func TestClient_GetPKIStatusNotModified(t *testing.T) {
 
 	// Fire the request
 	var pki *PKI
-	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err != nil {
 		t.Fatalf("error occurred in GetPKI: %s", err.Error())
 	} else if pki == nil {
@@ -121,7 +121,7 @@ func TestClient_GetPKIBadRequest(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusBadRequest,
 			`{"message": "request failed"}`,
@@ -130,7 +130,7 @@ func TestClient_GetPKIBadRequest(t *testing.T) {
 
 	// Fire the request
 	var pki *PKI
-	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred in GetPKI")
 	} else if pki != nil && pki.StatusCode != http.StatusBadRequest {
@@ -150,7 +150,7 @@ func TestClient_GetPKIBadError(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusBadRequest,
 			`{"message": request failed}`,
@@ -159,7 +159,7 @@ func TestClient_GetPKIBadError(t *testing.T) {
 
 	// Fire the request
 	var pki *PKI
-	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred in GetPKI")
 	} else if pki != nil && pki.StatusCode != http.StatusBadRequest {
@@ -179,7 +179,7 @@ func TestClient_GetPKIInvalidAlias(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
@@ -188,7 +188,7 @@ func TestClient_GetPKIInvalidAlias(t *testing.T) {
 
 	// Fire the request
 	var pki *PKI
-	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred in GetPKI")
 	} else if pki != nil && pki.StatusCode != http.StatusOK {
@@ -208,7 +208,7 @@ func TestClient_GetPKIInvalidJSON(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": 1,pubkey: 02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10}`,
@@ -217,7 +217,7 @@ func TestClient_GetPKIInvalidJSON(t *testing.T) {
 
 	// Fire the request
 	var pki *PKI
-	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred in GetPKI")
 	} else if pki != nil && pki.StatusCode != http.StatusOK {
@@ -237,7 +237,7 @@ func TestClient_GetPKIInvalidHandle(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "invalid@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
@@ -246,7 +246,7 @@ func TestClient_GetPKIInvalidHandle(t *testing.T) {
 
 	// Fire the request
 	var pki *PKI
-	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred in GetPKI")
 	} else if pki != nil && pki.StatusCode != http.StatusOK {
@@ -268,7 +268,7 @@ func TestClient_GetPKIMissingPubKey(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": ""}`,
@@ -277,7 +277,7 @@ func TestClient_GetPKIMissingPubKey(t *testing.T) {
 
 	// Fire the request
 	var pki *PKI
-	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred in GetPKI")
 	} else if pki != nil && pki.StatusCode != http.StatusOK {
@@ -297,7 +297,7 @@ func TestClient_GetPKIInvalidPubKeyLength(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "wrong-length"}`,
@@ -306,7 +306,7 @@ func TestClient_GetPKIInvalidPubKeyLength(t *testing.T) {
 
 	// Fire the request
 	var pki *PKI
-	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred in GetPKI")
 	} else if pki != nil && pki.StatusCode != http.StatusOK {
@@ -326,7 +326,7 @@ func TestClient_GetPKIInvalidURL(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
@@ -355,13 +355,13 @@ func TestClient_GetPKIHTTPError(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
 		httpmock.NewErrorResponder(fmt.Errorf("error in request")),
 	)
 
 	// Fire the request
 	var pki *PKI
-	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred in GetPKI")
 	} else if pki != nil && pki.StatusCode != http.StatusOK {
@@ -381,7 +381,7 @@ func TestClient_GetPKIMissingAlias(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
@@ -390,7 +390,7 @@ func TestClient_GetPKIMissingAlias(t *testing.T) {
 
 	// Fire the request
 	var pki *PKI
-	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "", "moneybutton.com")
+	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred in GetPKI")
 	} else if pki != nil && pki.StatusCode != http.StatusOK {
@@ -410,7 +410,7 @@ func TestClient_GetPKIMissingDomain(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/id/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
@@ -419,7 +419,7 @@ func TestClient_GetPKIMissingDomain(t *testing.T) {
 
 	// Fire the request
 	var pki *PKI
-	pki, err = client.GetPKI("https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "")
+	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "")
 	if err == nil {
 		t.Fatalf("error should have occurred in GetPKI")
 	} else if pki != nil && pki.StatusCode != http.StatusOK {

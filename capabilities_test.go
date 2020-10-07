@@ -24,7 +24,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
 		httpmock.NewStringResponder(
 			http.StatusOK,
-			`{"bsvalias": "1.0","capabilities": {"6745385c3fc0": false,"pki": "https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}","paymentDestination": "https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}"}}`,
+			`{"bsvalias": "1.0","capabilities": {"6745385c3fc0": false,"pki": "`+testServerURL+`id/{alias}@{domain.tld}","paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
 		),
 	)
 
@@ -92,7 +92,7 @@ func TestClient_GetCapabilitiesStatusNotModified(t *testing.T) {
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
 		httpmock.NewStringResponder(
 			http.StatusNotModified,
-			`{"bsvalias": "1.0","capabilities": {"6745385c3fc0": false,"pki": "https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}","paymentDestination": "https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}"}}`,
+			`{"bsvalias": "1.0","capabilities": {"6745385c3fc0": false,"pki": "`+testServerURL+`id/{alias}@{domain.tld}","paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
 		),
 	)
 
@@ -273,7 +273,7 @@ func TestClient_GetCapabilitiesInvalidQuotes(t *testing.T) {
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
 		httpmock.NewStringResponder(
 			http.StatusOK,
-			`{“bsvalias“: “1.0“,“capabilities“: {“6745385c3fc0“: false,“pki“: “https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}“,“paymentDestination“: “https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}“}}`,
+			`{“bsvalias“: “1.0“,“capabilities“: {“6745385c3fc0“: false,“pki“: “`+testServerURL+`id/{alias}@{domain.tld}“,“paymentDestination“: “`+testServerURL+`address/{alias}@{domain.tld}“}}`,
 		),
 	)
 
@@ -306,7 +306,7 @@ func TestClient_GetCapabilitiesInvalidAlias(t *testing.T) {
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
 		httpmock.NewStringResponder(
 			http.StatusNotModified,
-			`{"bsvalias": "","capabilities": {"6745385c3fc0": false,"pki": "https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}","paymentDestination": "https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}"}}`,
+			`{"bsvalias": "","capabilities": {"6745385c3fc0": false,"pki": "`+testServerURL+`id/{alias}@{domain.tld}","paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
 		),
 	)
 
@@ -339,7 +339,7 @@ func TestClient_GetCapabilitiesInvalidJSON(t *testing.T) {
 	httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
 		httpmock.NewStringResponder(
 			http.StatusNotModified,
-			`{"bsvalias": ,capabilities: {6745385c3fc0: ,pki: https://test.com/api/v1/bsvalias/id/{alias}@{domain.tld}","paymentDestination": "https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}"}}`,
+			`{"bsvalias": ,capabilities: {6745385c3fc0: ,pki: `+testServerURL+`id/{alias}@{domain.tld}","paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
 		),
 	)
 

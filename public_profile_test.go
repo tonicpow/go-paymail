@@ -20,7 +20,7 @@ func TestClient_GetPublicProfile(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"name": "MrZ","avatar": "https://www.gravatar.com/avatar/372bc0ab9b8a8930d4a86b2c5b11f11e?d=identicon"}`,
@@ -29,7 +29,7 @@ func TestClient_GetPublicProfile(t *testing.T) {
 
 	// Get profile
 	var profile *PublicProfile
-	profile, err = client.GetPublicProfile("https://test.com/api/v1/bsvalias/public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err != nil {
 		t.Fatalf("error occurred in GetPublicProfile: %s", err.Error())
 	} else if profile == nil {
@@ -91,7 +91,7 @@ func TestClient_GetPublicProfileStatusNotModified(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusNotModified,
 			`{"name": "MrZ","avatar": "https://www.gravatar.com/avatar/372bc0ab9b8a8930d4a86b2c5b11f11e?d=identicon"}`,
@@ -100,7 +100,7 @@ func TestClient_GetPublicProfileStatusNotModified(t *testing.T) {
 
 	// Get profile
 	var profile *PublicProfile
-	profile, err = client.GetPublicProfile("https://test.com/api/v1/bsvalias/public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err != nil {
 		t.Fatalf("error occurred in GetPublicProfile: %s", err.Error())
 	} else if profile == nil {
@@ -122,7 +122,7 @@ func TestClient_GetPublicProfileMissingURL(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"name": "MrZ","avatar": "https://www.gravatar.com/avatar/372bc0ab9b8a8930d4a86b2c5b11f11e?d=identicon"}`,
@@ -151,7 +151,7 @@ func TestClient_GetPublicProfileMissingAlias(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"name": "MrZ","avatar": "https://www.gravatar.com/avatar/372bc0ab9b8a8930d4a86b2c5b11f11e?d=identicon"}`,
@@ -160,7 +160,7 @@ func TestClient_GetPublicProfileMissingAlias(t *testing.T) {
 
 	// Get profile
 	var profile *PublicProfile
-	profile, err = client.GetPublicProfile("https://test.com/api/v1/bsvalias/public-profile/{alias}@{domain.tld}", "", "moneybutton.com")
+	profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", "", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if profile != nil {
@@ -180,7 +180,7 @@ func TestClient_GetPublicProfileMissingDomain(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"name": "MrZ","avatar": "https://www.gravatar.com/avatar/372bc0ab9b8a8930d4a86b2c5b11f11e?d=identicon"}`,
@@ -189,7 +189,7 @@ func TestClient_GetPublicProfileMissingDomain(t *testing.T) {
 
 	// Get profile
 	var profile *PublicProfile
-	profile, err = client.GetPublicProfile("https://test.com/api/v1/bsvalias/public-profile/{alias}@{domain.tld}", "mrz", "")
+	profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", "mrz", "")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if profile != nil {
@@ -209,7 +209,7 @@ func TestClient_GetPublicProfileBadRequest(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusBadRequest,
 			`{"message": "request failed"}`,
@@ -218,7 +218,7 @@ func TestClient_GetPublicProfileBadRequest(t *testing.T) {
 
 	// Get profile
 	var profile *PublicProfile
-	profile, err = client.GetPublicProfile("https://test.com/api/v1/bsvalias/public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if profile != nil && profile.StatusCode != http.StatusBadRequest {
@@ -238,13 +238,13 @@ func TestClient_GetPublicProfileHTTPError(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/mrz@moneybutton.com",
 		httpmock.NewErrorResponder(fmt.Errorf("error in request")),
 	)
 
 	// Get profile
 	var profile *PublicProfile
-	profile, err = client.GetPublicProfile("https://test.com/api/v1/bsvalias/public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if profile != nil {
@@ -264,7 +264,7 @@ func TestClient_GetPublicProfileBadError(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusBadRequest,
 			`{"message": request failed}`,
@@ -273,7 +273,7 @@ func TestClient_GetPublicProfileBadError(t *testing.T) {
 
 	// Get profile
 	var profile *PublicProfile
-	profile, err = client.GetPublicProfile("https://test.com/api/v1/bsvalias/public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if profile != nil && profile.StatusCode != http.StatusBadRequest {
@@ -293,7 +293,7 @@ func TestClient_GetPublicProfileBadJSON(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://test.com/api/v1/bsvalias/public-profile/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"name": MrZ,avatar: https://www.gravatar.com/avatar/372bc0ab9b8a8930d4a86b2c5b11f11e?d=identicon"}`,
@@ -302,7 +302,7 @@ func TestClient_GetPublicProfileBadJSON(t *testing.T) {
 
 	// Get profile
 	var profile *PublicProfile
-	profile, err = client.GetPublicProfile("https://test.com/api/v1/bsvalias/public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if profile != nil && profile.StatusCode != http.StatusOK {

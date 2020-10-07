@@ -21,7 +21,7 @@ func TestClient_ResolveAddress(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"output": "76a9147f11c8f67a2781df0400ebfb1f31b4c72a780b9d88ac"}`,
@@ -37,7 +37,7 @@ func TestClient_ResolveAddress(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
 	if err != nil {
 		t.Fatalf("error occurred in ResolveAddress: %s", err.Error())
 	} else if resolution == nil {
@@ -117,7 +117,7 @@ func TestClient_ResolveAddressStatusNotModified(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusNotModified,
 			`{"output": "76a9147f11c8f67a2781df0400ebfb1f31b4c72a780b9d88ac"}`,
@@ -133,7 +133,7 @@ func TestClient_ResolveAddressStatusNotModified(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
 	if err != nil {
 		t.Fatalf("error occurred in ResolveAddress: %s", err.Error())
 	} else if resolution == nil {
@@ -165,7 +165,7 @@ func TestClient_ResolveAddressInvalidURL(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusNotModified,
 			`{"output": "76a9147f11c8f67a2781df0400ebfb1f31b4c72a780b9d88ac"}`,
@@ -201,7 +201,7 @@ func TestClient_ResolveAddressSenderRequestNil(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusNotModified,
 			`{"output": "76a9147f11c8f67a2781df0400ebfb1f31b4c72a780b9d88ac"}`,
@@ -210,7 +210,7 @@ func TestClient_ResolveAddressSenderRequestNil(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", nil)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", nil)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution != nil {
@@ -230,7 +230,7 @@ func TestClient_ResolveAddressSenderRequestDt(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusNotModified,
 			`{"output": "76a9147f11c8f67a2781df0400ebfb1f31b4c72a780b9d88ac"}`,
@@ -246,7 +246,7 @@ func TestClient_ResolveAddressSenderRequestDt(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution != nil {
@@ -266,7 +266,7 @@ func TestClient_ResolveAddressSenderRequestHandle(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusNotModified,
 			`{"output": "76a9147f11c8f67a2781df0400ebfb1f31b4c72a780b9d88ac"}`,
@@ -282,7 +282,7 @@ func TestClient_ResolveAddressSenderRequestHandle(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution != nil {
@@ -302,7 +302,7 @@ func TestClient_ResolveAddressMissingAlias(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusNotModified,
 			`{"output": "76a9147f11c8f67a2781df0400ebfb1f31b4c72a780b9d88ac"}`,
@@ -318,7 +318,7 @@ func TestClient_ResolveAddressMissingAlias(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "", "moneybutton.com", senderRequest)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution != nil {
@@ -338,7 +338,7 @@ func TestClient_ResolveAddressMissingDomain(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusNotModified,
 			`{"output": "76a9147f11c8f67a2781df0400ebfb1f31b4c72a780b9d88ac"}`,
@@ -354,7 +354,7 @@ func TestClient_ResolveAddressMissingDomain(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "", senderRequest)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution != nil {
@@ -374,7 +374,7 @@ func TestClient_ResolveAddressBadRequest(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusBadRequest,
 			`{"message": "request failed"}`,
@@ -390,7 +390,7 @@ func TestClient_ResolveAddressBadRequest(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
@@ -412,7 +412,7 @@ func TestClient_ResolveAddressHTTPError(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewErrorResponder(fmt.Errorf("error in request")),
 	)
 
@@ -425,7 +425,7 @@ func TestClient_ResolveAddressHTTPError(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution != nil {
@@ -445,7 +445,7 @@ func TestClient_ResolveAddressBadError(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusBadRequest,
 			`{"message": request failed}`,
@@ -461,7 +461,7 @@ func TestClient_ResolveAddressBadError(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
@@ -483,7 +483,7 @@ func TestClient_ResolveAddressPaymailNotFound(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusNotFound,
 			`{"message": "not found"}`,
@@ -499,7 +499,7 @@ func TestClient_ResolveAddressPaymailNotFound(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
@@ -521,7 +521,7 @@ func TestClient_ResolveAddressBadJSON(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"output: 76a9147f11c8f67a2781df0400ebfb1f31b4c72a780b9d88ac"}`,
@@ -537,7 +537,7 @@ func TestClient_ResolveAddressBadJSON(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
@@ -559,7 +559,7 @@ func TestClient_ResolveAddressMissingOutput(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"output": ""}`,
@@ -575,7 +575,7 @@ func TestClient_ResolveAddressMissingOutput(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
@@ -597,7 +597,7 @@ func TestClient_ResolveAddressInvalidOutput(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"output": "12345678"}`,
@@ -613,7 +613,7 @@ func TestClient_ResolveAddressInvalidOutput(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
@@ -635,7 +635,7 @@ func TestClient_ResolveAddressInvalidHex(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"output": "7e00bb007d4960727eb11d92a052502c"}`,
@@ -651,7 +651,7 @@ func TestClient_ResolveAddressInvalidHex(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
@@ -673,7 +673,7 @@ func TestClient_ResolveAddressInvalidHexLength(t *testing.T) {
 
 	// Create response
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodPost, "https://test.com/api/v1/bsvalias/address/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/mrz@moneybutton.com",
 		httpmock.NewStringResponder(
 			http.StatusOK,
 			`{"output": "0"}`,
@@ -689,7 +689,7 @@ func TestClient_ResolveAddressInvalidHexLength(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://test.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
