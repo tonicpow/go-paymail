@@ -14,7 +14,7 @@ require (
 	github.com/mrz1836/go-logger v0.2.1
 	github.com/mrz1836/go-sanitize v1.1.1
 	github.com/mrz1836/go-validate v0.2.0
-	github.com/ugorji/go v1.1.11 // indirect
+	github.com/ugorji/go v1.1.12 // indirect
 	golang.org/x/net v0.0.0-20201010224723-4f7140c49acb
-	golang.org/x/sys v0.0.0-20201014080544-cc95f250f6bc // indirect
+	golang.org/x/sys v0.0.0-20201015000850-e3ed0017c211 // indirect
 )
