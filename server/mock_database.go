@@ -68,7 +68,7 @@ func generatePaymail(alias string, id uint64) error {
 	}
 
 	// Derive a pubkey from private key
-	if row.PubKey, err = bitcoin.PubKeyFromPrivateKey(row.PrivateKey); err != nil {
+	if row.PubKey, err = bitcoin.PubKeyFromPrivateKeyString(row.PrivateKey); err != nil {
 		return err
 	}
 
