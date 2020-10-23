@@ -15,6 +15,6 @@ require (
 	github.com/mrz1836/go-sanitize v1.1.1
 	github.com/mrz1836/go-validate v0.2.0
 	github.com/ugorji/go v1.1.13 // indirect
-	golang.org/x/net v0.0.0-20201021035429-f5854403a974
-	golang.org/x/sys v0.0.0-20201020230747-6e5568b54d1a // indirect
+	golang.org/x/net v0.0.0-20201022231255-08b38378de70
+	golang.org/x/sys v0.0.0-20201022201747-fb209a7c41cd // indirect
 )
