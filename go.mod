@@ -9,12 +9,12 @@ require (
 	github.com/go-resty/resty/v2 v2.3.0
 	github.com/jarcoal/httpmock v1.0.6
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/miekg/dns v1.1.34
+	github.com/miekg/dns v1.1.35
 	github.com/mrz1836/go-api-router v0.3.5
 	github.com/mrz1836/go-logger v0.2.1
 	github.com/mrz1836/go-sanitize v1.1.1
 	github.com/mrz1836/go-validate v0.2.0
 	github.com/ugorji/go v1.1.13 // indirect
-	golang.org/x/net v0.0.0-20201022231255-08b38378de70
-	golang.org/x/sys v0.0.0-20201022201747-fb209a7c41cd // indirect
+	golang.org/x/net v0.0.0-20201024042810-be3efd7ff127
+	golang.org/x/sys v0.0.0-20201024232916-9f70ab9862d5 // indirect
 )
