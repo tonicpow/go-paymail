@@ -86,7 +86,7 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 
 			// Derive address from pubKey
 			var rawAddress *bsvutil.LegacyAddressPubKeyHash
-			if rawAddress, err = bitcoin.GetAddressFromPubKey(senderPubKey); err != nil {
+			if rawAddress, err = bitcoin.GetAddressFromPubKey(senderPubKey, true); err != nil {
 				ErrorResponse(w, req, ErrorInvalidSenderHandle, "invalid senderHandle: "+err.Error(), http.StatusBadRequest)
 				return
 			}

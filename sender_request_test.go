@@ -68,7 +68,7 @@ func TestSenderRequest_Sign(t *testing.T) {
 
 	// Get address for verification
 	var address string
-	if address, err = bitcoin.GetAddressFromPrivateKey(key); err != nil {
+	if address, err = bitcoin.GetAddressFromPrivateKey(key, false); err != nil {
 		t.Fatalf("error occurred: %s", err.Error())
 	}
 
@@ -152,7 +152,7 @@ func TestSenderRequest_Verify(t *testing.T) {
 
 	// Get address from private key
 	var address string
-	if address, err = bitcoin.GetAddressFromPrivateKey(key); err != nil {
+	if address, err = bitcoin.GetAddressFromPrivateKey(key, false); err != nil {
 		t.Fatalf("error occurred in AddressFromPrivateKey: %s", err.Error())
 	}
 
