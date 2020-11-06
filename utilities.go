@@ -46,7 +46,7 @@ func ValidatePaymail(paymailAddress string) error {
 
 	// Validate the format for the paymail address (paymail addresses follow conventional email requirements)
 	if _, err := validate.IsValidEmail(paymailAddress, false); err != nil {
-		return fmt.Errorf("paymail address failed format validation: %s", err.Error())
+		return fmt.Errorf("paymail address failed format validation: %w", err)
 	}
 
 	return nil

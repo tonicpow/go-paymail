@@ -5,11 +5,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net"
-	"os"
-	"syscall"
 	"time"
-
-	"github.com/mrz1836/go-validate"
 )
 
 // CheckSSL will do a basic check on the host to see if there is a valid SSL cert
@@ -46,16 +42,18 @@ func (c *Client) CheckSSL(host string) (valid bool, err error) {
 				// catch missing ipv6 connectivity
 				// if the ip is ipv6 and the resulting error is "no route to host", the record is skipped
 				// otherwise the check will switch to critical
-				if validate.IsValidIPv6(ip.String()) {
-					switch dialErr.(type) {
-					case *net.OpError:
-						// https://stackoverflow.com/questions/38764084/proper-way-to-handle-missing-ipv6-connectivity
-						if dialErr.(*net.OpError).Err.(*os.SyscallError).Err == syscall.EHOSTUNREACH {
-							// log.Printf("%-15s - ignoring unreachable IPv6 address", ip)
-							continue
+				/*
+					if validate.IsValidIPv6(ip.String()) {
+						switch dialErr.(type) {
+						case *net.OpError:
+							// https://stackoverflow.com/questions/38764084/proper-way-to-handle-missing-ipv6-connectivity
+							if dialErr.(*net.OpError).Err.(*os.SyscallError).Err == syscall.EHOSTUNREACH {
+								// log.Printf("%-15s - ignoring unreachable IPv6 address", ip)
+								continue
+							}
 						}
 					}
-				}
+				*/
 				continue
 			}
 
