@@ -26,6 +26,7 @@ func TestSanitizePaymail(t *testing.T) {
 		{"test@", "test", "", ""},
 		{"test@domain", "test", "domain", "test@domain"},
 		{"domain.com", "domain.com", "", ""},
+		{"1337@Moneybutton.com", "1337", "moneybutton.com", "1337@moneybutton.com"},
 	}
 
 	// Test all
@@ -170,6 +171,8 @@ func TestConvertHandle(t *testing.T) {
 		{"$", false, "@handcash.io"},
 		{"$", true, "@beta.handcash.io"},
 		{"1handle", false, "handle@relayx.io"},
+		{"1337@moneybutton.com", false, "1337@moneybutton.com"},
+		{"1337", false, "337@relayx.io"},
 		{"1PN7K19Jmj7QQCpUg37WHpSRUw5gKhJVRa", false, "1PN7K19Jmj7QQCpUg37WHpSRUw5gKhJVRa"},
 		{"$misterz", true, "misterz@beta.handcash.io"},
 	}

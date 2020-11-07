@@ -78,7 +78,7 @@ func ConvertHandle(handle string, isBeta bool) string {
 			return strings.ToLower(strings.Replace(handle, "$", "", -1)) + "@beta.handcash.io"
 		}
 		return strings.ToLower(strings.Replace(handle, "$", "", -1)) + "@handcash.io"
-	} else if strings.HasPrefix(handle, "1") && len(handle) < 25 {
+	} else if strings.HasPrefix(handle, "1") && len(handle) < 25 && !strings.Contains(handle, "@") {
 		return strings.ToLower(strings.Replace(handle, "1", "", -1)) + "@relayx.io"
 	}
 	return handle
