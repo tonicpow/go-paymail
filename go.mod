@@ -3,7 +3,7 @@ module github.com/tonicpow/go-paymail
 go 1.15
 
 require (
-	github.com/bitcoinschema/go-bitcoin v0.2.26
+	github.com/bitcoinschema/go-bitcoin v0.2.27
 	github.com/bitcoinsv/bsvd v0.0.0-20190609155523-4c29707f7173
 	github.com/bitcoinsv/bsvutil v0.0.0-20181216182056-1d77cf353ea9
 	github.com/go-resty/resty/v2 v2.3.0
@@ -12,9 +12,10 @@ require (
 	github.com/miekg/dns v1.1.35
 	github.com/mrz1836/go-api-router v0.3.5
 	github.com/mrz1836/go-logger v0.2.1
+	github.com/mrz1836/go-parameters v0.2.4 // indirect
 	github.com/mrz1836/go-sanitize v1.1.1
 	github.com/mrz1836/go-validate v0.2.0
-	github.com/ugorji/go v1.1.13 // indirect
-	golang.org/x/net v0.0.0-20201026091529-146b70c837a4
-	golang.org/x/sys v0.0.0-20201026173827-119d4633e4d1 // indirect
+	golang.org/x/net v0.0.0-20201031054903-ff519b6c9102
+	golang.org/x/sys v0.0.0-20201107080550-4d91cf3a1aaf // indirect
+	golang.org/x/text v0.3.4 // indirect
 )
