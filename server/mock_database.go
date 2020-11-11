@@ -63,7 +63,7 @@ func generatePaymail(alias string, id uint64) error {
 	}
 
 	// Get address
-	if row.LastAddress, err = bitcoin.GetAddressFromPrivateKey(row.PrivateKey, true); err != nil {
+	if row.LastAddress, err = bitcoin.GetAddressFromPrivateKeyString(row.PrivateKey, true); err != nil {
 		return err
 	}
 
