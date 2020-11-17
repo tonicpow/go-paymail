@@ -11,7 +11,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/miekg/dns v1.1.35
 	github.com/mrz1836/go-api-router v0.3.6
-	github.com/mrz1836/go-logger v0.2.1
+	github.com/mrz1836/go-logger v0.2.3
 	github.com/mrz1836/go-sanitize v1.1.1
 	github.com/mrz1836/go-validate v0.2.0
 	github.com/ugorji/go v1.2.0 // indirect
