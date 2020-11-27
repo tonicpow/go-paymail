@@ -123,7 +123,7 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 
 	// Create a signature of output if senderValidation is enabled
 	if senderValidationEnabled {
-		if response.Signature, err = bitcoin.SignMessage(foundPaymail.PrivateKey, response.Output); err != nil {
+		if response.Signature, err = bitcoin.SignMessage(foundPaymail.PrivateKey, response.Output, false); err != nil {
 			ErrorResponse(w, req, ErrorInvalidSignature, "invalid signature: "+err.Error(), http.StatusUnprocessableEntity)
 			return
 		}

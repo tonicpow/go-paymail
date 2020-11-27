@@ -64,5 +64,9 @@ func (s *SenderRequest) Sign(privateKey string) (string, error) {
 	}
 
 	// Concatenate & sign message
-	return bitcoin.SignMessage(privateKey, fmt.Sprintf("%s%d%s%s", s.SenderHandle, s.Amount, s.Dt, s.Purpose))
+	return bitcoin.SignMessage(
+		privateKey,
+		fmt.Sprintf("%s%d%s%s", s.SenderHandle, s.Amount, s.Dt, s.Purpose),
+		false,
+	)
 }
