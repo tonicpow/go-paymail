@@ -14,8 +14,10 @@ require (
 	github.com/mrz1836/go-logger v0.2.4
 	github.com/mrz1836/go-sanitize v1.1.3
 	github.com/mrz1836/go-validate v0.2.0
+	github.com/stretchr/testify v1.6.1
 	github.com/ugorji/go v1.2.1 // indirect
-	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
-	golang.org/x/sys v0.0.0-20201202213521-69691e467435 // indirect
+	golang.org/x/crypto v0.0.0-20201208171446-5f87f3452ae9 // indirect
+	golang.org/x/net v0.0.0-20201209123823-ac852fbbde11
+	golang.org/x/sys v0.0.0-20201207223542-d4d67f95c62d // indirect
 	golang.org/x/text v0.3.4 // indirect
 )
