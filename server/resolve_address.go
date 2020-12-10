@@ -140,7 +140,7 @@ func getSenderPubKey(senderPaymailAddress string) (*bsvec.PublicKey, error) {
 	alias, domain, _ := paymail.SanitizePaymail(senderPaymailAddress)
 
 	// Load the client
-	client, err := paymail.NewClient(nil, nil)
+	client, err := paymail.NewClient(nil, nil, nil)
 	if err != nil {
 		return nil, err
 	}

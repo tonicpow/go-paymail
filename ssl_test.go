@@ -19,7 +19,6 @@ func TestClient_CheckSSL(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create the list of tests
 	var tests = []struct {
 		host          string
 		expectedValid bool
@@ -32,9 +31,9 @@ func TestClient_CheckSSL(t *testing.T) {
 		{"moneybutton.com", true, false},
 	}
 
-	// Test all
+	var valid bool
 	for _, test := range tests {
-		if valid, err := client.CheckSSL(test.host); err != nil && !test.expectedError {
+		if valid, err = client.CheckSSL(test.host); err != nil && !test.expectedError {
 			t.Errorf("%s Failed: [%s] inputted and error not expected but got: %s", t.Name(), test.host, err.Error())
 		} else if err == nil && test.expectedError {
 			t.Errorf("%s Failed: [%s] inputted and error was expected", t.Name(), test.host)
@@ -48,7 +47,7 @@ func TestClient_CheckSSL(t *testing.T) {
 //
 // See more examples in /examples/
 func ExampleClient_CheckSSL() {
-	client, _ := NewClient(nil, nil)
+	client, _ := NewClient(nil, nil, nil)
 	valid, _ := client.CheckSSL("moneybutton.com")
 	if valid {
 		fmt.Printf("valid SSL certificate found for: %s", "moneybutton.com")
@@ -61,7 +60,7 @@ func ExampleClient_CheckSSL() {
 
 // BenchmarkClient_CheckSSL benchmarks the method CheckSSL()
 func BenchmarkClient_CheckSSL(b *testing.B) {
-	client, _ := NewClient(nil, nil)
+	client, _ := NewClient(nil, nil, nil)
 	for i := 0; i < b.N; i++ {
 		_, _ = client.CheckSSL("moneybutton.com")
 	}

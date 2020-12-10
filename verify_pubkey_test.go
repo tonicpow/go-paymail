@@ -62,7 +62,7 @@ func TestClient_VerifyPubKey(t *testing.T) {
 // See more examples in /examples/
 func ExampleClient_VerifyPubKey() {
 	// Load the client
-	client, err := NewClient(nil, nil)
+	client, err := NewClient(nil, nil, nil)
 	if err != nil {
 		fmt.Printf("error loading client: %s", err.Error())
 		return
@@ -81,7 +81,7 @@ func ExampleClient_VerifyPubKey() {
 
 // BenchmarkClient_VerifyPubKey benchmarks the method VerifyPubKey()
 func BenchmarkClient_VerifyPubKey(b *testing.B) {
-	client, _ := NewClient(nil, nil)
+	client, _ := NewClient(nil, nil, nil)
 	for i := 0; i < b.N; i++ {
 		_, _ = client.VerifyPubKey("https://www.moneybutton.com/api/v1/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}", "mrz", "moneybutton.com", "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10")
 	}

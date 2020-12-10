@@ -51,7 +51,7 @@ func TestClient_GetPKI(t *testing.T) {
 // See more examples in /examples/
 func ExampleClient_GetPKI() {
 	// Load the client
-	client, err := NewClient(nil, nil)
+	client, err := NewClient(nil, nil, nil)
 	if err != nil {
 		fmt.Printf("error loading client: %s", err.Error())
 		return
@@ -70,7 +70,7 @@ func ExampleClient_GetPKI() {
 
 // BenchmarkClient_GetPKI benchmarks the method GetPKI()
 func BenchmarkClient_GetPKI(b *testing.B) {
-	client, _ := NewClient(nil, nil)
+	client, _ := NewClient(nil, nil, nil)
 	for i := 0; i < b.N; i++ {
 		_, _ = client.GetPKI("https://www.moneybutton.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	}

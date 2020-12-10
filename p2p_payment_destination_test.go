@@ -65,7 +65,7 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 // See more examples in /examples/
 func ExampleClient_GetP2PPaymentDestination() {
 	// Load the client
-	client, err := NewClient(nil, nil)
+	client, err := NewClient(nil, nil, nil)
 	if err != nil {
 		fmt.Printf("error loading client: %s", err.Error())
 		return
@@ -90,7 +90,7 @@ func ExampleClient_GetP2PPaymentDestination() {
 
 // BenchmarkClient_GetP2PPaymentDestination benchmarks the method GetP2PPaymentDestination()
 func BenchmarkClient_GetP2PPaymentDestination(b *testing.B) {
-	client, _ := NewClient(nil, nil)
+	client, _ := NewClient(nil, nil, nil)
 
 	// Payment Request
 	paymentRequest := &PaymentRequest{Satoshis: 100}

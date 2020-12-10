@@ -37,8 +37,9 @@ func TestClient_ResolveAddress(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
-	if err != nil {
+	if resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest,
+	); err != nil {
 		t.Fatalf("error occurred in ResolveAddress: %s", err.Error())
 	} else if resolution == nil {
 		t.Fatalf("resolution was nil")
@@ -62,7 +63,7 @@ func TestClient_ResolveAddress(t *testing.T) {
 // See more examples in /examples/
 func ExampleClient_ResolveAddress() {
 	// Load the client
-	client, err := NewClient(nil, nil)
+	client, err := NewClient(nil, nil, nil)
 	if err != nil {
 		fmt.Printf("error loading client: %s", err.Error())
 		return
@@ -77,7 +78,10 @@ func ExampleClient_ResolveAddress() {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("https://www.moneybutton.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(
+		"https://www.moneybutton.com/api/v1/bsvalias/address/{alias}@{domain.tld}",
+		"mrz", "moneybutton.com", senderRequest,
+	)
 	if err != nil {
 		fmt.Printf("error occurred in ResolveAddress: %s", err.Error())
 		return
@@ -91,7 +95,7 @@ func ExampleClient_ResolveAddress() {
 
 // BenchmarkClient_ResolveAddress benchmarks the method ResolveAddress()
 func BenchmarkClient_ResolveAddress(b *testing.B) {
-	client, _ := NewClient(nil, nil)
+	client, _ := NewClient(nil, nil, nil)
 
 	// Sender Request
 	senderRequest := &SenderRequest{
@@ -101,7 +105,10 @@ func BenchmarkClient_ResolveAddress(b *testing.B) {
 	}
 
 	for i := 0; i < b.N; i++ {
-		_, _ = client.ResolveAddress("https://www.moneybutton.com/api/v1/bsvalias/address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+		_, _ = client.ResolveAddress(
+			"https://www.moneybutton.com/api/v1/bsvalias/address/{alias}@{domain.tld}",
+			"mrz", "moneybutton.com", senderRequest,
+		)
 	}
 }
 
@@ -133,8 +140,9 @@ func TestClient_ResolveAddressStatusNotModified(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
-	if err != nil {
+	if resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest,
+	); err != nil {
 		t.Fatalf("error occurred in ResolveAddress: %s", err.Error())
 	} else if resolution == nil {
 		t.Fatalf("resolution was nil")
@@ -181,7 +189,9 @@ func TestClient_ResolveAddressInvalidURL(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress("invalid-domain", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(
+		"invalid-domain", "mrz", "moneybutton.com", senderRequest,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution != nil {
@@ -210,7 +220,9 @@ func TestClient_ResolveAddressSenderRequestNil(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", nil)
+	resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", nil,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution != nil {
@@ -246,7 +258,9 @@ func TestClient_ResolveAddressSenderRequestDt(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution != nil {
@@ -282,7 +296,9 @@ func TestClient_ResolveAddressSenderRequestHandle(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution != nil {
@@ -318,7 +334,9 @@ func TestClient_ResolveAddressMissingAlias(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "", "moneybutton.com", senderRequest,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution != nil {
@@ -354,7 +372,9 @@ func TestClient_ResolveAddressMissingDomain(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "", senderRequest)
+	resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "", senderRequest,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution != nil {
@@ -390,7 +410,9 @@ func TestClient_ResolveAddressBadRequest(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
@@ -425,7 +447,9 @@ func TestClient_ResolveAddressHTTPError(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution != nil {
@@ -461,7 +485,9 @@ func TestClient_ResolveAddressBadError(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
@@ -499,7 +525,9 @@ func TestClient_ResolveAddressPaymailNotFound(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
@@ -537,7 +565,9 @@ func TestClient_ResolveAddressBadJSON(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
@@ -575,7 +605,9 @@ func TestClient_ResolveAddressMissingOutput(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
@@ -613,7 +645,9 @@ func TestClient_ResolveAddressInvalidOutput(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
@@ -651,7 +685,9 @@ func TestClient_ResolveAddressInvalidHex(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {
@@ -689,7 +725,9 @@ func TestClient_ResolveAddressInvalidHexLength(t *testing.T) {
 
 	// Fire the request
 	var resolution *Resolution
-	resolution, err = client.ResolveAddress(testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest)
+	resolution, err = client.ResolveAddress(
+		testServerURL+"address/{alias}@{domain.tld}", "mrz", "moneybutton.com", senderRequest,
+	)
 	if err == nil {
 		t.Fatalf("error should have occurred")
 	} else if resolution == nil {

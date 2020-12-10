@@ -54,7 +54,7 @@ func TestClient_GetPublicProfile(t *testing.T) {
 // See more examples in /examples/
 func ExampleClient_GetPublicProfile() {
 	// Load the client
-	client, err := NewClient(nil, nil)
+	client, err := NewClient(nil, nil, nil)
 	if err != nil {
 		fmt.Printf("error loading client: %s", err.Error())
 		return
@@ -73,7 +73,7 @@ func ExampleClient_GetPublicProfile() {
 
 // BenchmarkClient_GetPublicProfile benchmarks the method GetPublicProfile()
 func BenchmarkClient_GetPublicProfile(b *testing.B) {
-	client, _ := NewClient(nil, nil)
+	client, _ := NewClient(nil, nil, nil)
 	for i := 0; i < b.N; i++ {
 		_, _ = client.GetPublicProfile("https://www.moneybutton.com/api/v1/bsvalias/public-profile/{alias}@{domain.tld}", "mrz", "moneybutton.com")
 	}

@@ -9,7 +9,7 @@ import (
 func main() {
 
 	// Create a client with options
-	client, err := paymail.NewClient(nil, nil)
+	client, err := paymail.NewClient(nil, nil, nil)
 	if err != nil {
 		log.Fatalf("error loading client: %s", err.Error())
 	}

@@ -1,6 +1,7 @@
 package paymail
 
 import (
+	"context"
 	"net"
 	"time"
 
@@ -9,9 +10,9 @@ import (
 
 // Client is the paymail client/configuration
 type Client struct {
-	Options  *ClientOptions `json:"options"` // Options are all the default settings / configuration
-	Resolver net.Resolver   `json:"-"`       // Resolver is used for DNS lookups
-	Resty    *resty.Client  `json:"-"`       // Resty HTTP client for outgoing requests
+	Options  *ClientOptions    `json:"options"` // Options are all the default settings / configuration
+	Resolver ResolverInterface `json:"-"`       // Resolver is used for DNS lookups
+	Resty    *resty.Client     `json:"-"`       // Resty HTTP client for outgoing requests
 }
 
 // ClientOptions holds all the configuration for client requests and default resources
@@ -56,11 +57,19 @@ func DefaultClientOptions() (clientOptions *ClientOptions, err error) {
 	return
 }
 
+// ResolverInterface is a custom resolver interface for testing
+type ResolverInterface interface {
+	LookupHost(ctx context.Context, host string) ([]string, error)
+	LookupIPAddr(ctx context.Context, host string) ([]net.IPAddr, error)
+	LookupSRV(ctx context.Context, service, proto, name string) (string, []*net.SRV, error)
+}
+
 // NewClient creates a new client for all outgoing paymail requests
 //
 // If no options are given, it will use the DefaultClientOptions()
 // If no client is supplied it will use a default Resty HTTP client
-func NewClient(clientOptions *ClientOptions, customClient *resty.Client) (client *Client, err error) {
+func NewClient(clientOptions *ClientOptions, customClient *resty.Client,
+	customResolver ResolverInterface) (client *Client, err error) {
 
 	// Create a new client
 	client = new(Client)
@@ -82,8 +91,12 @@ func NewClient(clientOptions *ClientOptions, customClient *resty.Client) (client
 	client.Options = clientOptions
 
 	// Set the resolver
-	// todo: make this an interface (allows for testing custom DNS resolution)
-	client.Resolver = client.customResolver()
+	if customResolver != nil {
+		client.Resolver = customResolver
+	} else {
+		r := client.defaultResolver()
+		client.Resolver = &r
+	}
 
 	// Set the Resty HTTP client
 	if customClient != nil {

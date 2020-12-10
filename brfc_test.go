@@ -14,7 +14,6 @@ func TestBRFCSpec_Generate(t *testing.T) {
 
 	t.Parallel()
 
-	// Create the list of tests
 	var tests = []struct {
 		brfc          *BRFCSpec
 		expectedID    string
@@ -34,7 +33,6 @@ func TestBRFCSpec_Generate(t *testing.T) {
 		{&BRFCSpec{Author: "  andy (nChain)  ", ID: "0036f9b8860f", Title: "  bsvalias Integration with Simplified Payment Protocol  ", Version: "1"}, "0036f9b8860f", false},
 	}
 
-	// Test all
 	for _, test := range tests {
 		if err := test.brfc.Generate(); err != nil && !test.expectedError {
 			t.Errorf("%s Failed: [%v] inputted, [%s] expected and error not expected but got: %s", t.Name(), test.brfc, test.expectedID, err.Error())
@@ -77,7 +75,6 @@ func TestBRFCSpec_Validate(t *testing.T) {
 
 	t.Parallel()
 
-	// Create the list of tests
 	var tests = []struct {
 		brfc          *BRFCSpec
 		expectedID    string
@@ -108,7 +105,6 @@ func TestBRFCSpec_Validate(t *testing.T) {
 		{&BRFCSpec{Author: "nChain", ID: "ce852c4c2cd1", Title: "merchant_api", Version: "0.1"}, "eaad81dc6d4d", false, false},
 	}
 
-	// Test all
 	for _, test := range tests {
 		if valid, id, err := test.brfc.Validate(); err != nil && !test.expectedError {
 			t.Errorf("%s Failed: [%v] inputted, [%s] expected and error not expected but got: %s", t.Name(), test.brfc, test.expectedID, err.Error())
@@ -162,7 +158,6 @@ func TestClientOptions_LoadBRFCs(t *testing.T) {
 		t.Fatalf("error loading client: %s", err.Error())
 	}
 
-	// Create the list of tests
 	var tests = []struct {
 		specJSON       string
 		expectedLength int
@@ -174,7 +169,6 @@ func TestClientOptions_LoadBRFCs(t *testing.T) {
 		{`[{"author": "andy (nChain), Ryan X. Charles (Money Button)","title":""}]`, len(client.Options.BRFCSpecs), true},
 	}
 
-	// Test all
 	for _, test := range tests {
 		if err = client.Options.LoadBRFCs(test.specJSON); err != nil && !test.expectedError {
 			t.Errorf("%s Failed: [%s] inputted, [%d] expected specs and error not expected but got: %s", t.Name(), test.specJSON, test.expectedLength, err.Error())
@@ -191,7 +185,7 @@ func TestClientOptions_LoadBRFCs(t *testing.T) {
 // See more examples in /examples/
 func ExampleClientOptions_LoadBRFCs() {
 	// Create a client with options
-	client, err := NewClient(nil, nil)
+	client, err := NewClient(nil, nil, nil)
 	if err != nil {
 		fmt.Printf("error loading client: %s", err.Error())
 		return
@@ -210,7 +204,7 @@ func ExampleClientOptions_LoadBRFCs() {
 
 // BenchmarkClientOptions_LoadBRFCs benchmarks the method LoadBRFCs()
 func BenchmarkClientOptions_LoadBRFCs(b *testing.B) {
-	client, _ := NewClient(nil, nil)
+	client, _ := NewClient(nil, nil, nil)
 	additionalSpec := `[{"author": "andy (nChain)","id": "57dd1f54fc67","title": "BRFC Specifications","url": "http://bsvalias.org/01-02-brfc-id-assignment.html","version": "1"}]`
 	for i := 0; i < b.N; i++ {
 		_ = client.Options.LoadBRFCs(additionalSpec)

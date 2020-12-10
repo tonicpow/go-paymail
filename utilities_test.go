@@ -11,7 +11,6 @@ func TestSanitizePaymail(t *testing.T) {
 
 	t.Parallel()
 
-	// Create the list of tests
 	var tests = []struct {
 		input           string
 		expectedAlias   string
@@ -29,7 +28,6 @@ func TestSanitizePaymail(t *testing.T) {
 		{"1337@Moneybutton.com", "1337", "moneybutton.com", "1337@moneybutton.com"},
 	}
 
-	// Test all
 	for _, test := range tests {
 		if outputAlias, outputDomain, outputPaymail := SanitizePaymail(test.input); outputAlias != test.expectedAlias {
 			t.Errorf("%s Failed: [%s] inputted and [%s] expected, received: [%s]", t.Name(), test.input, test.expectedAlias, outputAlias)
@@ -62,7 +60,6 @@ func TestValidatePaymail(t *testing.T) {
 
 	t.Parallel()
 
-	// Create the list of tests
 	var tests = []struct {
 		input         string
 		expectedError bool
@@ -77,7 +74,6 @@ func TestValidatePaymail(t *testing.T) {
 		{"test@.com.", true},
 	}
 
-	// Test all
 	for _, test := range tests {
 		if err := ValidatePaymail(test.input); err != nil && !test.expectedError {
 			t.Errorf("%s Failed: [%s] inputted and error not expected but got: %s", t.Name(), test.input, err.Error())
@@ -112,7 +108,6 @@ func TestValidateDomain(t *testing.T) {
 
 	t.Parallel()
 
-	// Create the list of tests
 	var tests = []struct {
 		input         string
 		expectedError bool
@@ -125,7 +120,6 @@ func TestValidateDomain(t *testing.T) {
 		{"example.c", false},
 	}
 
-	// Test all
 	for _, test := range tests {
 		if err := ValidateDomain(test.input); err != nil && !test.expectedError {
 			t.Errorf("%s Failed: [%s] inputted and error not expected but got: %s", t.Name(), test.input, err.Error())
@@ -159,7 +153,6 @@ func BenchmarkValidateDomain(b *testing.B) {
 func TestConvertHandle(t *testing.T) {
 	t.Parallel()
 
-	// Create the list of tests
 	var tests = []struct {
 		input    string
 		beta     bool
@@ -177,7 +170,6 @@ func TestConvertHandle(t *testing.T) {
 		{"$misterz", true, "misterz@beta.handcash.io"},
 	}
 
-	// Test all
 	for _, test := range tests {
 		if output := ConvertHandle(test.input, test.beta); output != test.expected {
 			t.Errorf("%s Failed: [%s] inputted and [%s] expected, received: [%s]", t.Name(), test.input, test.expected, output)
@@ -205,7 +197,6 @@ func BenchmarkConvertHandle(b *testing.B) {
 func TestValidateTimestamp(t *testing.T) {
 	t.Parallel()
 
-	// Create the list of tests
 	var tests = []struct {
 		timestamp     string
 		expectedError bool
@@ -232,7 +223,6 @@ func TestValidateTimestamp(t *testing.T) {
 		{time.Now().UTC().Format(time.RFC3339), false},
 	}
 
-	// Test all
 	for _, test := range tests {
 		if err := ValidateTimestamp(test.timestamp); err != nil && !test.expectedError {
 			t.Errorf("%s Failed: [%s] inputted and error not expected but got: %s", t.Name(), test.timestamp, err.Error())

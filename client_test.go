@@ -2,10 +2,13 @@ package paymail
 
 import (
 	"fmt"
+	"net"
 	"testing"
+	"time"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/jarcoal/httpmock"
+	"github.com/stretchr/testify/assert"
 )
 
 // newTestClient will return a client for testing purposes
@@ -26,85 +29,107 @@ func newTestClient() (*Client, error) {
 	options.RequestTracing = true
 	options.DNSTimeout = 15
 
-	// Return the mocking client with default options
-	return NewClient(options, client)
+	// Create a new client
+	var newClient *Client
+	newClient, err = NewClient(options, client, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Set the customer resolver with known defaults
+	r := newCustomResolver(
+		newClient.Resolver,
+		map[string][]string{
+			"moneybutton.com": {"44.225.125.175", "35.165.117.200", "54.190.182.236"},
+			"test.com":        {"44.225.125.175", "35.165.117.200", "54.190.182.236"},
+		},
+		map[string][]*net.SRV{
+			DefaultServiceName + DefaultProtocol + "moneybutton.com": {{Target: "www.moneybutton.com", Port: 443, Priority: 10, Weight: 10}},
+			"invalid" + DefaultProtocol + "moneybutton.com":          {{Target: "www.moneybutton.com", Port: 443, Priority: 10, Weight: 10}},
+			DefaultServiceName + DefaultProtocol + "relayx.io":       {{Target: "relayx.io", Port: 443, Priority: 10, Weight: 10}},
+		},
+		map[string][]net.IPAddr{
+			"example.com": {net.IPAddr{IP: net.ParseIP("8.8.8.8"), Zone: "eth0"}},
+		},
+	)
+
+	// Set the custom resolver
+	newClient.Resolver = r
+
+	// Return the mocking client
+	return newClient, nil
 }
 
 // TestNewClient will test the method NewClient()
 func TestNewClient(t *testing.T) {
 	t.Parallel()
 
-	client, err := NewClient(nil, nil)
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
+	t.Run("default client", func(t *testing.T) {
+		client, err := NewClient(nil, nil, nil)
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+		assert.Equal(t, defaultDNSTimeout, client.Options.DNSTimeout)
+		assert.Equal(t, defaultDNSPort, client.Options.DNSPort)
+		assert.Equal(t, defaultUserAgent, client.Options.UserAgent)
+		assert.Equal(t, defaultNameServerNetwork, client.Options.NameServerNetwork)
+		assert.Equal(t, defaultNameServer, client.Options.NameServer)
+		assert.Equal(t, defaultSSLTimeout, client.Options.SSLTimeout)
+		assert.Equal(t, defaultSSLDeadline, client.Options.SSLDeadline)
+		assert.Equal(t, defaultGetTimeout, client.Options.GetTimeout)
+		assert.Equal(t, defaultRetryCount, client.Options.RetryCount)
+		assert.Equal(t, false, client.Options.RequestTracing)
+		assert.Equal(t, defaultPostTimeout, client.Options.PostTimeout)
+		assert.NotEqual(t, 0, len(client.Options.BRFCSpecs))
+		assert.Greater(t, len(client.Options.BRFCSpecs), 6)
+	})
 
-	if client == nil {
-		t.Fatal("failed to load client")
-	}
+	t.Run("custom http client", func(t *testing.T) {
+		customHTTPClient := resty.New()
+		customHTTPClient.SetTimeout(defaultGetTimeout * time.Second)
+		client, err := NewClient(nil, customHTTPClient, nil)
+		assert.NotNil(t, client)
+		assert.NoError(t, err)
+	})
 
-	if client.Options.DNSTimeout != defaultDNSTimeout {
-		t.Fatal("defaultDNSTimeout does not match default")
-	}
+	t.Run("custom options", func(t *testing.T) {
+		options, err := DefaultClientOptions()
+		assert.NotNil(t, options)
+		assert.NoError(t, err)
+		options.UserAgent = "custom user agent"
 
-	if client.Options.DNSPort != defaultDNSPort {
-		t.Fatal("defaultDNSPort does not match default")
-	}
+		var client *Client
+		client, err = NewClient(options, nil, nil)
+		assert.NotNil(t, client)
+		assert.NoError(t, err)
+	})
 
-	if client.Options.UserAgent != defaultUserAgent {
-		t.Fatal("defaultUserAgent does not match default")
-	}
+	t.Run("custom resolver", func(t *testing.T) {
+		r := newCustomResolver(nil, nil, nil, nil)
+		client, err := NewClient(nil, nil, r)
+		assert.NotNil(t, client)
+		assert.NoError(t, err)
+	})
 
-	if client.Options.NameServerNetwork != defaultNameServerNetwork {
-		t.Fatal("defaultNameServerNetwork does not match default")
-	}
+	t.Run("no brfcs", func(t *testing.T) {
+		options, err := DefaultClientOptions()
+		assert.NoError(t, err)
+		assert.NotNil(t, options)
 
-	if client.Options.NameServer != defaultNameServer {
-		t.Fatal("defaultNameServer does not match default")
-	}
+		// Remove the specs (empty)
+		options.BRFCSpecs = nil
 
-	if client.Options.SSLTimeout != defaultSSLTimeout {
-		t.Fatal("defaultSSLTimeout does not match default")
-	}
-
-	if client.Options.SSLDeadline != defaultSSLDeadline {
-		t.Fatal("defaultSSLDeadline does not match default")
-	}
-
-	if client.Options.GetTimeout != defaultGetTimeout {
-		t.Fatal("defaultGetTimeout does not match default")
-	}
-
-	if client.Options.RetryCount != defaultRetryCount {
-		t.Fatal("defaultRetryCount does not match default")
-	}
-
-	if client.Options.RequestTracing {
-		t.Fatal("RequestTracing should be false by default")
-	}
-
-	if client.Options.PostTimeout != defaultPostTimeout {
-		t.Fatal("defaultPostTimeout does not match default")
-	}
-
-	if client.Resolver.Dial == nil {
-		t.Fatal("client.Resolver.Dial was nil")
-	}
-
-	if len(client.Options.BRFCSpecs) == 0 {
-		t.Fatal("client.Options.BRFCSpecs was empty")
-	}
-
-	if len(client.Options.BRFCSpecs) < 6 {
-		t.Fatal("client.Options.BRFCSpecs was less than 10 (missing default specs)")
-	}
+		var client *Client
+		client, err = NewClient(options, nil, nil)
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+	})
 }
 
 // ExampleNewClient example using NewClient()
 //
 // See more examples in /examples/
 func ExampleNewClient() {
-	client, err := NewClient(nil, nil)
+	client, err := NewClient(nil, nil, nil)
 	if err != nil {
 		fmt.Printf("error loading client: %s", err.Error())
 		return
@@ -116,30 +141,7 @@ func ExampleNewClient() {
 // BenchmarkNewClient benchmarks the method NewClient()
 func BenchmarkNewClient(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_, _ = NewClient(nil, nil)
-	}
-}
-
-// TestNewClientNoBRFCs will test the method NewClient()
-func TestNewClientNoBRFCs(t *testing.T) {
-	t.Parallel()
-
-	options, err := DefaultClientOptions()
-	if err != nil {
-		t.Fatalf("error occurred: %s", err.Error())
-	}
-
-	// Remove the specs (empty)
-	options.BRFCSpecs = nil
-
-	var client *Client
-	client, err = NewClient(options, nil)
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
-
-	if client == nil {
-		t.Fatal("failed to load client")
+		_, _ = NewClient(nil, nil, nil)
 	}
 }
 
@@ -148,62 +150,22 @@ func TestDefaultClientOptions(t *testing.T) {
 	t.Parallel()
 
 	options, err := DefaultClientOptions()
-	if err != nil {
-		t.Fatalf("error loading options: %s", err.Error())
-	}
+	assert.NoError(t, err)
+	assert.NotNil(t, options)
 
-	if options.DNSTimeout != defaultDNSTimeout {
-		t.Fatal("defaultDNSTimeout does not match default")
-	}
-
-	if options.DNSPort != defaultDNSPort {
-		t.Fatal("defaultDNSPort does not match default")
-	}
-
-	if options.UserAgent != defaultUserAgent {
-		t.Fatal("defaultUserAgent does not match default")
-	}
-
-	if options.NameServerNetwork != defaultNameServerNetwork {
-		t.Fatal("defaultNameServerNetwork does not match default")
-	}
-
-	if options.NameServer != defaultNameServer {
-		t.Fatal("defaultNameServer does not match default")
-	}
-
-	if options.SSLTimeout != defaultSSLTimeout {
-		t.Fatal("defaultSSLTimeout does not match default")
-	}
-
-	if options.SSLDeadline != defaultSSLDeadline {
-		t.Fatal("defaultSSLDeadline does not match default")
-	}
-
-	if options.GetTimeout != defaultGetTimeout {
-		t.Fatal("defaultGetTimeout does not match default")
-	}
-
-	if options.RetryCount != defaultRetryCount {
-		t.Fatal("defaultRetryCount does not match default")
-	}
-
-	if options.PostTimeout != defaultPostTimeout {
-		t.Fatal("defaultPostTimeout does not match default")
-	}
-
-	if options.RequestTracing {
-		t.Fatal("RequestTracing should be false by default")
-	}
-
-	if len(options.BRFCSpecs) == 0 {
-		t.Fatal("options.BRFCSpecs was empty")
-	}
-
-	if len(options.BRFCSpecs) < 6 {
-		t.Fatal("options.BRFCSpecs was less than 10 (missing default specs)")
-	}
-
+	assert.Equal(t, defaultDNSTimeout, options.DNSTimeout)
+	assert.Equal(t, defaultDNSPort, options.DNSPort)
+	assert.Equal(t, defaultUserAgent, options.UserAgent)
+	assert.Equal(t, defaultNameServerNetwork, options.NameServerNetwork)
+	assert.Equal(t, defaultNameServer, options.NameServer)
+	assert.Equal(t, defaultSSLTimeout, options.SSLTimeout)
+	assert.Equal(t, defaultSSLDeadline, options.SSLDeadline)
+	assert.Equal(t, defaultGetTimeout, options.GetTimeout)
+	assert.Equal(t, defaultRetryCount, options.RetryCount)
+	assert.Equal(t, false, options.RequestTracing)
+	assert.Equal(t, defaultPostTimeout, options.PostTimeout)
+	assert.NotEqual(t, 0, len(options.BRFCSpecs))
+	assert.Greater(t, len(options.BRFCSpecs), 6)
 }
 
 // ExampleDefaultClientOptions example using DefaultClientOptions()
