@@ -8,10 +8,10 @@ import (
 	"time"
 )
 
-// customResolver will return a custom dns resolver
+// defaultResolver will return a custom dns resolver
 //
 // This uses client options to set the network and port
-func (c *Client) customResolver() net.Resolver {
+func (c *Client) defaultResolver() net.Resolver {
 	return net.Resolver{
 		PreferGo:     true,
 		StrictErrors: false,
@@ -19,7 +19,9 @@ func (c *Client) customResolver() net.Resolver {
 			d := net.Dialer{
 				Timeout: time.Second * time.Duration(c.Options.DNSTimeout),
 			}
-			return d.DialContext(ctx, c.Options.NameServerNetwork, c.Options.NameServer+":"+c.Options.DNSPort)
+			return d.DialContext(
+				ctx, c.Options.NameServerNetwork, c.Options.NameServer+":"+c.Options.DNSPort,
+			)
 		},
 	}
 }
@@ -48,7 +50,9 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 	// Lookup the SRV record
 	var cname string
 	var records []*net.SRV
-	if cname, records, err = c.Resolver.LookupSRV(context.Background(), service, protocol, domainName); err != nil {
+	if cname, records, err = c.Resolver.LookupSRV(
+		context.Background(), service, protocol, domainName,
+	); err != nil {
 		return
 	} else if len(records) == 0 {
 		// todo: this check might not be needed if an error is always returned
@@ -56,10 +60,12 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 		return
 	}
 
-	//  Basic CNAME check (sanity check!)
+	// Basic CNAME check (sanity check!)
 	if cname != cnameCheck {
-		// todo: this check might not be needed if the cname is always the same as the resolved result
-		err = fmt.Errorf("srv cname was invalid or not found using: %s and expected: %s", cnameCheck, cname)
+		err = fmt.Errorf(
+			"srv cname was invalid or not found using: %s and expected: %s",
+			cnameCheck, cname,
+		)
 		return
 	}
 
@@ -75,7 +81,7 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 // ValidateSRVRecord will check for a valid SRV record for paymail following specs
 //
 // Specs: http://bsvalias.org/02-01-host-discovery.html
-func (c *Client) ValidateSRVRecord(srv *net.SRV, port, priority, weight uint16) error {
+func (c *Client) ValidateSRVRecord(ctx context.Context, srv *net.SRV, port, priority, weight uint16) error {
 
 	// Check the parameters
 	if srv == nil {
@@ -103,7 +109,7 @@ func (c *Client) ValidateSRVRecord(srv *net.SRV, port, priority, weight uint16) 
 	}
 
 	// Test resolving the target
-	if addresses, err := c.Resolver.LookupHost(context.Background(), srv.Target); err != nil {
+	if addresses, err := c.Resolver.LookupHost(ctx, srv.Target); err != nil {
 		return err
 	} else if len(addresses) == 0 {
 		return fmt.Errorf("srv target %s could not resolve a host", srv.Target)

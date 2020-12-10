@@ -1,80 +1,110 @@
 package paymail
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // TestClient_GetSRVRecord will test the method GetSRVRecord()
 func TestClient_GetSRVRecord(t *testing.T) {
 	// t.Parallel() (turned off - race condition)
 
-	// Integration test (requires internet connection)
-	if testing.Short() {
-		t.Skip("skipping integration testing in short mode")
-	}
-
 	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
+	assert.NoError(t, err)
+	assert.NotNil(t, client)
 
-	// Create the list of tests
-	var tests = []struct {
-		service       string
-		protocol      string
-		domainName    string
-		expectedError bool
-		expectedNil   bool
-	}{
-		{DefaultServiceName, DefaultProtocol, "domain.com", true, true},
-		{"", "", "domain.com", true, true},
-		{"", DefaultProtocol, "domain.com", true, true},
-		{DefaultServiceName, "", "domain.com", true, true},
-		{"", "", "", true, true},
-		{DefaultServiceName, DefaultProtocol, "", true, true},
-		{"bogus", DefaultProtocol, "moneybutton.com", true, true},
-		{DefaultServiceName, DefaultProtocol, "moneybutton.com", false, false},
-		{DefaultServiceName, DefaultProtocol, "relayx.io", false, false},
-		{DefaultServiceName, DefaultProtocol, "mypaymail.co", false, false},
-	}
+	t.Run("valid cases", func(t *testing.T) {
 
-	// Test all
-	for _, test := range tests {
-		if srv, err := client.GetSRVRecord(test.service, test.protocol, test.domainName); err != nil && !test.expectedError {
-			t.Errorf("%s Failed: [%s] [%s] [%s] inputted and error not expected but got: %s", t.Name(), test.service, test.protocol, test.domainName, err.Error())
-		} else if err == nil && test.expectedError {
-			t.Errorf("%s Failed: [%s] [%s] [%s] inputted and error was expected", t.Name(), test.service, test.protocol, test.domainName)
-		} else if srv == nil && !test.expectedNil {
-			t.Errorf("%s Failed: [%s] [%s] [%s] inputted and srv should have not been nil", t.Name(), test.service, test.protocol, test.domainName)
-		} else if srv != nil && test.expectedNil {
-			t.Errorf("%s Failed: [%s] [%s] [%s] inputted and srv should have been nil", t.Name(), test.service, test.protocol, test.domainName)
-		} else if srv != nil && srv.Port == 0 {
-			t.Errorf("%s Failed: [%s] [%s] [%s] inputted and srv port was empty", t.Name(), test.service, test.protocol, test.domainName)
-		} else if srv != nil && srv.Priority == 0 {
-			t.Errorf("%s Failed: [%s] [%s] [%s] inputted and srv priority was empty", t.Name(), test.service, test.protocol, test.domainName)
-		} else if srv != nil && srv.Weight == 0 {
-			t.Errorf("%s Failed: [%s] [%s] [%s] inputted and srv weight was empty", t.Name(), test.service, test.protocol, test.domainName)
-		} else if srv != nil && len(srv.Target) == 0 {
-			t.Errorf("%s Failed: [%s] [%s] [%s] inputted and srv target was empty", t.Name(), test.service, test.protocol, test.domainName)
+		var tests = []struct {
+			name             string
+			service          string
+			protocol         string
+			domainName       string
+			expectedTarget   string
+			expectedPort     uint16
+			expectedPriority uint16
+			expectedWeight   uint16
+		}{
+			{
+				"valid - moneybutton",
+				DefaultServiceName,
+				DefaultProtocol,
+				"moneybutton.com",
+				"www.moneybutton.com",
+				443,
+				10,
+				10,
+			},
+			{
+				"valid - relay",
+				DefaultServiceName,
+				DefaultProtocol,
+				"relayx.io",
+				"relayx.io",
+				443,
+				10,
+				10,
+			},
 		}
-	}
+		var srv *net.SRV
+		for _, test := range tests {
+			t.Run(test.name, func(t *testing.T) {
+				srv, err = client.GetSRVRecord(test.service, test.protocol, test.domainName)
+				assert.NoError(t, err)
+				assert.NotNil(t, srv)
+				assert.Equal(t, test.expectedPort, srv.Port)
+				assert.Equal(t, test.expectedPriority, srv.Priority)
+				assert.Equal(t, test.expectedWeight, srv.Weight)
+				assert.Equal(t, test.expectedTarget, srv.Target)
+			})
+		}
+	})
+
+	t.Run("invalid cases", func(t *testing.T) {
+
+		var tests = []struct {
+			name       string
+			service    string
+			protocol   string
+			domainName string
+		}{
+			{"domain not found", DefaultServiceName, DefaultProtocol, "domain.com"},
+			{"missing service and protocol", "", "", "domain.com"},
+			{"missing service", "", DefaultProtocol, "domain.com"},
+			{"missing protocol", DefaultServiceName, "", "domain.com"},
+			{"all empty", "", "", ""},
+			{"missing domain", DefaultServiceName, DefaultProtocol, ""},
+			{"invalid service name", "bogus", DefaultProtocol, "moneybutton.com"},
+			{"invalid cname", "invalid", DefaultProtocol, "moneybutton.com"},
+		}
+		var srv *net.SRV
+		for _, test := range tests {
+			t.Run(test.name, func(t *testing.T) {
+				srv, err = client.GetSRVRecord(test.service, test.protocol, test.domainName)
+				assert.Error(t, err)
+				assert.Nil(t, srv)
+			})
+		}
+	})
 }
 
 // ExampleClient_GetSRVRecord example using GetSRVRecord()
 //
 // See more examples in /examples/
 func ExampleClient_GetSRVRecord() {
-	client, _ := NewClient(nil, nil)
+	client, _ := newTestClient()
 	srv, _ := client.GetSRVRecord(DefaultServiceName, DefaultProtocol, "moneybutton.com")
 	fmt.Printf("port: %d priority: %d weight: %d target: %s", srv.Port, srv.Priority, srv.Weight, srv.Target)
-	// Output:port: 443 priority: 1 weight: 10 target: www.moneybutton.com
+	// Output:port: 443 priority: 10 weight: 10 target: www.moneybutton.com
 }
 
 // BenchmarkClient_GetSRVRecord benchmarks the method GetSRVRecord()
 func BenchmarkClient_GetSRVRecord(b *testing.B) {
-	client, _ := NewClient(nil, nil)
+	client, _ := newTestClient()
 	for i := 0; i < b.N; i++ {
 		_, _ = client.GetSRVRecord(DefaultServiceName, DefaultProtocol, "moneybutton.com")
 	}
@@ -86,50 +116,164 @@ func TestClient_ValidateSRVRecord(t *testing.T) {
 	// t.Parallel() (turned off - race condition)
 
 	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
+	assert.NoError(t, err)
+	assert.NotNil(t, client)
 
-	// Create the list of tests
-	var tests = []struct {
-		srv           *net.SRV
-		port          uint16
-		priority      uint16
-		weight        uint16
-		expectedError bool
-	}{
-		{&net.SRV{Target: "domain.com", Port: DefaultPort, Priority: DefaultPriority, Weight: DefaultWeight}, DefaultPort, DefaultPriority, DefaultWeight, false},
-		{&net.SRV{Target: "domain.com", Port: DefaultPort, Priority: DefaultPriority, Weight: DefaultWeight}, 0, 0, 0, false},
-		{&net.SRV{Target: "", Port: DefaultPort, Priority: DefaultPriority, Weight: DefaultWeight}, DefaultPort, DefaultPriority, DefaultWeight, true},
-		{&net.SRV{Target: "domain", Port: DefaultPort, Priority: DefaultPriority, Weight: DefaultWeight}, DefaultPort, DefaultPriority, DefaultWeight, true},
-		{&net.SRV{Target: "domain.com", Port: 123, Priority: DefaultPriority, Weight: DefaultWeight}, DefaultPort, DefaultPriority, DefaultWeight, true},
-		{&net.SRV{Target: "domain.com", Port: DefaultPort, Priority: 123, Weight: DefaultWeight}, DefaultPort, DefaultPriority, DefaultWeight, true},
-		{&net.SRV{Target: "domain.com", Port: DefaultPort, Priority: DefaultPriority, Weight: 123}, DefaultPort, DefaultPriority, DefaultWeight, true},
-		{&net.SRV{Target: "baddomain10901919.com", Port: DefaultPort, Priority: DefaultPriority, Weight: DefaultWeight}, DefaultPort, DefaultPriority, DefaultWeight, true},
-		{nil, DefaultPort, DefaultPriority, DefaultWeight, true},
-	}
-
-	// Test all
-	for _, test := range tests {
-		if err := client.ValidateSRVRecord(test.srv, test.port, test.priority, test.weight); err != nil && !test.expectedError {
-			t.Errorf("%s Failed: [%v] [%d] [%d] [%d] inputted and error not expected but got: %s", t.Name(), test.srv, test.port, test.priority, test.weight, err.Error())
-		} else if err == nil && test.expectedError {
-			t.Errorf("%s Failed: [%v] [%d] [%d] [%d] inputted and error was expected", t.Name(), test.srv, test.port, test.priority, test.weight)
+	t.Run("valid cases", func(t *testing.T) {
+		var tests = []struct {
+			name     string
+			srv      *net.SRV
+			port     uint16
+			priority uint16
+			weight   uint16
+		}{
+			{
+				"valid domain and parameters",
+				&net.SRV{
+					Target:   "domain.com",
+					Port:     DefaultPort,
+					Priority: DefaultPriority,
+					Weight:   DefaultWeight,
+				},
+				DefaultPort,
+				DefaultPriority,
+				DefaultWeight,
+			},
+			{
+				"use default ports",
+				&net.SRV{
+					Target:   "domain.com",
+					Port:     DefaultPort,
+					Priority: DefaultPriority,
+					Weight:   DefaultWeight,
+				},
+				0,
+				0,
+				0,
+			},
 		}
-	}
+		for _, test := range tests {
+			t.Run(test.name, func(t *testing.T) {
+				err = client.ValidateSRVRecord(context.Background(), test.srv, test.port, test.priority, test.weight)
+				assert.NoError(t, err)
+			})
+		}
+	})
+
+	t.Run("invalid cases", func(t *testing.T) {
+		var tests = []struct {
+			name     string
+			srv      *net.SRV
+			port     uint16
+			priority uint16
+			weight   uint16
+		}{
+			{
+				"missing target",
+				&net.SRV{
+					Target:   "",
+					Port:     DefaultPort,
+					Priority: DefaultPriority,
+					Weight:   DefaultWeight,
+				},
+				DefaultPort,
+				DefaultPriority,
+				DefaultWeight,
+			},
+			{
+				"invalid domain name",
+				&net.SRV{
+					Target:   "domain",
+					Port:     DefaultPort,
+					Priority: DefaultPriority,
+					Weight:   DefaultWeight,
+				},
+				DefaultPort,
+				DefaultPriority,
+				DefaultWeight,
+			},
+			{
+				"invalid port",
+				&net.SRV{
+					Target:   "domain.com",
+					Port:     123,
+					Priority: DefaultPriority,
+					Weight:   DefaultWeight,
+				},
+				DefaultPort,
+				DefaultPriority,
+				DefaultWeight,
+			},
+			{
+				"invalid priority",
+				&net.SRV{
+					Target:   "domain.com",
+					Port:     DefaultPort,
+					Priority: 123,
+					Weight:   DefaultWeight,
+				},
+				DefaultPort,
+				DefaultPriority,
+				DefaultWeight,
+			},
+			{
+				"invalid weight",
+				&net.SRV{
+					Target:   "domain.com",
+					Port:     DefaultPort,
+					Priority: DefaultPriority,
+					Weight:   123,
+				},
+				DefaultPort,
+				DefaultPriority,
+				DefaultWeight,
+			},
+			{
+				"domain does not resolve",
+				&net.SRV{
+					Target:   "baddomain10901919.com",
+					Port:     DefaultPort,
+					Priority: DefaultPriority,
+					Weight:   DefaultWeight,
+				},
+				DefaultPort,
+				DefaultPriority,
+				DefaultWeight,
+			},
+			{
+				"srv is nil",
+				nil,
+				DefaultPort,
+				DefaultPriority,
+				DefaultWeight,
+			},
+		}
+		for _, test := range tests {
+			t.Run(test.name, func(t *testing.T) {
+				err = client.ValidateSRVRecord(context.Background(), test.srv, test.port, test.priority, test.weight)
+				assert.Error(t, err)
+			})
+		}
+	})
 }
 
 // ExampleClient_ValidateSRVRecord example using ValidateSRVRecord()
 //
 // See more examples in /examples/
 func ExampleClient_ValidateSRVRecord() {
-	client, _ := NewClient(nil, nil)
-	err := client.ValidateSRVRecord(&net.SRV{
-		Target:   "moneybutton.com",
-		Port:     DefaultPort,
-		Priority: 1,
-		Weight:   DefaultWeight,
-	}, DefaultPort, DefaultPriority, DefaultWeight)
+	client, _ := newTestClient()
+	err := client.ValidateSRVRecord(
+		context.Background(),
+		&net.SRV{
+			Target:   "moneybutton.com",
+			Port:     DefaultPort,
+			Priority: 1,
+			Weight:   DefaultWeight,
+		},
+		DefaultPort,
+		DefaultPriority,
+		DefaultWeight,
+	)
 	if err != nil {
 		fmt.Printf("error: %s", err.Error())
 	}
@@ -138,13 +282,19 @@ func ExampleClient_ValidateSRVRecord() {
 
 // BenchmarkClient_ValidateSRVRecord benchmarks the method ValidateSRVRecord()
 func BenchmarkClient_ValidateSRVRecord(b *testing.B) {
-	client, _ := NewClient(nil, nil)
+	client, _ := newTestClient()
 	for i := 0; i < b.N; i++ {
-		_ = client.ValidateSRVRecord(&net.SRV{
-			Target:   "moneybutton.com",
-			Port:     DefaultPort,
-			Priority: DefaultPriority,
-			Weight:   DefaultWeight,
-		}, DefaultPort, DefaultPriority, DefaultWeight)
+		_ = client.ValidateSRVRecord(
+			context.Background(),
+			&net.SRV{
+				Target:   "moneybutton.com",
+				Port:     DefaultPort,
+				Priority: DefaultPriority,
+				Weight:   DefaultWeight,
+			},
+			DefaultPort,
+			DefaultPriority,
+			DefaultWeight,
+		)
 	}
 }
