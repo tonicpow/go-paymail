@@ -40,6 +40,7 @@ View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-pay
 - [Paymail Client](client.go) (outgoing requests to other providers)
     - Use a custom [Resty HTTP client](https://github.com/go-resty/resty)
     - Use custom [client options](client.go)
+    - Use a custom [net.Resolver](resolver_test.go)
     - [Get & Validate SRV records](srv.go)
     - [Check SSL Certificates](ssl.go)
     - [Check & Validate DNNSEC](dns_sec.go)
