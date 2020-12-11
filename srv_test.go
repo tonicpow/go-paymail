@@ -113,7 +113,6 @@ func BenchmarkClient_GetSRVRecord(b *testing.B) {
 
 // TestClient_ValidateSRVRecord will test the method ValidateSRVRecord()
 func TestClient_ValidateSRVRecord(t *testing.T) {
-
 	// t.Parallel() (turned off - race condition)
 
 	client, err := newTestClient()

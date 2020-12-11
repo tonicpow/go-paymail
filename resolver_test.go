@@ -27,8 +27,8 @@ func newCustomResolver(liveResolver ResolverInterface, hosts map[string][]string
 
 // LookupHost will lookup a host
 func (r *resolver) LookupHost(ctx context.Context, host string) ([]string, error) {
-	records := r.hosts[host]
-	if len(records) != 0 {
+	records, ok := r.hosts[host]
+	if ok {
 		return records, nil
 	}
 	return r.liveResolver.LookupHost(ctx, host)
@@ -36,8 +36,8 @@ func (r *resolver) LookupHost(ctx context.Context, host string) ([]string, error
 
 // LookupIPAddr will lookup an ip address
 func (r *resolver) LookupIPAddr(ctx context.Context, host string) ([]net.IPAddr, error) {
-	records := r.ipAddresses[host]
-	if len(records) != 0 {
+	records, ok := r.ipAddresses[host]
+	if ok {
 		return records, nil
 	}
 	return r.liveResolver.LookupIPAddr(ctx, host)
@@ -45,8 +45,8 @@ func (r *resolver) LookupIPAddr(ctx context.Context, host string) ([]net.IPAddr,
 
 // LookupSRV will lookup an SRV record
 func (r *resolver) LookupSRV(ctx context.Context, service, proto, name string) (string, []*net.SRV, error) {
-	records := r.srvRecords[service+proto+name]
-	if len(records) != 0 {
+	records, ok := r.srvRecords[service+proto+name]
+	if ok {
 		if service == "invalid" { // Returns an invalid cname
 			return fmt.Sprintf("_%s._%s", service, proto), records, nil
 		}
