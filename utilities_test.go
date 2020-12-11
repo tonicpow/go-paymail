@@ -202,7 +202,10 @@ func TestValidateTimestamp(t *testing.T) {
 		expectedError bool
 	}{
 		{"", true},
+		{"0", true},
 		{"0000-00-00T00:00:00Z", true},
+		{"0001-01-01 00:00:00 +0000 UTC", true},
+		{"0001-01-01T00:00:00Z", true},
 		{"12345", true},
 		{"2017", true},
 		{"2018-01-01", true},
