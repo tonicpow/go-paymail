@@ -80,6 +80,7 @@ func TestClient_GetSRVRecord(t *testing.T) {
 			{"missing domain", DefaultServiceName, DefaultProtocol, ""},
 			{"invalid service name", "bogus", DefaultProtocol, "moneybutton.com"},
 			{"invalid cname", "invalid", DefaultProtocol, "moneybutton.com"},
+			{"no records", DefaultServiceName, DefaultProtocol, "norecords.com"},
 		}
 		var srv *net.SRV
 		for _, test := range tests {
@@ -232,6 +233,18 @@ func TestClient_ValidateSRVRecord(t *testing.T) {
 				"domain does not resolve",
 				&net.SRV{
 					Target:   "baddomain10901919.com",
+					Port:     DefaultPort,
+					Priority: DefaultPriority,
+					Weight:   DefaultWeight,
+				},
+				DefaultPort,
+				DefaultPriority,
+				DefaultWeight,
+			},
+			{
+				"no records",
+				&net.SRV{
+					Target:   "norecords.com",
 					Port:     DefaultPort,
 					Priority: DefaultPriority,
 					Weight:   DefaultWeight,

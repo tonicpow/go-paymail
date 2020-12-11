@@ -42,11 +42,13 @@ func newTestClient() (*Client, error) {
 		map[string][]string{
 			"moneybutton.com": {"44.225.125.175", "35.165.117.200", "54.190.182.236"},
 			"test.com":        {"44.225.125.175", "35.165.117.200", "54.190.182.236"},
+			"norecords.com":   {},
 		},
 		map[string][]*net.SRV{
 			DefaultServiceName + DefaultProtocol + "moneybutton.com": {{Target: "www.moneybutton.com", Port: 443, Priority: 10, Weight: 10}},
 			"invalid" + DefaultProtocol + "moneybutton.com":          {{Target: "www.moneybutton.com", Port: 443, Priority: 10, Weight: 10}},
 			DefaultServiceName + DefaultProtocol + "relayx.io":       {{Target: "relayx.io", Port: 443, Priority: 10, Weight: 10}},
+			DefaultServiceName + DefaultProtocol + "norecords.com":   {},
 		},
 		map[string][]net.IPAddr{
 			"example.com": {net.IPAddr{IP: net.ParseIP("8.8.8.8"), Zone: "eth0"}},
