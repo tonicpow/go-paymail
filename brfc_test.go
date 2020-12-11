@@ -149,8 +149,7 @@ func BenchmarkBRFCSpec_Validate(b *testing.B) {
 
 // TestClientOptions_LoadBRFCs will test the method LoadBRFCs()
 func TestClientOptions_LoadBRFCs(t *testing.T) {
-
-	t.Parallel()
+	// t.Parallel() cannot use newTestClient() race condition
 
 	// Create a client with options
 	client, err := newTestClient()

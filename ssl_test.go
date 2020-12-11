@@ -9,7 +9,7 @@ import (
 
 // TestClient_CheckSSL will test the method CheckSSL()
 func TestClient_CheckSSL(t *testing.T) {
-	t.Parallel()
+	// t.Parallel() cannot use newTestClient() race condition
 
 	// Integration test (requires internet connection)
 	if testing.Short() {
