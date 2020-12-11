@@ -232,13 +232,13 @@ func ExampleClient_GetCapabilities() {
 
 	// Get the capabilities
 	var capabilities *Capabilities
-	capabilities, err = client.GetCapabilities("moneybutton.com", DefaultPort)
+	capabilities, err = client.GetCapabilities("relayx.io", DefaultPort)
 	if err != nil {
 		fmt.Printf("error getting capabilities: " + err.Error())
 		return
 	}
 	fmt.Printf("found %d capabilities", len(capabilities.Capabilities))
-	// Output:found 7 capabilities
+	// Output:found 4 capabilities
 }
 
 // BenchmarkClient_GetCapabilities benchmarks the method GetCapabilities()
