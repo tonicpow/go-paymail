@@ -6,76 +6,69 @@ import (
 	"time"
 
 	"github.com/bitcoinschema/go-bitcoin"
+	"github.com/stretchr/testify/assert"
 )
 
 // TestSenderRequest_Sign will test the method Sign()
 func TestSenderRequest_Sign(t *testing.T) {
 
-	// Test private key
+	// Create key
 	key, err := bitcoin.CreatePrivateKeyString()
-	if err != nil {
-		t.Fatalf("error occurred: %s", err.Error())
-	}
+	assert.NoError(t, err)
+	assert.NotNil(t, key)
 
 	// Create the request / message
 	senderRequest := &SenderRequest{
 		Dt:           time.Now().UTC().Format(time.RFC3339),
-		SenderHandle: "mrz@moneybutton.com",
-		SenderName:   "MrZ",
-		Purpose:      "testing",
+		SenderHandle: testAlias + "@" + testDomain,
+		SenderName:   testName,
+		Purpose:      testMessage,
 	}
 
 	var signature string
 
-	// Test signing (invalid key)
-	if signature, err = senderRequest.Sign(""); err == nil {
-		t.Fatalf("error was expected")
-	} else if len(signature) > 0 {
-		t.Fatalf("signature should be empty")
-	}
+	t.Run("invalid key - empty", func(t *testing.T) {
+		signature, err = senderRequest.Sign("")
+		assert.Error(t, err)
+		assert.Equal(t, len(signature), 0)
+	})
 
-	// Test signing (invalid key)
-	if signature, err = senderRequest.Sign("0"); err == nil {
-		t.Fatalf("error was expected")
-	} else if len(signature) > 0 {
-		t.Fatalf("signature should be empty")
-	}
+	t.Run("invalid key - 0", func(t *testing.T) {
+		signature, err = senderRequest.Sign("0")
+		assert.Error(t, err)
+		assert.Equal(t, len(signature), 0)
+	})
 
-	// Test signing (invalid dt)
-	senderRequest.Dt = ""
-	if signature, err = senderRequest.Sign(key); err == nil {
-		t.Fatalf("error was expected")
-	} else if len(signature) > 0 {
-		t.Fatalf("signature should be empty")
-	}
+	t.Run("invalid dt", func(t *testing.T) {
+		senderRequest.Dt = ""
+		signature, err = senderRequest.Sign(key)
+		assert.Error(t, err)
+		assert.Equal(t, len(signature), 0)
+	})
 
-	// Test signing (invalid senderHandle)
-	senderRequest.Dt = time.Now().UTC().Format(time.RFC3339)
-	senderRequest.SenderHandle = ""
-	if signature, err = senderRequest.Sign(key); err == nil {
-		t.Fatalf("error was expected")
-	} else if len(signature) > 0 {
-		t.Fatalf("signature should be empty")
-	}
+	t.Run("invalid sender handle", func(t *testing.T) {
+		senderRequest.Dt = time.Now().UTC().Format(time.RFC3339)
+		senderRequest.SenderHandle = ""
+		signature, err = senderRequest.Sign(key)
+		assert.Error(t, err)
+		assert.Equal(t, len(signature), 0)
+	})
 
-	// Test signing (valid)
-	senderRequest.SenderHandle = "mrz@moneybutton.com"
-	if signature, err = senderRequest.Sign(key); err != nil {
-		t.Fatalf("error occurred in sign: %s", err.Error())
-	} else if len(signature) == 0 {
-		t.Fatalf("signature was expected but empty")
-	}
+	t.Run("valid signature", func(t *testing.T) {
+		senderRequest.SenderHandle = testAlias + "@" + testDomain
+		signature, err = senderRequest.Sign(key)
+		assert.NoError(t, err)
+		assert.NotEqual(t, len(signature), 0)
 
-	// Get address for verification
-	var address string
-	if address, err = bitcoin.GetAddressFromPrivateKeyString(key, false); err != nil {
-		t.Fatalf("error occurred: %s", err.Error())
-	}
+		// Get address for verification
+		var address string
+		address, err = bitcoin.GetAddressFromPrivateKeyString(key, false)
+		assert.NoError(t, err)
 
-	// Verify the signature
-	if err = senderRequest.Verify(address, signature); err != nil {
-		t.Fatalf("error occurred: %s", err.Error())
-	}
+		// Verify the signature
+		err = senderRequest.Verify(address, signature)
+		assert.NoError(t, err)
+	})
 }
 
 // ExampleSenderRequest_Sign example using Sign()
@@ -89,9 +82,9 @@ func ExampleSenderRequest_Sign() {
 	// Create the request / message
 	senderRequest := &SenderRequest{
 		Dt:           time.Now().UTC().Format(time.RFC3339),
-		SenderHandle: "mrz@moneybutton.com",
-		SenderName:   "MrZ",
-		Purpose:      "testing",
+		SenderHandle: testAlias + "@" + testDomain,
+		SenderName:   testName,
+		Purpose:      testMessage,
 	}
 
 	// Sign the sender request
@@ -115,9 +108,9 @@ func BenchmarkSenderRequest_Sign(b *testing.B) {
 	// Create the request / message
 	senderRequest := &SenderRequest{
 		Dt:           time.Now().UTC().Format(time.RFC3339),
-		SenderHandle: "mrz@moneybutton.com",
-		SenderName:   "MrZ",
-		Purpose:      "testing",
+		SenderHandle: testAlias + "@" + testDomain,
+		SenderName:   testName,
+		Purpose:      testMessage,
 	}
 
 	for i := 0; i < b.N; i++ {
@@ -128,53 +121,55 @@ func BenchmarkSenderRequest_Sign(b *testing.B) {
 // TestSenderRequest_Verify will test the method Verify()
 func TestSenderRequest_Verify(t *testing.T) {
 
-	// Test private key
+	// Create key
 	key, err := bitcoin.CreatePrivateKeyString()
-	if err != nil {
-		t.Fatalf("error occurred: %s", err.Error())
-	}
+	assert.NoError(t, err)
+	assert.NotNil(t, key)
 
 	// Create the request / message
 	senderRequest := &SenderRequest{
 		Dt:           time.Now().UTC().Format(time.RFC3339),
-		SenderHandle: "mrz@moneybutton.com",
-		SenderName:   "MrZ",
-		Purpose:      "testing",
+		SenderHandle: testAlias + "@" + testDomain,
+		SenderName:   testName,
+		Purpose:      testMessage,
 	}
 
 	// Sign
 	var signature string
-	if signature, err = senderRequest.Sign(key); err != nil {
-		t.Fatalf("error occurred in sign: %s", err.Error())
-	} else if len(signature) == 0 {
-		t.Fatalf("signature was expected but empty")
-	}
+	signature, err = senderRequest.Sign(key)
+	assert.NoError(t, err)
+	assert.NotEqual(t, 0, len(signature))
 
 	// Get address from private key
 	var address string
-	if address, err = bitcoin.GetAddressFromPrivateKeyString(key, false); err != nil {
-		t.Fatalf("error occurred in AddressFromPrivateKey: %s", err.Error())
-	}
+	address, err = bitcoin.GetAddressFromPrivateKeyString(key, false)
+	assert.NoError(t, err)
+	assert.NotNil(t, address)
 
-	// Try verifying (valid)
-	if err = senderRequest.Verify(address, signature); err != nil {
-		t.Fatalf("error occurred in Verify: %s", err.Error())
-	}
+	t.Run("valid verification", func(t *testing.T) {
+		err = senderRequest.Verify(address, signature)
+		assert.NoError(t, err)
+	})
 
-	// Try verifying (invalid)
-	if err = senderRequest.Verify("", signature); err == nil {
-		t.Fatalf("error should have occurred")
-	}
+	t.Run("invalid - empty address", func(t *testing.T) {
+		err = senderRequest.Verify("", signature)
+		assert.Error(t, err)
+	})
 
-	// Try verifying (invalid)
-	if err = senderRequest.Verify(address, ""); err == nil {
-		t.Fatalf("error should have occurred")
-	}
+	t.Run("invalid - empty signature", func(t *testing.T) {
+		err = senderRequest.Verify(address, "")
+		assert.Error(t, err)
+	})
 
-	// Try verifying (invalid)
-	if err = senderRequest.Verify(address, "0"); err == nil {
-		t.Fatalf("error should have occurred")
-	}
+	t.Run("invalid - wrong signature - hex short", func(t *testing.T) {
+		err = senderRequest.Verify(address, "0")
+		assert.Error(t, err)
+	})
+
+	t.Run("invalid - wrong signature", func(t *testing.T) {
+		err = senderRequest.Verify(address, "73646661736466736466617364667364666173646673646661736466")
+		assert.Error(t, err)
+	})
 }
 
 // ExampleSenderRequest_Verify example using Verify()
@@ -185,15 +180,15 @@ func ExampleSenderRequest_Verify() {
 	// Example sender request
 	senderRequest := &SenderRequest{
 		Dt:           "2020-10-02T16:43:39Z",
-		SenderHandle: "mrz@moneybutton.com",
-		SenderName:   "MrZ",
-		Purpose:      "testing",
+		SenderHandle: testAlias + "@" + testDomain,
+		SenderName:   testName,
+		Purpose:      testMessage,
 	}
 
 	// Try verifying (valid) (using an address and a signature - previously generated for example)
 	if err := senderRequest.Verify(
-		"1MRXps9AaAhHiZwpAvVqaX9J8UAjFhbgGw",
-		"IDQWyhXrMrV0++c8lCzp6opWdDkbwEgNjHIOH+TRn9K6fJkOexICLiD9XzLajSlFezHJWgJTicCRv641zhk6rOY=",
+		"1LqWAxSaKdXRKATAj7ELk34ioyT1T8gXgU",
+		"G70DPE2p8xtCehUjRkQF2gI26kDu59JsQ6KKUmJyHi1XFGkeoIokgzN/kiMy+lujpXOi+C35sZUwgSMqOYRDXPQ=",
 	); err != nil {
 		fmt.Printf("error occurred in Verify: %s", err.Error())
 		return
@@ -209,15 +204,15 @@ func BenchmarkSenderRequest_Verify(b *testing.B) {
 	// Example sender request
 	senderRequest := &SenderRequest{
 		Dt:           "2020-10-02T16:43:39Z",
-		SenderHandle: "mrz@moneybutton.com",
-		SenderName:   "MrZ",
-		Purpose:      "testing",
+		SenderHandle: testAlias + "@" + testDomain,
+		SenderName:   testName,
+		Purpose:      testMessage,
 	}
 
 	for i := 0; i < b.N; i++ {
 		_ = senderRequest.Verify(
-			"1MRXps9AaAhHiZwpAvVqaX9J8UAjFhbgGw",
-			"IDQWyhXrMrV0++c8lCzp6opWdDkbwEgNjHIOH+TRn9K6fJkOexICLiD9XzLajSlFezHJWgJTicCRv641zhk6rOY=",
+			"1LqWAxSaKdXRKATAj7ELk34ioyT1T8gXgU",
+			"G70DPE2p8xtCehUjRkQF2gI26kDu59JsQ6KKUmJyHi1XFGkeoIokgzN/kiMy+lujpXOi+C35sZUwgSMqOYRDXPQ=",
 		)
 	}
 }

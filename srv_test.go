@@ -30,11 +30,11 @@ func TestClient_GetSRVRecord(t *testing.T) {
 			expectedWeight   uint16
 		}{
 			{
-				"valid - moneybutton",
+				"valid - test domain",
 				DefaultServiceName,
 				DefaultProtocol,
-				"moneybutton.com",
-				"www.moneybutton.com",
+				testDomain,
+				"www." + testDomain,
 				443,
 				10,
 				10,
@@ -78,8 +78,8 @@ func TestClient_GetSRVRecord(t *testing.T) {
 			{"missing protocol", DefaultServiceName, "", "domain.com"},
 			{"all empty", "", "", ""},
 			{"missing domain", DefaultServiceName, DefaultProtocol, ""},
-			{"invalid service name", "bogus", DefaultProtocol, "moneybutton.com"},
-			{"invalid cname", "invalid", DefaultProtocol, "moneybutton.com"},
+			{"invalid service name", "bogus", DefaultProtocol, testDomain},
+			{"invalid cname", "invalid", DefaultProtocol, testDomain},
 			{"no records", DefaultServiceName, DefaultProtocol, "norecords.com"},
 		}
 		var srv *net.SRV
@@ -98,16 +98,16 @@ func TestClient_GetSRVRecord(t *testing.T) {
 // See more examples in /examples/
 func ExampleClient_GetSRVRecord() {
 	client, _ := newTestClient()
-	srv, _ := client.GetSRVRecord(DefaultServiceName, DefaultProtocol, "moneybutton.com")
+	srv, _ := client.GetSRVRecord(DefaultServiceName, DefaultProtocol, testDomain)
 	fmt.Printf("port: %d priority: %d weight: %d target: %s", srv.Port, srv.Priority, srv.Weight, srv.Target)
-	// Output:port: 443 priority: 10 weight: 10 target: www.moneybutton.com
+	// Output:port: 443 priority: 10 weight: 10 target: www.test.com
 }
 
 // BenchmarkClient_GetSRVRecord benchmarks the method GetSRVRecord()
 func BenchmarkClient_GetSRVRecord(b *testing.B) {
 	client, _ := newTestClient()
 	for i := 0; i < b.N; i++ {
-		_, _ = client.GetSRVRecord(DefaultServiceName, DefaultProtocol, "moneybutton.com")
+		_, _ = client.GetSRVRecord(DefaultServiceName, DefaultProtocol, testDomain)
 	}
 }
 
@@ -277,7 +277,7 @@ func ExampleClient_ValidateSRVRecord() {
 	err := client.ValidateSRVRecord(
 		context.Background(),
 		&net.SRV{
-			Target:   "moneybutton.com",
+			Target:   testDomain,
 			Port:     DefaultPort,
 			Priority: 1,
 			Weight:   DefaultWeight,
@@ -299,7 +299,7 @@ func BenchmarkClient_ValidateSRVRecord(b *testing.B) {
 		_ = client.ValidateSRVRecord(
 			context.Background(),
 			&net.SRV{
-				Target:   "moneybutton.com",
+				Target:   testDomain,
 				Port:     DefaultPort,
 				Priority: DefaultPriority,
 				Weight:   DefaultWeight,

@@ -14,8 +14,8 @@ import (
 /*
 Incoming Data Object Example:
 {
-    "senderName": "MrZ",
-    "senderHandle": "mrz@moneybutton.com",
+    "senderName": "UserName",
+    "senderHandle": "alias@domain.com",
     "dt": "2020-04-09T16:08:06.419Z",
     "amount": 551,
     "purpose": "message to receiver",

@@ -3,11 +3,13 @@ package paymail
 import (
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // TestClient_CheckSSL will test the method CheckSSL()
 func TestClient_CheckSSL(t *testing.T) {
-	// t.Parallel() (turned off - race condition)
+	t.Parallel()
 
 	// Integration test (requires internet connection)
 	if testing.Short() {
@@ -15,32 +17,43 @@ func TestClient_CheckSSL(t *testing.T) {
 	}
 
 	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
+	assert.NoError(t, err)
+	assert.NotNil(t, client)
 
-	var tests = []struct {
-		host          string
-		expectedValid bool
-		expectedError bool
-	}{
-		{"google.com", true, false},
-		{"google", false, true},
-		{"", false, true},
-		{"domaindoesntexistatall101910.co", false, true},
-		{"moneybutton.com", true, false},
-	}
-
-	var valid bool
-	for _, test := range tests {
-		if valid, err = client.CheckSSL(test.host); err != nil && !test.expectedError {
-			t.Errorf("%s Failed: [%s] inputted and error not expected but got: %s", t.Name(), test.host, err.Error())
-		} else if err == nil && test.expectedError {
-			t.Errorf("%s Failed: [%s] inputted and error was expected", t.Name(), test.host)
-		} else if valid != test.expectedValid {
-			t.Errorf("%s Failed: [%s] inputted and valid was not as expected", t.Name(), test.host)
+	t.Run("valid ssl certs", func(t *testing.T) {
+		var tests = []struct {
+			host string
+		}{
+			{"google.com"},
+			{"mrz1818.com"},
 		}
-	}
+		var valid bool
+		for _, test := range tests {
+			t.Run("checking: "+test.host, func(t *testing.T) {
+				valid, err = client.CheckSSL(test.host)
+				assert.NoError(t, err)
+				assert.Equal(t, true, valid)
+			})
+		}
+	})
+
+	t.Run("invalid ssl certs", func(t *testing.T) {
+		var tests = []struct {
+			host string
+		}{
+			{"google"},
+			{""},
+			{"domaindoesntexistatall101910.co"},
+		}
+		var valid bool
+		for _, test := range tests {
+			t.Run("checking: "+test.host, func(t *testing.T) {
+				valid, err = client.CheckSSL(test.host)
+				assert.Error(t, err)
+				assert.Equal(t, false, valid)
+			})
+		}
+	})
 }
 
 // ExampleClient_CheckSSL example using CheckSSL()
@@ -48,20 +61,20 @@ func TestClient_CheckSSL(t *testing.T) {
 // See more examples in /examples/
 func ExampleClient_CheckSSL() {
 	client, _ := NewClient(nil, nil, nil)
-	valid, _ := client.CheckSSL("moneybutton.com")
+	valid, _ := client.CheckSSL("google.com")
 	if valid {
-		fmt.Printf("valid SSL certificate found for: %s", "moneybutton.com")
+		fmt.Printf("valid SSL certificate found for: %s", "google.com")
 	} else {
-		fmt.Printf("invalid SSL certificate found for: %s", "moneybutton.com")
+		fmt.Printf("invalid SSL certificate found for: %s", "google.com")
 	}
 
-	// Output:valid SSL certificate found for: moneybutton.com
+	// Output:valid SSL certificate found for: google.com
 }
 
 // BenchmarkClient_CheckSSL benchmarks the method CheckSSL()
 func BenchmarkClient_CheckSSL(b *testing.B) {
 	client, _ := NewClient(nil, nil, nil)
 	for i := 0; i < b.N; i++ {
-		_, _ = client.CheckSSL("moneybutton.com")
+		_, _ = client.CheckSSL("google.com")
 	}
 }

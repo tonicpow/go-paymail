@@ -54,20 +54,20 @@ func TestClient_CheckDNSSEC(t *testing.T) {
 // See more examples in /examples/
 func ExampleClient_CheckDNSSEC() {
 	client, _ := NewClient(nil, nil, nil)
-	results := client.CheckDNSSEC("moneybutton.com")
+	results := client.CheckDNSSEC("google.com")
 	if len(results.ErrorMessage) == 0 {
-		fmt.Printf("valid DNSSEC found for: %s", "moneybutton.com")
+		fmt.Printf("valid DNSSEC found for: %s", "google.com")
 	} else {
-		fmt.Printf("invalid DNSSEC found for: %s error: %s", "moneybutton.com", results.ErrorMessage)
+		fmt.Printf("invalid DNSSEC found for: %s error: %s", "google.com", results.ErrorMessage)
 	}
 
-	// Output:valid DNSSEC found for: moneybutton.com
+	// Output:valid DNSSEC found for: google.com
 }
 
 // BenchmarkClient_CheckDNSSEC benchmarks the method CheckDNSSEC()
 func BenchmarkClient_CheckDNSSEC(b *testing.B) {
 	client, _ := NewClient(nil, nil, nil)
 	for i := 0; i < b.N; i++ {
-		_ = client.CheckDNSSEC("moneybutton.com")
+		_ = client.CheckDNSSEC("google.com")
 	}
 }

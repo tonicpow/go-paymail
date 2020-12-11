@@ -28,7 +28,7 @@ func main() {
 
 	// Create the basic senderRequest to achieve an address resolution request
 	senderRequest := &paymail.SenderRequest{
-		Dt:           time.Now().UTC().Format(time.RFC3339), // UTC is assumed
+		Dt:           time.Now().UTC().Format(time.RFC3339),
 		SenderHandle: "mrz@moneybutton.com",
 		SenderName:   "MrZ",
 	}

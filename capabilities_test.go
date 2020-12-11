@@ -19,16 +19,10 @@ func TestClient_GetCapabilities(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, client)
 
-		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
-			httpmock.NewStringResponder(
-				http.StatusOK,
-				`{"bsvalias": "1.0","capabilities": {"6745385c3fc0": false,"pki": "`+testServerURL+`id/{alias}@{domain.tld}","paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
-			),
-		)
+		mockCapabilities(http.StatusOK)
 
 		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities("test.com", DefaultPort)
+		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
 		assert.NoError(t, err)
 		assert.NotNil(t, capabilities)
 		assert.Equal(t, DefaultBsvAliasVersion, capabilities.BsvAlias)
@@ -41,16 +35,10 @@ func TestClient_GetCapabilities(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, client)
 
-		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
-			httpmock.NewStringResponder(
-				http.StatusNotModified,
-				`{"bsvalias": "1.0","capabilities": {"6745385c3fc0": false,"pki": "`+testServerURL+`id/{alias}@{domain.tld}","paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
-			),
-		)
+		mockCapabilities(http.StatusNotModified)
 
 		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities("test.com", DefaultPort)
+		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
 		assert.NoError(t, err)
 		assert.NotNil(t, capabilities)
 		assert.Equal(t, DefaultBsvAliasVersion, capabilities.BsvAlias)
@@ -64,7 +52,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		assert.NotNil(t, client)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
+		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": "request failed"}`,
@@ -72,7 +60,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		)
 
 		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities("test.com", DefaultPort)
+		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
 		assert.Error(t, err)
 		assert.NotNil(t, capabilities)
 		assert.Equal(t, http.StatusBadRequest, capabilities.StatusCode)
@@ -85,7 +73,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		assert.NotNil(t, client)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
+		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": "request failed"}`,
@@ -104,7 +92,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		assert.NotNil(t, client)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
+		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": "request failed"}`,
@@ -112,7 +100,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		)
 
 		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities("test.com", 0)
+		capabilities, err = client.GetCapabilities(testDomain, 0)
 		assert.Error(t, err)
 		assert.Nil(t, capabilities)
 	})
@@ -123,12 +111,12 @@ func TestClient_GetCapabilities(t *testing.T) {
 		assert.NotNil(t, client)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
+		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewErrorResponder(fmt.Errorf("error in request")),
 		)
 
 		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities("test.com", DefaultPort)
+		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
 		assert.Error(t, err)
 		assert.Nil(t, capabilities)
 	})
@@ -139,7 +127,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		assert.NotNil(t, client)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
+		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusBadRequest,
 				`{"message": request failed}`,
@@ -147,7 +135,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 		)
 
 		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities("test.com", DefaultPort)
+		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
 		assert.Error(t, err)
 		assert.NotNil(t, capabilities)
 		assert.Equal(t, http.StatusBadRequest, capabilities.StatusCode)
@@ -160,15 +148,16 @@ func TestClient_GetCapabilities(t *testing.T) {
 		assert.NotNil(t, client)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
+		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusOK,
-				`{“bsvalias“: “1.0“,“capabilities“: {“6745385c3fc0“: false,“pki“: “`+testServerURL+`id/{alias}@{domain.tld}“,“paymentDestination“: “`+testServerURL+`address/{alias}@{domain.tld}“}}`,
+				`{“`+DefaultServiceName+`“: “`+DefaultBsvAliasVersion+`“,“capabilities“: {“6745385c3fc0“: false,
+“pki“: “`+testServerURL+`id/{alias}@{domain.tld}“,“paymentDestination“: “`+testServerURL+`address/{alias}@{domain.tld}“}}`,
 			),
 		)
 
 		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities("test.com", DefaultPort)
+		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
 		assert.NoError(t, err)
 		assert.NotNil(t, capabilities)
 		assert.Equal(t, DefaultBsvAliasVersion, capabilities.BsvAlias)
@@ -182,15 +171,16 @@ func TestClient_GetCapabilities(t *testing.T) {
 		assert.NotNil(t, client)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
+		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusNotModified,
-				`{"bsvalias": "","capabilities": {"6745385c3fc0": false,"pki": "`+testServerURL+`id/{alias}@{domain.tld}","paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
+				`{"`+DefaultServiceName+`": "","capabilities": {"6745385c3fc0": false,"pki": "`+testServerURL+`id/{alias}@{domain.tld}",
+"paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
 			),
 		)
 
 		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities("test.com", DefaultPort)
+		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
 		assert.Error(t, err)
 		assert.NotNil(t, capabilities)
 		assert.NotEqual(t, DefaultBsvAliasVersion, capabilities.BsvAlias)
@@ -203,15 +193,16 @@ func TestClient_GetCapabilities(t *testing.T) {
 		assert.NotNil(t, client)
 
 		httpmock.Reset()
-		httpmock.RegisterResponder(http.MethodGet, "https://test.com:443/.well-known/bsvalias",
+		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewStringResponder(
 				http.StatusNotModified,
-				`{"bsvalias": ,capabilities: {6745385c3fc0: ,pki: `+testServerURL+`id/{alias}@{domain.tld}","paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
+				`{"`+DefaultServiceName+`": ,capabilities: {6745385c3fc0: ,pki: `+testServerURL+`id/{alias}@{domain.tld}",
+"paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
 			),
 		)
 
 		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities("test.com", DefaultPort)
+		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
 		assert.Error(t, err)
 		assert.NotNil(t, capabilities)
 		assert.Equal(t, http.StatusNotModified, capabilities.StatusCode)
@@ -219,33 +210,49 @@ func TestClient_GetCapabilities(t *testing.T) {
 	})
 }
 
+// mockCapabilities is used for mocking the response
+func mockCapabilities(statusCode int) {
+	httpmock.Reset()
+	httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
+		httpmock.NewStringResponder(
+			statusCode,
+			`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","capabilities": 
+{"6745385c3fc0": false,"pki": "`+testServerURL+`id/{alias}@{domain.tld}",
+"paymentDestination": "`+testServerURL+`address/{alias}@{domain.tld}"}}`,
+		),
+	)
+}
+
 // ExampleClient_GetCapabilities example using GetCapabilities()
 //
 // See more examples in /examples/
 func ExampleClient_GetCapabilities() {
 	// Load the client
-	client, err := NewClient(nil, nil, nil)
+	client, err := newTestClient()
 	if err != nil {
 		fmt.Printf("error loading client: %s", err.Error())
 		return
 	}
 
+	mockCapabilities(http.StatusOK)
+
 	// Get the capabilities
 	var capabilities *Capabilities
-	capabilities, err = client.GetCapabilities("relayx.io", DefaultPort)
+	capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
 	if err != nil {
 		fmt.Printf("error getting capabilities: " + err.Error())
 		return
 	}
 	fmt.Printf("found %d capabilities", len(capabilities.Capabilities))
-	// Output:found 4 capabilities
+	// Output:found 3 capabilities
 }
 
 // BenchmarkClient_GetCapabilities benchmarks the method GetCapabilities()
 func BenchmarkClient_GetCapabilities(b *testing.B) {
-	client, _ := NewClient(nil, nil, nil)
+	client, _ := newTestClient()
+	mockCapabilities(http.StatusOK)
 	for i := 0; i < b.N; i++ {
-		_, _ = client.GetCapabilities("moneybutton.com", DefaultPort)
+		_, _ = client.GetCapabilities(testDomain, DefaultPort)
 	}
 }
 
@@ -262,32 +269,56 @@ func TestCapabilities_Has(t *testing.T) {
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": true,
+				"alternate_id": true,
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
 		}, "6745385c3fc0", "alternate_id", true},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": true,
+				"alternate_id": true,
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
 		}, "6745385c3fc0", "", true},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": true,
+				"alternate_id": true,
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
 		}, "alternate_id", "6745385c3fc0", true},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": true,
+				"alternate_id": true,
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
 		}, "6745385c3fc0", "6745385c3fc0", true},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": true,
+				"alternate_id": true,
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
 		}, "wrong", "wrong", false},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": true,
+				"alternate_id": true,
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
 		}, "wrong", "6745385c3fc0", true},
 	}
 
@@ -305,7 +336,11 @@ func ExampleCapabilities_Has() {
 	capabilities := &Capabilities{
 		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 		BsvAlias:         DefaultServiceName,
-		Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+		Capabilities: map[string]interface{}{
+			"6745385c3fc0": true,
+			"alternate_id": true,
+			"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		},
 	}
 
 	found := capabilities.Has("6745385c3fc0", "alternate_id")
@@ -318,7 +353,11 @@ func BenchmarkCapabilities_Has(b *testing.B) {
 	capabilities := &Capabilities{
 		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 		BsvAlias:         DefaultServiceName,
-		Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+		Capabilities: map[string]interface{}{
+			"6745385c3fc0": true,
+			"alternate_id": true,
+			"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		},
 	}
 
 	for i := 0; i < b.N; i++ {
@@ -339,32 +378,56 @@ func TestCapabilities_GetBool(t *testing.T) {
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": true,
+				"alternate_id": true,
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
 		}, "6745385c3fc0", "alternate_id", true},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": true,
+				"alternate_id": true,
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
 		}, "6745385c3fc0", "", true},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": true,
+				"alternate_id": true,
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
 		}, "alternate_id", "6745385c3fc0", true},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": true,
+				"alternate_id": true,
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
 		}, "6745385c3fc0", "6745385c3fc0", true},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": true,
+				"alternate_id": true,
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
 		}, "wrong", "wrong", false},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": true,
+				"alternate_id": true,
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
 		}, "wrong", "6745385c3fc0", true},
 	}
 
@@ -382,7 +445,11 @@ func ExampleCapabilities_GetBool() {
 	capabilities := &Capabilities{
 		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 		BsvAlias:         DefaultServiceName,
-		Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+		Capabilities: map[string]interface{}{
+			"6745385c3fc0": true,
+			"alternate_id": true,
+			"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		},
 	}
 
 	found := capabilities.GetBool("6745385c3fc0", "alternate_id")
@@ -395,7 +462,11 @@ func BenchmarkCapabilities_GetBool(b *testing.B) {
 	capabilities := &Capabilities{
 		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 		BsvAlias:         DefaultServiceName,
-		Capabilities:     map[string]interface{}{"6745385c3fc0": true, "alternate_id": true, "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+		Capabilities: map[string]interface{}{
+			"6745385c3fc0": true,
+			"alternate_id": true,
+			"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		},
 	}
 
 	for i := 0; i < b.N; i++ {
@@ -417,33 +488,81 @@ func TestCapabilities_GetString(t *testing.T) {
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": false, "pki": "https://domain.com/bsvalias/id/{alias}@{domain.tld}", "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
-		}, "pki", "0c4339ef99c2", "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": false,
+				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
+		},
+			"pki",
+			"0c4339ef99c2",
+			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": false, "pki": "https://domain.com/bsvalias/id/{alias}@{domain.tld}", "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
-		}, "0c4339ef99c2", "pki", "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": false,
+				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
+		},
+			"0c4339ef99c2",
+			"pki",
+			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": false, "pki": "https://domain.com/bsvalias/id/{alias}@{domain.tld}", "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
-		}, "0c4339ef99c2", "0c4339ef99c2", "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": false,
+				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
+		},
+			"0c4339ef99c2",
+			"0c4339ef99c2",
+			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": false, "pki": "https://domain.com/bsvalias/id/{alias}@{domain.tld}", "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
-		}, "pki", "", "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": false,
+				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
+		},
+			"pki",
+			"",
+			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": false, "pki": "https://domain.com/bsvalias/id/{alias}@{domain.tld}", "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
-		}, "wrong", "wrong", ""},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": false,
+				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
+		},
+			"wrong",
+			"wrong",
+			"",
+		},
 		{&Capabilities{
 			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 			BsvAlias:         DefaultServiceName,
-			Capabilities:     map[string]interface{}{"6745385c3fc0": false, "pki": "https://domain.com/bsvalias/id/{alias}@{domain.tld}", "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
-		}, "wrong", "pki", "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+			Capabilities: map[string]interface{}{
+				"6745385c3fc0": false,
+				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			},
+		},
+			"wrong",
+			"pki",
+			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		},
 	}
 
 	for _, test := range tests {
@@ -460,7 +579,11 @@ func ExampleCapabilities_GetString() {
 	capabilities := &Capabilities{
 		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 		BsvAlias:         DefaultServiceName,
-		Capabilities:     map[string]interface{}{"6745385c3fc0": false, "pki": "https://domain.com/bsvalias/id/{alias}@{domain.tld}", "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+		Capabilities: map[string]interface{}{
+			"6745385c3fc0": false,
+			"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		},
 	}
 
 	found := capabilities.GetString("pki", "0c4339ef99c2")
@@ -473,7 +596,11 @@ func BenchmarkCapabilities_GetString(b *testing.B) {
 	capabilities := &Capabilities{
 		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
 		BsvAlias:         DefaultServiceName,
-		Capabilities:     map[string]interface{}{"6745385c3fc0": false, "pki": "https://domain.com/bsvalias/id/{alias}@{domain.tld}", "0c4339ef99c2": "https://domain.com/bsvalias/id/{alias}@{domain.tld}"},
+		Capabilities: map[string]interface{}{
+			"6745385c3fc0": false,
+			"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+			"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
+		},
 	}
 	for i := 0; i < b.N; i++ {
 		_ = capabilities.GetString("pki", "0c4339ef99c2")

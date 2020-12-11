@@ -6,44 +6,263 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
+	"github.com/stretchr/testify/assert"
 )
 
 // TestClient_GetPKI will test the method GetPKI()
 func TestClient_GetPKI(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
 
-	// Create a client with options
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
+	t.Run("successful response", func(t *testing.T) {
+		client, err := newTestClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
 
-	// Create response
+		mockGetPKI(http.StatusOK)
+
+		var pki *PKI
+		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		assert.NoError(t, err)
+		assert.NotNil(t, pki)
+		assert.Equal(t, DefaultBsvAliasVersion, pki.BsvAlias)
+		assert.Equal(t, http.StatusOK, pki.StatusCode)
+		assert.Equal(t, testAlias+"@"+testDomain, pki.Handle)
+		assert.Equal(t, "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10", pki.PubKey)
+	})
+
+	t.Run("successful response - status not modified", func(t *testing.T) {
+		client, err := newTestClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+
+		mockGetPKI(http.StatusNotModified)
+
+		var pki *PKI
+		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		assert.NoError(t, err)
+		assert.NotNil(t, pki)
+		assert.Equal(t, DefaultBsvAliasVersion, pki.BsvAlias)
+		assert.Equal(t, http.StatusNotModified, pki.StatusCode)
+		assert.Equal(t, testAlias+"@"+testDomain, pki.Handle)
+		assert.Equal(t, "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10", pki.PubKey)
+	})
+
+	t.Run("bad request", func(t *testing.T) {
+		client, err := newTestClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+
+		httpmock.Reset()
+		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+			httpmock.NewStringResponder(
+				http.StatusBadRequest,
+				`{"message": "request failed"}`,
+			),
+		)
+
+		var pki *PKI
+		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		assert.Error(t, err)
+		assert.NotNil(t, pki)
+		assert.Equal(t, http.StatusBadRequest, pki.StatusCode)
+	})
+
+	t.Run("bad error", func(t *testing.T) {
+		client, err := newTestClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+
+		httpmock.Reset()
+		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+			httpmock.NewStringResponder(
+				http.StatusBadRequest,
+				`{"message": request failed}`,
+			),
+		)
+
+		var pki *PKI
+		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		assert.Error(t, err)
+		assert.NotNil(t, pki)
+		assert.Equal(t, http.StatusBadRequest, pki.StatusCode)
+	})
+
+	t.Run("invalid alias", func(t *testing.T) {
+		client, err := newTestClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+
+		httpmock.Reset()
+		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+			httpmock.NewStringResponder(
+				http.StatusOK,
+				`{"`+DefaultServiceName+`": "","handle": "`+testAlias+`@`+testDomain+`","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
+			),
+		)
+
+		var pki *PKI
+		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		assert.Error(t, err)
+		assert.NotNil(t, pki)
+		assert.Equal(t, http.StatusOK, pki.StatusCode)
+		assert.Equal(t, "", pki.BsvAlias)
+	})
+
+	t.Run("invalid json", func(t *testing.T) {
+		client, err := newTestClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+
+		httpmock.Reset()
+		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+			httpmock.NewStringResponder(
+				http.StatusOK,
+				`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","handle": 1,pubkey: 02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10}`,
+			),
+		)
+
+		var pki *PKI
+		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		assert.Error(t, err)
+		assert.NotNil(t, pki)
+		assert.Equal(t, http.StatusOK, pki.StatusCode)
+		assert.Equal(t, "", pki.BsvAlias)
+		assert.Equal(t, "", pki.PubKey)
+	})
+
+	t.Run("returned incorrect handle", func(t *testing.T) {
+		client, err := newTestClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+
+		httpmock.Reset()
+		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+			httpmock.NewStringResponder(
+				http.StatusOK,
+				`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","handle": "invalid@`+testDomain+`","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
+			),
+		)
+
+		var pki *PKI
+		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		assert.Error(t, err)
+		assert.NotNil(t, pki)
+		assert.Equal(t, http.StatusOK, pki.StatusCode)
+		assert.NotEqual(t, testAlias+"@"+testDomain, pki.Handle)
+	})
+
+	t.Run("missing pubkey", func(t *testing.T) {
+		client, err := newTestClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+
+		httpmock.Reset()
+		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+			httpmock.NewStringResponder(
+				http.StatusOK,
+				`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","handle": "`+testAlias+`@`+testDomain+`","pubkey": ""}`,
+			),
+		)
+
+		var pki *PKI
+		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		assert.Error(t, err)
+		assert.NotNil(t, pki)
+		assert.Equal(t, http.StatusOK, pki.StatusCode)
+		assert.Equal(t, testAlias+"@"+testDomain, pki.Handle)
+		assert.Equal(t, "", pki.PubKey)
+	})
+
+	t.Run("invalid pubkey length", func(t *testing.T) {
+		client, err := newTestClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+
+		httpmock.Reset()
+		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+			httpmock.NewStringResponder(
+				http.StatusOK,
+				`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`",
+"handle": "`+testAlias+`@`+testDomain+`","pubkey": "wrong-length"}`,
+			),
+		)
+
+		var pki *PKI
+		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		assert.Error(t, err)
+		assert.NotNil(t, pki)
+		assert.Equal(t, http.StatusOK, pki.StatusCode)
+		assert.Equal(t, testAlias+"@"+testDomain, pki.Handle)
+		assert.NotEqual(t, PubKeyLength, len(pki.PubKey))
+	})
+
+	t.Run("invalid url", func(t *testing.T) {
+		client, err := newTestClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+
+		mockGetPKI(http.StatusOK)
+
+		var pki *PKI
+		pki, err = client.GetPKI("invalid-url", testAlias, testDomain)
+		assert.Error(t, err)
+		assert.Nil(t, pki)
+	})
+
+	t.Run("missing alias", func(t *testing.T) {
+		client, err := newTestClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+
+		mockGetPKI(http.StatusOK)
+
+		var pki *PKI
+		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "", testDomain)
+		assert.Error(t, err)
+		assert.Nil(t, pki)
+	})
+
+	t.Run("missing domain", func(t *testing.T) {
+		client, err := newTestClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+
+		mockGetPKI(http.StatusOK)
+
+		var pki *PKI
+		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, "")
+		assert.Error(t, err)
+		assert.Nil(t, pki)
+	})
+
+	t.Run("http error", func(t *testing.T) {
+		client, err := newTestClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+
+		httpmock.Reset()
+		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
+			httpmock.NewErrorResponder(fmt.Errorf("error in request")),
+		)
+
+		var pki *PKI
+		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		assert.Error(t, err)
+		assert.Nil(t, pki)
+	})
+}
+
+// mockGetPKI is used for mocking the response
+func mockGetPKI(statusCode int) {
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
+	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
 		httpmock.NewStringResponder(
-			http.StatusOK,
-			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
+			statusCode,
+			`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`",
+"handle": "`+testAlias+`@`+testDomain+`",
+"pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
 		),
 	)
-
-	// Fire the request
-	var pki *PKI
-	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
-	if err != nil {
-		t.Fatalf("error occurred in GetPKI: %s", err.Error())
-	} else if pki == nil {
-		t.Fatalf("pki was nil")
-	} else if pki.BsvAlias != DefaultBsvAliasVersion {
-		t.Fatalf("BsvAlias was: %s and not: %s", pki.BsvAlias, DefaultBsvAliasVersion)
-	} else if pki.StatusCode != http.StatusOK {
-		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
-	}
-
-	// Check if response has pki
-	if pki.Handle != "mrz@moneybutton.com" {
-		t.Fatalf("handle %s did not match: %s", pki.Handle, "mrz@moneybutton.com")
-	}
 }
 
 // ExampleClient_GetPKI example using GetPKI()
@@ -51,378 +270,30 @@ func TestClient_GetPKI(t *testing.T) {
 // See more examples in /examples/
 func ExampleClient_GetPKI() {
 	// Load the client
-	client, err := NewClient(nil, nil, nil)
+	client, err := newTestClient()
 	if err != nil {
 		fmt.Printf("error loading client: %s", err.Error())
 		return
 	}
 
+	mockGetPKI(http.StatusOK)
+
 	// Get the pki
 	var pki *PKI
-	pki, err = client.GetPKI("https://www.moneybutton.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
+	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
 	if err != nil {
 		fmt.Printf("error getting pki: " + err.Error())
 		return
 	}
 	fmt.Printf("found %s handle with pubkey: %s", pki.Handle, pki.PubKey)
-	// Output:found mrz@moneybutton.com handle with pubkey: 02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10
+	// Output:found mrz@test.com handle with pubkey: 02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10
 }
 
 // BenchmarkClient_GetPKI benchmarks the method GetPKI()
 func BenchmarkClient_GetPKI(b *testing.B) {
-	client, _ := NewClient(nil, nil, nil)
+	client, _ := newTestClient()
+	mockGetPKI(http.StatusOK)
 	for i := 0; i < b.N; i++ {
-		_, _ = client.GetPKI("https://www.moneybutton.com/api/v1/bsvalias/id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
-	}
-}
-
-// TestClient_GetPKIStatusNotModified will test the method GetPKI()
-func TestClient_GetPKIStatusNotModified(t *testing.T) {
-	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
-
-	// Create a client with options
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
-
-	// Create response
-	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
-		httpmock.NewStringResponder(
-			http.StatusNotModified,
-			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
-		),
-	)
-
-	// Fire the request
-	var pki *PKI
-	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
-	if err != nil {
-		t.Fatalf("error occurred in GetPKI: %s", err.Error())
-	} else if pki == nil {
-		t.Fatalf("pki was nil")
-	} else if pki.BsvAlias != DefaultBsvAliasVersion {
-		t.Fatalf("BsvAlias was: %s and not: %s", pki.BsvAlias, DefaultBsvAliasVersion)
-	} else if pki.StatusCode != http.StatusNotModified {
-		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
-	}
-}
-
-// TestClient_GetPKIBadRequest will test the method GetPKI()
-func TestClient_GetPKIBadRequest(t *testing.T) {
-	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
-
-	// Create a client with options
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
-
-	// Create response
-	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
-		httpmock.NewStringResponder(
-			http.StatusBadRequest,
-			`{"message": "request failed"}`,
-		),
-	)
-
-	// Fire the request
-	var pki *PKI
-	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
-	if err == nil {
-		t.Fatalf("error should have occurred in GetPKI")
-	} else if pki != nil && pki.StatusCode != http.StatusBadRequest {
-		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusBadRequest)
-	}
-}
-
-// TestClient_GetPKIBadError will test the method GetPKI()
-func TestClient_GetPKIBadError(t *testing.T) {
-	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
-
-	// Create a client with options
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
-
-	// Create response
-	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
-		httpmock.NewStringResponder(
-			http.StatusBadRequest,
-			`{"message": request failed}`,
-		),
-	)
-
-	// Fire the request
-	var pki *PKI
-	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
-	if err == nil {
-		t.Fatalf("error should have occurred in GetPKI")
-	} else if pki != nil && pki.StatusCode != http.StatusBadRequest {
-		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusBadRequest)
-	}
-}
-
-// TestClient_GetPKIInvalidAlias will test the method GetPKI()
-func TestClient_GetPKIInvalidAlias(t *testing.T) {
-	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
-
-	// Create a client with options
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
-
-	// Create response
-	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
-		httpmock.NewStringResponder(
-			http.StatusOK,
-			`{"bsvalias": "","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
-		),
-	)
-
-	// Fire the request
-	var pki *PKI
-	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
-	if err == nil {
-		t.Fatalf("error should have occurred in GetPKI")
-	} else if pki != nil && pki.StatusCode != http.StatusOK {
-		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
-	}
-}
-
-// TestClient_GetPKIInvalidJSON will test the method GetPKI()
-func TestClient_GetPKIInvalidJSON(t *testing.T) {
-	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
-
-	// Create a client with options
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
-
-	// Create response
-	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
-		httpmock.NewStringResponder(
-			http.StatusOK,
-			`{"bsvalias": "1.0","handle": 1,pubkey: 02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10}`,
-		),
-	)
-
-	// Fire the request
-	var pki *PKI
-	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
-	if err == nil {
-		t.Fatalf("error should have occurred in GetPKI")
-	} else if pki != nil && pki.StatusCode != http.StatusOK {
-		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
-	}
-}
-
-// TestClient_GetPKIInvalidHandle will test the method GetPKI()
-func TestClient_GetPKIInvalidHandle(t *testing.T) {
-	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
-
-	// Create a client with options
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
-
-	// Create response
-	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
-		httpmock.NewStringResponder(
-			http.StatusOK,
-			`{"bsvalias": "1.0","handle": "invalid@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
-		),
-	)
-
-	// Fire the request
-	var pki *PKI
-	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
-	if err == nil {
-		t.Fatalf("error should have occurred in GetPKI")
-	} else if pki != nil && pki.StatusCode != http.StatusOK {
-		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
-	} else if pki != nil && pki.Handle == "mrz@moneybutton.com" {
-		t.Fatalf("Handle was: %s and not: %s", pki.Handle, "mrz@moneybutton.com")
-	}
-}
-
-// TestClient_GetPKIMissingPubKey will test the method GetPKI()
-func TestClient_GetPKIMissingPubKey(t *testing.T) {
-	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
-
-	// Create a client with options
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
-
-	// Create response
-	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
-		httpmock.NewStringResponder(
-			http.StatusOK,
-			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": ""}`,
-		),
-	)
-
-	// Fire the request
-	var pki *PKI
-	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
-	if err == nil {
-		t.Fatalf("error should have occurred in GetPKI")
-	} else if pki != nil && pki.StatusCode != http.StatusOK {
-		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
-	}
-}
-
-// TestClient_GetPKIInvalidPubKeyLength will test the method GetPKI()
-func TestClient_GetPKIInvalidPubKeyLength(t *testing.T) {
-	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
-
-	// Create a client with options
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
-
-	// Create response
-	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
-		httpmock.NewStringResponder(
-			http.StatusOK,
-			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "wrong-length"}`,
-		),
-	)
-
-	// Fire the request
-	var pki *PKI
-	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
-	if err == nil {
-		t.Fatalf("error should have occurred in GetPKI")
-	} else if pki != nil && pki.StatusCode != http.StatusOK {
-		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
-	}
-}
-
-// TestClient_GetPKIInvalidURL will test the method GetPKI()
-func TestClient_GetPKIInvalidURL(t *testing.T) {
-	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
-
-	// Create a client with options
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
-
-	// Create response
-	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
-		httpmock.NewStringResponder(
-			http.StatusOK,
-			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
-		),
-	)
-
-	// Fire the request
-	var pki *PKI
-	pki, err = client.GetPKI("invalid-url", "mrz", "moneybutton.com")
-	if err == nil {
-		t.Fatalf("error should have occurred in GetPKI")
-	} else if pki != nil && pki.StatusCode != http.StatusOK {
-		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
-	}
-}
-
-// TestClient_GetPKIHTTPError will test the method GetPKI()
-func TestClient_GetPKIHTTPError(t *testing.T) {
-	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
-
-	// Create a client with options
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
-
-	// Create response
-	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
-		httpmock.NewErrorResponder(fmt.Errorf("error in request")),
-	)
-
-	// Fire the request
-	var pki *PKI
-	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "moneybutton.com")
-	if err == nil {
-		t.Fatalf("error should have occurred in GetPKI")
-	} else if pki != nil && pki.StatusCode != http.StatusOK {
-		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
-	}
-}
-
-// TestClient_GetPKIMissingAlias will test the method GetPKI()
-func TestClient_GetPKIMissingAlias(t *testing.T) {
-	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
-
-	// Create a client with options
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
-
-	// Create response
-	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
-		httpmock.NewStringResponder(
-			http.StatusOK,
-			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
-		),
-	)
-
-	// Fire the request
-	var pki *PKI
-	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "", "moneybutton.com")
-	if err == nil {
-		t.Fatalf("error should have occurred in GetPKI")
-	} else if pki != nil && pki.StatusCode != http.StatusOK {
-		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
-	}
-}
-
-// TestClient_GetPKIMissingDomain will test the method GetPKI()
-func TestClient_GetPKIMissingDomain(t *testing.T) {
-	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
-
-	// Create a client with options
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
-
-	// Create response
-	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/mrz@moneybutton.com",
-		httpmock.NewStringResponder(
-			http.StatusOK,
-			`{"bsvalias": "1.0","handle": "mrz@moneybutton.com","pubkey": "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"}`,
-		),
-	)
-
-	// Fire the request
-	var pki *PKI
-	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "mrz", "")
-	if err == nil {
-		t.Fatalf("error should have occurred in GetPKI")
-	} else if pki != nil && pki.StatusCode != http.StatusOK {
-		t.Fatalf("StatusCode was: %d and not: %d", pki.StatusCode, http.StatusOK)
+		_, _ = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
 	}
 }
