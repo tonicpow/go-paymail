@@ -3,7 +3,7 @@ module github.com/tonicpow/go-paymail
 go 1.15
 
 require (
-	github.com/bitcoinschema/go-bitcoin v0.3.9
+	github.com/bitcoinschema/go-bitcoin v0.3.11
 	github.com/bitcoinsv/bsvd v0.0.0-20190609155523-4c29707f7173
 	github.com/bitcoinsv/bsvutil v0.0.0-20181216182056-1d77cf353ea9
 	github.com/go-resty/resty/v2 v2.3.0
