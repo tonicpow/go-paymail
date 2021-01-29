@@ -7,7 +7,7 @@ require (
 	github.com/bitcoinsv/bsvd v0.0.0-20190609155523-4c29707f7173
 	github.com/bitcoinsv/bsvutil v0.0.0-20181216182056-1d77cf353ea9
 	github.com/go-resty/resty/v2 v2.4.0
-	github.com/jarcoal/httpmock v1.0.7
+	github.com/jarcoal/httpmock v1.0.8
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/miekg/dns v1.1.35
 	github.com/mrz1836/go-api-router v0.3.8
