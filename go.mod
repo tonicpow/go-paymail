@@ -21,3 +21,5 @@ require (
 	golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c // indirect
 	golang.org/x/text v0.3.5 // indirect
 )
+
+replace github.com/go-resty/resty/v2 => github.com/go-resty/resty/v2 v2.4.0
