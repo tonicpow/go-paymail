@@ -10,7 +10,7 @@ require (
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/libsv/go-bt v0.0.8 // indirect
-	github.com/miekg/dns v1.1.39
+	github.com/miekg/dns v1.1.40
 	github.com/mrz1836/go-api-router v0.3.9
 	github.com/mrz1836/go-logger v0.2.4
 	github.com/mrz1836/go-sanitize v1.1.3
