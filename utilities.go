@@ -9,6 +9,29 @@ import (
 	"github.com/mrz1836/go-validate"
 )
 
+// SanitisedPaymail contains elements of a sanitized paymail address.
+// All elements are lowercased.
+type SanitisedPaymail struct{
+	Alias, Domain, Address string
+}
+
+// ValidateAndSanitisePaymail will take a paymail address or handle,
+// convert to a paymail address if it's a handle,
+// validate that address, then sanitize it if it is valid.
+// If the address or handle isn't valid, an error will be returned.
+func ValidateAndSanitisePaymail(paymail string, isBeta bool) (*SanitisedPaymail, error){
+	h := ConvertHandle(paymail, isBeta)
+	if err := ValidatePaymail(h); err != nil{
+		return nil, err
+	}
+	a,d,ad := SanitizePaymail(h)
+	return &SanitisedPaymail{
+		Alias:  a,
+		Domain:  d,
+		Address: ad,
+	}, nil
+}
+
 // SanitizePaymail will take an input and return the sanitized version (alias@domain.tld)
 //
 // Alias is the first part of the address (alias @)

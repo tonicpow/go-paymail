@@ -1,7 +1,9 @@
 package paymail
 
 import (
+	"errors"
 	"fmt"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -253,5 +255,82 @@ func BenchmarkValidateTimestamp(b *testing.B) {
 	timestamp := time.Now().UTC().Format(time.RFC3339)
 	for i := 0; i < b.N; i++ {
 		_ = ValidateTimestamp(timestamp)
+	}
+}
+
+func TestValidateAndSanitisePaymail(t *testing.T) {
+	t.Parallel()
+	tests := map[string]struct{
+		paymail string
+		isBeta bool
+		expected *SanitisedPaymail
+		error error
+	}{
+		"valid paymail address should be allowed": {
+			paymail:  "test@domain.com",
+			isBeta:  false,
+			expected: &SanitisedPaymail{
+				Alias:   "test",
+				Domain:  "domain.com",
+				Address: "test@domain.com",
+			},
+		},"invalid paymail address should error": {
+			paymail:  "test@domain",
+			isBeta:  false,
+			error:errors.New("paymail address failed format validation: email is not a valid address format"),
+		},"handcash should convert and return": {
+			paymail:  "$test",
+			isBeta:  false,
+			expected: &SanitisedPaymail{
+				Alias:   "test",
+				Domain:  "handcash.io",
+				Address: "test@handcash.io",
+			},
+		},"handcash beta should convert and return": {
+			paymail:  "$test",
+			isBeta:  true,
+			expected: &SanitisedPaymail{
+				Alias:   "test",
+				Domain:  "beta.handcash.io",
+				Address: "test@beta.handcash.io",
+			},
+		},"mad casing should standardize": {
+			paymail:  "TeST@tEsT.cOM",
+			isBeta:  true,
+			expected: &SanitisedPaymail{
+				Alias:   "test",
+				Domain:  "test.com",
+				Address: "test@test.com",
+			},
+		},"relayx should convert and return": {
+			paymail:  "1test",
+			isBeta:  false,
+			expected: &SanitisedPaymail{
+				Alias:   "test",
+				Domain:  "relayx.io",
+				Address: "test@relayx.io",
+			},
+		},
+	}
+	for name, test := range tests{
+		t.Run(name, func(t *testing.T) {
+			s, err := ValidateAndSanitisePaymail(test.paymail, test.isBeta)
+			if test.error != nil{
+				if err == nil || err.Error() != test.error.Error(){
+					t.Errorf("expected error [%s] does not match actual [%s]", test.error, err)
+				}
+			}
+			if !reflect.DeepEqual(test.expected,s){
+				t.Errorf("expected result [%+v] \n does not match actual [%+v]\n", test.expected, s)
+			}
+		})
+	}
+}
+
+
+// BenchmarkTestValidateAndSanitisePaymail benchmarks the method ValidateTimestamp()
+func BenchmarkTestValidateAndSanitisePaymail(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _ = ValidateAndSanitisePaymail("test@paymail.com", false)
 	}
 }
