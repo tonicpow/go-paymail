@@ -162,10 +162,10 @@ func TestClientOptions_LoadBRFCs(t *testing.T) {
 		expectedLength int
 		expectedError  bool
 	}{
-		{`[{"author": "andy (nChain)","id": "57dd1f54fc67","title": "BRFC Specifications","url": "http://bsvalias.org/01-02-brfc-id-assignment.html","version": "1"}]`, len(client.Options.BRFCSpecs) + 1, false},
-		{`[{"invalid:1}]`, len(client.Options.BRFCSpecs), true},
-		{`[{"author": "andy (nChain), Ryan X. Charles (Money Button)","title":"invalid-spec","id": "17dd1f54fc66"}]`, len(client.Options.BRFCSpecs), true},
-		{`[{"author": "andy (nChain), Ryan X. Charles (Money Button)","title":""}]`, len(client.Options.BRFCSpecs), true},
+		{`[{"author": "andy (nChain)","id": "57dd1f54fc67","title": "BRFC Specifications","url": "http://bsvalias.org/01-02-brfc-id-assignment.html","version": "1"}]`, len(client.Options.brfcSpecs) + 1, false},
+		{`[{"invalid:1}]`, len(client.Options.brfcSpecs), true},
+		{`[{"author": "andy (nChain), Ryan X. Charles (Money Button)","title":"invalid-spec","id": "17dd1f54fc66"}]`, len(client.Options.brfcSpecs), true},
+		{`[{"author": "andy (nChain), Ryan X. Charles (Money Button)","title":""}]`, len(client.Options.brfcSpecs), true},
 	}
 
 	for _, test := range tests {
@@ -173,8 +173,8 @@ func TestClientOptions_LoadBRFCs(t *testing.T) {
 			t.Errorf("%s Failed: [%s] inputted, [%d] expected specs and error not expected but got: %s", t.Name(), test.specJSON, test.expectedLength, err.Error())
 		} else if err == nil && test.expectedError {
 			t.Errorf("%s Failed: [%s] inputted, [%d] expected specs and error was expected", t.Name(), test.specJSON, test.expectedLength)
-		} else if len(client.Options.BRFCSpecs) != test.expectedLength {
-			t.Errorf("%s Failed: [%s] inputted, [%d] expected specs but got: %d", t.Name(), test.specJSON, test.expectedLength, len(client.Options.BRFCSpecs))
+		} else if len(client.Options.brfcSpecs) != test.expectedLength {
+			t.Errorf("%s Failed: [%s] inputted, [%d] expected specs but got: %d", t.Name(), test.specJSON, test.expectedLength, len(client.Options.brfcSpecs))
 		}
 	}
 }
@@ -196,7 +196,7 @@ func ExampleClientOptions_LoadBRFCs() {
 		fmt.Printf("error occurred: %s", err.Error())
 		return
 	}
-	fmt.Printf("total specifications found: %d", len(client.Options.BRFCSpecs))
+	fmt.Printf("total specifications found: %d", len(client.Options.brfcSpecs))
 
 	// Output:total specifications found: 20
 }

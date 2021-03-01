@@ -26,19 +26,12 @@ func newTestClient() (*Client, error) {
 	}
 
 	// Set test options
-	options.RequestTracing = true
-	options.DNSTimeout = 15
-
-	// Create a new client
-	var newClient *Client
-	newClient, err = NewClient(options, client, nil)
-	if err != nil {
-		return nil, err
-	}
+	options.requestTracing = true
+	options.dnsTimeout = 15
 
 	// Set the customer resolver with known defaults
 	r := newCustomResolver(
-		newClient.Resolver,
+		newClient.Options.resolver,
 		map[string][]string{
 			testDomain:      {"44.225.125.175", "35.165.117.200", "54.190.182.236"},
 			"norecords.com": {},
@@ -54,9 +47,13 @@ func newTestClient() (*Client, error) {
 		},
 	)
 
+	// Create a new client
+	newClient, err := NewClient(WithRequestTracing(), WithDNSTimeout(15*time.Second))
+	if err != nil {
+		return nil, err
+	}
 	// Set the custom resolver
 	newClient.Resolver = r
-
 	// Return the mocking client
 	return newClient, nil
 }
@@ -69,19 +66,19 @@ func TestNewClient(t *testing.T) {
 		client, err := NewClient(nil, nil, nil)
 		assert.NoError(t, err)
 		assert.NotNil(t, client)
-		assert.Equal(t, defaultDNSTimeout, client.Options.DNSTimeout)
-		assert.Equal(t, defaultDNSPort, client.Options.DNSPort)
+		assert.Equal(t, defaultDNSTimeout, client.Options.dnsTimeout)
+		assert.Equal(t, defaultDNSPort, client.Options.dnsPort)
 		assert.Equal(t, defaultUserAgent, client.Options.UserAgent)
 		assert.Equal(t, defaultNameServerNetwork, client.Options.NameServerNetwork)
 		assert.Equal(t, defaultNameServer, client.Options.NameServer)
 		assert.Equal(t, defaultSSLTimeout, client.Options.SSLTimeout)
 		assert.Equal(t, defaultSSLDeadline, client.Options.SSLDeadline)
-		assert.Equal(t, defaultGetTimeout, client.Options.GetTimeout)
+		assert.Equal(t, defaultGetTimeout, client.Options.getTimeout)
 		assert.Equal(t, defaultRetryCount, client.Options.RetryCount)
 		assert.Equal(t, false, client.Options.RequestTracing)
 		assert.Equal(t, defaultPostTimeout, client.Options.PostTimeout)
-		assert.NotEqual(t, 0, len(client.Options.BRFCSpecs))
-		assert.Greater(t, len(client.Options.BRFCSpecs), 6)
+		assert.NotEqual(t, 0, len(client.Options.brfcSpecs))
+		assert.Greater(t, len(client.Options.brfcSpecs), 6)
 	})
 
 	t.Run("custom http client", func(t *testing.T) {
@@ -117,7 +114,7 @@ func TestNewClient(t *testing.T) {
 		assert.NotNil(t, options)
 
 		// Remove the specs (empty)
-		options.BRFCSpecs = nil
+		options.brfcSpecs = nil
 
 		var client *Client
 		client, err = NewClient(options, nil, nil)
@@ -154,19 +151,19 @@ func TestDefaultClientOptions(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, options)
 
-	assert.Equal(t, defaultDNSTimeout, options.DNSTimeout)
-	assert.Equal(t, defaultDNSPort, options.DNSPort)
+	assert.Equal(t, defaultDNSTimeout, options.dnsTimeout)
+	assert.Equal(t, defaultDNSPort, options.dnsPort)
 	assert.Equal(t, defaultUserAgent, options.UserAgent)
 	assert.Equal(t, defaultNameServerNetwork, options.NameServerNetwork)
 	assert.Equal(t, defaultNameServer, options.NameServer)
 	assert.Equal(t, defaultSSLTimeout, options.SSLTimeout)
 	assert.Equal(t, defaultSSLDeadline, options.SSLDeadline)
-	assert.Equal(t, defaultGetTimeout, options.GetTimeout)
+	assert.Equal(t, defaultGetTimeout, options.getTimeout)
 	assert.Equal(t, defaultRetryCount, options.RetryCount)
 	assert.Equal(t, false, options.RequestTracing)
 	assert.Equal(t, defaultPostTimeout, options.PostTimeout)
-	assert.NotEqual(t, 0, len(options.BRFCSpecs))
-	assert.Greater(t, len(options.BRFCSpecs), 6)
+	assert.NotEqual(t, 0, len(options.brfcSpecs))
+	assert.Greater(t, len(options.brfcSpecs), 6)
 }
 
 // ExampleDefaultClientOptions example using DefaultClientOptions()

@@ -19,5 +19,5 @@ func main() {
 	if err = client.Options.LoadBRFCs(additionalSpec); err != nil {
 		log.Fatalf("error occurred: %s", err.Error())
 	}
-	log.Printf("total specifications loaded: %d", len(client.Options.BRFCSpecs))
+	log.Printf("total specifications loaded: %d", len(client.Options.brfcSpecs))
 }

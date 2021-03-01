@@ -10,13 +10,13 @@ import (
 type resolver struct {
 	hosts        map[string][]string
 	ipAddresses  map[string][]net.IPAddr
-	liveResolver ResolverInterface
+	liveResolver DNSResolver
 	srvRecords   map[string][]*net.SRV
 }
 
 // newCustomResolver will return a custom resolver with specific records hard coded ,
-func newCustomResolver(liveResolver ResolverInterface, hosts map[string][]string,
-	srvRecords map[string][]*net.SRV, ipAddresses map[string][]net.IPAddr) ResolverInterface {
+func newCustomResolver(liveResolver DNSResolver, hosts map[string][]string,
+	srvRecords map[string][]*net.SRV, ipAddresses map[string][]net.IPAddr) DNSResolver {
 	return &resolver{
 		hosts:        hosts,
 		ipAddresses:  ipAddresses,
