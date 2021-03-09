@@ -10,101 +10,130 @@ import (
 
 // Client is the paymail client/configuration
 type Client struct {
-	options *clientOptions `json:"options"` // Options are all the default settings / configuration
+	options    *clientOptions // Options are all the default settings / configuration
+	resolver   DNSResolver
+	httpClient *resty.Client
 }
 
 // ClientOptions holds all the configuration for client requests and default resources
 type clientOptions struct {
-	brfcSpecs         []*BRFCSpec   `json:"brfc_specs"`          // List of BRFC specifications
-	dnsPort           string        `json:"dns_port"`            // Default DNS port for SRV checks
-	dnsTimeout        time.Duration `json:"dns_timeout"`         // Default timeout in seconds for DNS fetching
-	httpTimeout       time.Duration `json:"get_timeout"`         // Default timeout in seconds for GET requests
-	nameServer        string        `json:"name_server"`         // Default name server for DNS checks
-	nameServerNetwork string        `json:"name_server_network"` // Default name server network
-	requestTracing    bool          `json:"request_tracing"`     // If enabled, it will trace the request timing
-	retryCount        int           `json:"retry_count"`         // Default retry count for HTTP requests
-	sslDeadline       time.Duration `json:"ssl_deadline"`        // Default timeout in seconds for SSL deadline
-	sslTimeout        time.Duration `json:"ssl_timeout"`         // Default timeout in seconds for SSL timeout
-	userAgent         string        `json:"user_agent"`          // User agent for all outgoing requests
-	resolver          DNSResolver   `json:"-"`
-	httpClient        *resty.Client `json:"-"`
+	brfcSpecs         []*BRFCSpec   // List of BRFC specifications
+	dnsPort           string        // Default DNS port for SRV checks
+	dnsTimeout        time.Duration // Default timeout in seconds for DNS fetching
+	httpTimeout       time.Duration // Default timeout in seconds for GET requests
+	nameServer        string        // Default name server for DNS checks
+	nameServerNetwork string        // Default name server network
+	requestTracing    bool          // If enabled, it will trace the request timing
+	retryCount        int           // Default retry count for HTTP requests
+	sslDeadline       time.Duration // Default timeout in seconds for SSL deadline
+	sslTimeout        time.Duration // Default timeout in seconds for SSL timeout
+	userAgent         string        // User agent for all outgoing requests
+
 }
 
+// ClientOps allow functional options to be supplied
+// that overwrite default go-paymail client options.
 type ClientOps func(c *clientOptions)
 
+// WithDNSPort can be supplied with a custom dns port to perform SRV checks on.
+// Default is 53.
 func WithDNSPort(port string) ClientOps {
 	return func(c *clientOptions) {
 		c.dnsPort = port
 	}
 }
 
+// WithDNSTimeout can be supplied to overwrite the default dns srv check timeout.
+// The default is 5 seconds.
 func WithDNSTimeout(timeout time.Duration) ClientOps {
 	return func(c *clientOptions) {
 		c.dnsTimeout = timeout
 	}
 }
+
+// WithBRFCSpecs allows custom specs to be supplied to extend or replace the defaults.
 func WithBRFCSpecs(specs []*BRFCSpec) ClientOps {
 	return func(c *clientOptions) {
 		c.brfcSpecs = specs
 	}
 }
 
-func WithHttpTimeout(timeout time.Duration) ClientOps {
+// WithHTTPTimeout can be supplied to adjust the default http client timeouts.
+// The http client is used when querying paymail services for capabilities
+// Default timeout is 20 seconds.
+func WithHTTPTimeout(timeout time.Duration) ClientOps {
 	return func(c *clientOptions) {
 		c.httpTimeout = timeout
 	}
 }
 
+// WithNameServer can be supplied to overwrite the default name server used to resolve srv requests.
+// default is 8.8.8.8.
 func WithNameServer(ip string) ClientOps {
 	return func(c *clientOptions) {
 		c.nameServer = ip
 	}
 }
+
+// WithNameServerNetwork can overwrite the default network protocol to use.
+// The default is udp.
 func WithNameServerNetwork(network string) ClientOps {
 	return func(c *clientOptions) {
 		c.nameServerNetwork = network
 	}
 }
 
+// WithRequestTracing will enable tracing.
+// Tracing is disabled by default.
 func WithRequestTracing() ClientOps {
 	return func(c *clientOptions) {
 		c.requestTracing = true
 	}
 }
+
+// WithRetryCount will overwrite the default retry count for http requests.
+// Default retries is 2.
 func WithRetryCount(retries int) ClientOps {
 	return func(c *clientOptions) {
 		c.retryCount = retries
 	}
 }
 
+// WithSSLTimeout will overwrite the default ssl timeout.
+// Default timeout is 10 seconds.
 func WithSSLTimeout(timeout time.Duration) ClientOps {
 	return func(c *clientOptions) {
 		c.sslTimeout = timeout
 	}
 }
 
+// WithSSLDeadline will overwrite the default ssl deadline.
+// Default is 10 seconds.
 func WithSSLDeadline(timeout time.Duration) ClientOps {
 	return func(c *clientOptions) {
 		c.sslDeadline = timeout
 	}
 }
 
+// WithUserAgent will overwrite the default useragent.
+// Default is go-paymail + version.
 func WithUserAgent(userAgent string) ClientOps {
 	return func(c *clientOptions) {
 		c.userAgent = userAgent
 	}
 }
 
-func WithCustomResolver(resolver DNSResolver) ClientOps {
-	return func(c *clientOptions) {
-		c.resolver = resolver
-	}
+// WithCustomResolver will allow you to supply a custom  dns resolver,
+// useful for testing etc.
+func (c *Client) WithCustomResolver(resolver DNSResolver) *Client {
+	c.resolver = resolver
+	return c
 }
 
-func WithCustomHttpClient(client *resty.Client) ClientOps {
-	return func(c *clientOptions) {
-		c.httpClient = client
-	}
+// WithCustomHTTPClient will overwrite the default client with a custom client.
+func (c *Client) WithCustomHTTPClient(client *resty.Client) *Client {
+	c.httpClient = client
+	return c
 }
 
 // defaultClientOptions will return an Options struct with the default settings
@@ -115,7 +144,7 @@ func defaultClientOptions() (opts *clientOptions, err error) {
 	opts = &clientOptions{
 		dnsPort:           defaultDNSPort,
 		dnsTimeout:        defaultDNSTimeout,
-		httpTimeout:       defaultHttpTimeout,
+		httpTimeout:       defaultHTTPTimeout,
 		nameServer:        defaultNameServer,
 		nameServerNetwork: defaultNameServerNetwork,
 		requestTracing:    false,
@@ -161,16 +190,16 @@ func NewClient(opts ...ClientOps) (*Client, error) {
 		}
 	}
 	// Set the resolver
-	if client.options.resolver == nil {
+	if client.resolver == nil {
 		r := client.defaultResolver()
-		client.options.resolver = &r
+		client.resolver = &r
 	}
 	// Set the Resty HTTP client
-	if client.options.httpClient == nil {
-		client.options.httpClient = resty.New()
+	if client.httpClient == nil {
+		client.httpClient = resty.New()
 		// Set defaults (for GET requests)
-		client.options.httpClient.SetTimeout(time.Duration(client.options.httpTimeout) * time.Second)
-		client.options.httpClient.SetRetryCount(client.options.retryCount)
+		client.httpClient.SetTimeout(client.options.httpTimeout)
+		client.httpClient.SetRetryCount(client.options.retryCount)
 	}
 	return client, nil
 }
@@ -178,9 +207,9 @@ func NewClient(opts ...ClientOps) (*Client, error) {
 // getRequest is a standard GET request for all outgoing HTTP requests
 func (c *Client) getRequest(requestURL string) (response StandardResponse, err error) {
 	// Set the user agent
-	req := c.Options.httpClient.R().SetHeader("User-Agent", c.Options.userAgent)
+	req := c.httpClient.R().SetHeader("User-Agent", c.options.userAgent)
 	// Enable tracing
-	if c.Options.requestTracing {
+	if c.options.requestTracing {
 		req.EnableTrace()
 	}
 	// Fire the request
@@ -189,7 +218,7 @@ func (c *Client) getRequest(requestURL string) (response StandardResponse, err e
 		return
 	}
 	// Tracing enabled?
-	if c.Options.requestTracing {
+	if c.options.requestTracing {
 		response.Tracing = resp.Request.TraceInfo()
 	}
 	// Set the status code
@@ -202,9 +231,9 @@ func (c *Client) getRequest(requestURL string) (response StandardResponse, err e
 // postRequest is a standard PORT request for all outgoing HTTP requests
 func (c *Client) postRequest(requestURL string, data interface{}) (response StandardResponse, err error) {
 	// Set the user agent
-	req := c.Options.httpClient.R().SetBody(data).SetHeader("User-Agent", c.Options.userAgent)
+	req := c.httpClient.R().SetBody(data).SetHeader("User-Agent", c.options.userAgent)
 	// Enable tracing
-	if c.Options.requestTracing {
+	if c.options.requestTracing {
 		req.EnableTrace()
 	}
 	// Fire the request
@@ -213,7 +242,7 @@ func (c *Client) postRequest(requestURL string, data interface{}) (response Stan
 		return
 	}
 	// Tracing enabled?
-	if c.Options.requestTracing {
+	if c.options.requestTracing {
 		response.Tracing = resp.Request.TraceInfo()
 	}
 	// Set the status code

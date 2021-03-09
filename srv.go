@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 	"strings"
-	"time"
 )
 
 // defaultResolver will return a custom dns resolver
@@ -17,10 +16,10 @@ func (c *Client) defaultResolver() net.Resolver {
 		StrictErrors: false,
 		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
 			d := net.Dialer{
-				Timeout: time.Second * time.Duration(c.Options.dnsTimeout),
+				Timeout: c.options.dnsTimeout,
 			}
 			return d.DialContext(
-				ctx, c.Options.nameServerNetwork, c.Options.nameServer+":"+c.Options.dnsPort,
+				ctx, c.options.nameServerNetwork, c.options.nameServer+":"+c.options.dnsPort,
 			)
 		},
 	}
@@ -49,7 +48,7 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 	// Lookup the SRV record
 	var cname string
 	var records []*net.SRV
-	if cname, records, err = c.Options.resolver.LookupSRV(
+	if cname, records, err = c.resolver.LookupSRV(
 		context.Background(), service, protocol, domainName,
 	); err != nil {
 		return
@@ -108,7 +107,7 @@ func (c *Client) ValidateSRVRecord(ctx context.Context, srv *net.SRV, port, prio
 	}
 
 	// Test resolving the target
-	if addresses, err := c.Options.resolver.LookupHost(ctx, srv.Target); err != nil {
+	if addresses, err := c.resolver.LookupHost(ctx, srv.Target); err != nil {
 		return err
 	} else if len(addresses) == 0 {
 		return fmt.Errorf("srv target %s could not resolve a host", srv.Target)

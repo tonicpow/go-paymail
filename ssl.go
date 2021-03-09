@@ -15,7 +15,7 @@ func (c *Client) CheckSSL(host string) (valid bool, err error) {
 
 	// Lookup the host
 	var ips []net.IPAddr
-	if ips, err = c.Resolver.LookupIPAddr(context.Background(), host); err != nil {
+	if ips, err = c.resolver.LookupIPAddr(context.Background(), host); err != nil {
 		return
 	}
 
@@ -25,8 +25,8 @@ func (c *Client) CheckSSL(host string) (valid bool, err error) {
 
 			// Set the dialer
 			dialer := net.Dialer{
-				Timeout:  time.Duration(c.Options.SSLTimeout) * time.Second,
-				Deadline: time.Now().Add(time.Duration(c.Options.SSLDeadline) * time.Second),
+				Timeout:  c.options.sslTimeout,
+				Deadline: time.Now().Add(c.options.sslDeadline),
 			}
 
 			// Set the connection

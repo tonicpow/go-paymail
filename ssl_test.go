@@ -60,7 +60,7 @@ func TestClient_CheckSSL(t *testing.T) {
 //
 // See more examples in /examples/
 func ExampleClient_CheckSSL() {
-	client, _ := NewClient(nil, nil, nil)
+	client, _ := NewClient()
 	valid, _ := client.CheckSSL("google.com")
 	if valid {
 		fmt.Printf("valid SSL certificate found for: %s", "google.com")

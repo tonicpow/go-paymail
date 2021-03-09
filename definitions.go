@@ -11,8 +11,8 @@ import (
 // Defaults for paymail functions
 const (
 	defaultDNSPort           = "53"                     // Default port for DNS / NameServer checks
-	defaultDNSTimeout        = 5                        // In seconds
-	defaultHttpTimeout       = 20 * time.Second         // Default timeout for all GET requests in seconds
+	defaultDNSTimeout        = 5 * time.Second          // In seconds
+	defaultHTTPTimeout       = 20 * time.Second         // Default timeout for all GET requests in seconds
 	defaultNameServer        = "8.8.8.8"                // Default DNS NameServer
 	defaultNameServerNetwork = "udp"                    // Default for NS dialer
 	defaultRetryCount        = 2                        // Default retry count for HTTP requests

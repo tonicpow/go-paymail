@@ -21,8 +21,7 @@ func TestClient_GetCapabilities(t *testing.T) {
 
 		mockCapabilities(http.StatusOK)
 
-		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
+		capabilities, err := client.GetCapabilities(testDomain, DefaultPort)
 		assert.NoError(t, err)
 		assert.NotNil(t, capabilities)
 		assert.Equal(t, DefaultBsvAliasVersion, capabilities.BsvAlias)

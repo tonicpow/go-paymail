@@ -11,7 +11,7 @@ import (
 func main() {
 
 	// Load the client
-	client, err := paymail.NewClient(nil, nil, nil)
+	client, err := paymail.NewClient()
 	if err != nil {
 		log.Fatalf("error loading client: %s", err.Error())
 	}
