@@ -11,7 +11,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/miekg/dns v1.1.41
 	github.com/mrz1836/go-api-router v0.3.9
-	github.com/mrz1836/go-logger v0.2.4
+	github.com/mrz1836/go-logger v0.2.5
 	github.com/mrz1836/go-sanitize v1.1.3
 	github.com/mrz1836/go-validate v0.2.0
 	github.com/stretchr/testify v1.7.0
