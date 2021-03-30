@@ -80,8 +80,56 @@ func TestNewClient(t *testing.T) {
 		client.WithCustomHTTPClient(customHTTPClient)
 	})
 
+	t.Run("custom dns port", func(t *testing.T) {
+		client, err := NewClient(WithDNSPort("54"))
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+		assert.Equal(t, "54", client.options.dnsPort)
+	})
+
+	t.Run("custom http timeout", func(t *testing.T) {
+		client, err := NewClient(WithHTTPTimeout(10 * time.Second))
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+		assert.Equal(t, 10*time.Second, client.options.httpTimeout)
+	})
+
+	t.Run("custom name server", func(t *testing.T) {
+		client, err := NewClient(WithNameServer("9.9.9.9"))
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+		assert.Equal(t, "9.9.9.9", client.options.nameServer)
+	})
+
+	t.Run("custom name server network", func(t *testing.T) {
+		client, err := NewClient(WithNameServerNetwork("tcp"))
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+		assert.Equal(t, "tcp", client.options.nameServerNetwork)
+	})
+
+	t.Run("custom retry count", func(t *testing.T) {
+		client, err := NewClient(WithRetryCount(3))
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+		assert.Equal(t, 3, client.options.retryCount)
+	})
+
+	t.Run("custom ssl timeout", func(t *testing.T) {
+		client, err := NewClient(WithSSLTimeout(7 * time.Second))
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+		assert.Equal(t, 7*time.Second, client.options.sslTimeout)
+	})
+
+	t.Run("custom ssl deadline", func(t *testing.T) {
+		client, err := NewClient(WithSSLDeadline(7 * time.Second))
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+		assert.Equal(t, 7*time.Second, client.options.sslDeadline)
+	})
+
 	t.Run("custom options", func(t *testing.T) {
-		var client *Client
 		client, err := NewClient(WithUserAgent("custom user agent"))
 		assert.NotNil(t, client)
 		assert.NoError(t, err)
@@ -113,7 +161,7 @@ func ExampleNewClient() {
 		return
 	}
 	fmt.Printf("loaded client: %s", client.options.userAgent)
-	// Output:loaded client: go-paymail: v0.1.6
+	// Output:loaded client: go-paymail: v0.2.0
 }
 
 // BenchmarkNewClient benchmarks the method NewClient()
@@ -123,7 +171,7 @@ func BenchmarkNewClient(b *testing.B) {
 	}
 }
 
-// TestDefaultClientOptions will test the method DefaultClientOptions()
+// TestDefaultClientOptions will test the method defaultClientOptions()
 func TestDefaultClientOptions(t *testing.T) {
 	t.Parallel()
 
@@ -145,21 +193,7 @@ func TestDefaultClientOptions(t *testing.T) {
 	assert.Greater(t, len(options.brfcSpecs), 6)
 }
 
-// ExampleDefaultClientOptions example using DefaultClientOptions()
-//
-// See more examples in /examples/
-// nolint:govet // opts are now private
-func ExampleDefaultClientOptions() {
-	options, err := defaultClientOptions()
-	if err != nil {
-		fmt.Printf("error loading options: %s", err.Error())
-		return
-	}
-	fmt.Printf("loaded options: %s", options.userAgent)
-	// Output:loaded options: go-paymail: v0.1.6
-}
-
-// BenchmarkDefaultClientOptions benchmarks the method DefaultClientOptions()
+// BenchmarkDefaultClientOptions benchmarks the method defaultClientOptions()
 func BenchmarkDefaultClientOptions(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_, _ = defaultClientOptions()

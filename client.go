@@ -208,21 +208,26 @@ func NewClient(opts ...ClientOps) (*Client, error) {
 func (c *Client) getRequest(requestURL string) (response StandardResponse, err error) {
 	// Set the user agent
 	req := c.httpClient.R().SetHeader("User-Agent", c.options.userAgent)
+
 	// Enable tracing
 	if c.options.requestTracing {
 		req.EnableTrace()
 	}
+
 	// Fire the request
 	var resp *resty.Response
 	if resp, err = req.Get(requestURL); err != nil {
 		return
 	}
+
 	// Tracing enabled?
 	if c.options.requestTracing {
 		response.Tracing = resp.Request.TraceInfo()
 	}
+
 	// Set the status code
 	response.StatusCode = resp.StatusCode()
+
 	// Set the body
 	response.Body = resp.Body()
 	return
@@ -232,21 +237,26 @@ func (c *Client) getRequest(requestURL string) (response StandardResponse, err e
 func (c *Client) postRequest(requestURL string, data interface{}) (response StandardResponse, err error) {
 	// Set the user agent
 	req := c.httpClient.R().SetBody(data).SetHeader("User-Agent", c.options.userAgent)
+
 	// Enable tracing
 	if c.options.requestTracing {
 		req.EnableTrace()
 	}
+
 	// Fire the request
 	var resp *resty.Response
 	if resp, err = req.Post(requestURL); err != nil {
 		return
 	}
+
 	// Tracing enabled?
 	if c.options.requestTracing {
 		response.Tracing = resp.Request.TraceInfo()
 	}
+
 	// Set the status code
 	response.StatusCode = resp.StatusCode()
+
 	// Set the body
 	response.Body = resp.Body()
 	return
