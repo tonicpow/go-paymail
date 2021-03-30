@@ -151,6 +151,20 @@ func TestNewClient(t *testing.T) {
 	})
 }
 
+// TestClient_GetBRFCs will test the method GetBRFCs()
+func TestClient_GetBRFCs(t *testing.T) {
+	t.Parallel()
+
+	t.Run("get brfcs", func(t *testing.T) {
+		client, err := NewClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+		brfcs := client.GetBRFCs()
+		assert.Equal(t, 19, len(brfcs))
+		assert.Equal(t, "b2aa66e26b43", brfcs[0].ID)
+	})
+}
+
 // ExampleNewClient example using NewClient()
 //
 // See more examples in /examples/

@@ -136,6 +136,11 @@ func (c *Client) WithCustomHTTPClient(client *resty.Client) *Client {
 	return c
 }
 
+// GetBRFCs will return the list of specs
+func (c *Client) GetBRFCs() []*BRFCSpec {
+	return c.options.brfcSpecs
+}
+
 // defaultClientOptions will return an Options struct with the default settings
 //
 // Useful for starting with the default and then modifying as needed
