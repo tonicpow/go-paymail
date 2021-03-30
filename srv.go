@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 	"strings"
-	"time"
 )
 
 // defaultResolver will return a custom dns resolver
@@ -17,10 +16,10 @@ func (c *Client) defaultResolver() net.Resolver {
 		StrictErrors: false,
 		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
 			d := net.Dialer{
-				Timeout: time.Second * time.Duration(c.Options.DNSTimeout),
+				Timeout: c.options.dnsTimeout,
 			}
 			return d.DialContext(
-				ctx, c.Options.NameServerNetwork, c.Options.NameServer+":"+c.Options.DNSPort,
+				ctx, c.options.nameServerNetwork, c.options.nameServer+":"+c.options.dnsPort,
 			)
 		},
 	}
@@ -30,7 +29,6 @@ func (c *Client) defaultResolver() net.Resolver {
 //
 // Specs: http://bsvalias.org/02-01-host-discovery.html
 func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SRV, err error) {
-
 	// Invalid parameters?
 	if len(service) == 0 { // Use the default from paymail specs
 		service = DefaultServiceName
@@ -50,7 +48,7 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 	// Lookup the SRV record
 	var cname string
 	var records []*net.SRV
-	if cname, records, err = c.Resolver.LookupSRV(
+	if cname, records, err = c.resolver.LookupSRV(
 		context.Background(), service, protocol, domainName,
 	); err != nil {
 		return
@@ -109,7 +107,7 @@ func (c *Client) ValidateSRVRecord(ctx context.Context, srv *net.SRV, port, prio
 	}
 
 	// Test resolving the target
-	if addresses, err := c.Resolver.LookupHost(ctx, srv.Target); err != nil {
+	if addresses, err := c.resolver.LookupHost(ctx, srv.Target); err != nil {
 		return err
 	} else if len(addresses) == 0 {
 		return fmt.Errorf("srv target %s could not resolve a host", srv.Target)

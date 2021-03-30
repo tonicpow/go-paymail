@@ -121,21 +121,21 @@ func (c *Client) CheckDNSSEC(domain string) (result *DNSCheckResult) {
 
 	// Set the registry name server
 	var registryNameserver string
-	if registryNameserver, err = resolveOneNS(tld, c.Options.NameServer, c.Options.DNSPort); err != nil {
+	if registryNameserver, err = resolveOneNS(tld, c.options.nameServer, c.options.dnsPort); err != nil {
 		result.ErrorMessage = fmt.Sprintf("failed in resolveOneNS: %s", err.Error())
 		return
 	}
 
 	// Set the domain name server
 	var domainNameserver string
-	if domainNameserver, err = resolveOneNS(domain, c.Options.NameServer, c.Options.DNSPort); err != nil {
+	if domainNameserver, err = resolveOneNS(domain, c.options.nameServer, c.options.dnsPort); err != nil {
 		result.ErrorMessage = fmt.Sprintf("failed in resolveOneNS: %s", err.Error())
 		return
 	}
 
 	// Domain name servers at registrar Host
 	var domainDsRecord []*domainDS
-	if domainDsRecord, err = resolveDomainDS(domain, registryNameserver, c.Options.DNSPort); err != nil {
+	if domainDsRecord, err = resolveDomainDS(domain, registryNameserver, c.options.dnsPort); err != nil {
 		result.ErrorMessage = fmt.Sprintf("failed in resolveDomainDS: %s", err.Error())
 		return
 	}
@@ -146,7 +146,7 @@ func (c *Client) CheckDNSSEC(domain string) (result *DNSCheckResult) {
 
 	// Resolve domain DNSKey
 	var dnsKey []*domainDNSKEY
-	if dnsKey, err = resolveDomainDNSKEY(domain, domainNameserver, c.Options.DNSPort); err != nil {
+	if dnsKey, err = resolveDomainDNSKEY(domain, domainNameserver, c.options.dnsPort); err != nil {
 		result.ErrorMessage = fmt.Sprintf("failed in resolveDomainDNSKEY: %s", err.Error())
 		return
 	}
@@ -164,7 +164,7 @@ func (c *Client) CheckDNSSEC(domain string) (result *DNSCheckResult) {
 	// Check the DS record
 	if result.Answer.DSRecordCount > 0 && result.Answer.DNSKEYRecordCount > 0 {
 		var calculatedDS []*domainDS
-		if calculatedDS, err = calculateDSRecord(domain, domainNameserver, c.Options.DNSPort, digest); err != nil {
+		if calculatedDS, err = calculateDSRecord(domain, domainNameserver, c.options.dnsPort, digest); err != nil {
 			result.ErrorMessage = fmt.Sprintf("failed in calculateDSRecord: %s", err.Error())
 			return
 		}
@@ -173,7 +173,7 @@ func (c *Client) CheckDNSSEC(domain string) (result *DNSCheckResult) {
 
 	// Resolve the domain NSEC
 	var nsec *dns.NSEC
-	if nsec, err = resolveDomainNSEC(domain, c.Options.NameServer, c.Options.DNSPort); err != nil {
+	if nsec, err = resolveDomainNSEC(domain, c.options.nameServer, c.options.dnsPort); err != nil {
 		result.ErrorMessage = fmt.Sprintf("failed in resolveDomainNSEC: %s", err.Error())
 		return
 	} else if nsec != nil {
@@ -183,7 +183,7 @@ func (c *Client) CheckDNSSEC(domain string) (result *DNSCheckResult) {
 
 	// Resolve the domain NSEC3
 	var nsec3 *dns.NSEC3
-	if nsec3, err = resolveDomainNSEC3(domain, c.Options.NameServer, c.Options.DNSPort); err != nil {
+	if nsec3, err = resolveDomainNSEC3(domain, c.options.nameServer, c.options.dnsPort); err != nil {
 		result.ErrorMessage = fmt.Sprintf("failed in resolveDomainNSEC3: %s", err.Error())
 		return
 	} else if nsec3 != nil {
@@ -193,7 +193,7 @@ func (c *Client) CheckDNSSEC(domain string) (result *DNSCheckResult) {
 
 	// Resolve the domain NSEC3PARAM
 	var nsec3param *dns.NSEC3PARAM
-	if nsec3param, err = resolveDomainNSEC3PARAM(domain, c.Options.NameServer, c.Options.DNSPort); err != nil {
+	if nsec3param, err = resolveDomainNSEC3PARAM(domain, c.options.nameServer, c.options.dnsPort); err != nil {
 		result.ErrorMessage = fmt.Sprintf("failed in resolveDomainNSEC3PARAM: %s", err.Error())
 		return
 	} else if nsec3param != nil {

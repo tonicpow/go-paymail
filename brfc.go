@@ -26,10 +26,10 @@ type BRFCSpec struct {
 //
 // additionSpecifications is appended to the default specs
 // BRFCKnownSpecifications is a local constant of JSON to pre-load known BRFC ids
-func (c *ClientOptions) LoadBRFCs(additionalSpecifications string) (err error) {
+func (c *clientOptions) LoadBRFCs(additionalSpecifications string) (err error) {
 
 	// Load the default specs
-	if err = json.Unmarshal([]byte(BRFCKnownSpecifications), &c.BRFCSpecs); err != nil {
+	if err = json.Unmarshal([]byte(BRFCKnownSpecifications), &c.brfcSpecs); err != nil {
 		// This error case should never occur since the JSON is hardcoded, but good practice anyway
 		return
 	}
@@ -59,7 +59,7 @@ func (c *ClientOptions) LoadBRFCs(additionalSpecifications string) (err error) {
 		}
 
 		// Add to existing list
-		c.BRFCSpecs = append(c.BRFCSpecs, spec)
+		c.brfcSpecs = append(c.brfcSpecs, spec)
 	}
 
 	return

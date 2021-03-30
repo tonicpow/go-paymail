@@ -1,20 +1,23 @@
 package paymail
 
-import "github.com/go-resty/resty/v2"
+import (
+	"time"
+
+	"github.com/go-resty/resty/v2"
+)
 
 // version is the current package version
 
 // Defaults for paymail functions
 const (
 	defaultDNSPort           = "53"                     // Default port for DNS / NameServer checks
-	defaultDNSTimeout        = 5                        // In seconds
-	defaultGetTimeout        = 15                       // Default timeout for all GET requests in seconds
+	defaultDNSTimeout        = 5 * time.Second          // In seconds
+	defaultHTTPTimeout       = 20 * time.Second         // Default timeout for all GET requests in seconds
 	defaultNameServer        = "8.8.8.8"                // Default DNS NameServer
 	defaultNameServerNetwork = "udp"                    // Default for NS dialer
-	defaultPostTimeout       = 25                       // Default timeout for all POST requests in seconds
 	defaultRetryCount        = 2                        // Default retry count for HTTP requests
-	defaultSSLDeadline       = 10                       // Default deadline in seconds
-	defaultSSLTimeout        = 10                       // Default timeout in seconds
+	defaultSSLDeadline       = 10 * time.Second         // Default deadline in seconds
+	defaultSSLTimeout        = 10 * time.Second         // Default timeout in seconds
 	defaultUserAgent         = "go-paymail: " + version // Default user agent
 	version                  = "v0.1.6"                 // Go-Paymail version
 )

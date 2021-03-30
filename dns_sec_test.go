@@ -53,7 +53,7 @@ func TestClient_CheckDNSSEC(t *testing.T) {
 //
 // See more examples in /examples/
 func ExampleClient_CheckDNSSEC() {
-	client, _ := NewClient(nil, nil, nil)
+	client, _ := NewClient()
 	results := client.CheckDNSSEC("google.com")
 	if len(results.ErrorMessage) == 0 {
 		fmt.Printf("valid DNSSEC found for: %s", "google.com")
