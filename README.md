@@ -43,7 +43,7 @@ View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-pay
     - Use a custom [net.Resolver](resolver_test.go)
     - [Get & Validate SRV records](srv.go)
     - [Check SSL Certificates](ssl.go)
-    - [Check & Validate DNNSEC](dns_sec.go)
+    - [Check & Validate DNSSEC](dns_sec.go)
     - [Generate, Validate & Load Additional BRFC Specifications](brfc.go)
     - [Fetch, Get and Has Capabilities](capabilities.go)
     - [Get Public Key Information - PKI](pki.go)
