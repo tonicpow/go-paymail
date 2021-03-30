@@ -185,7 +185,7 @@ func NewClient(opts ...ClientOps) (*Client, error) {
 	// default brfcs
 	if len(client.options.brfcSpecs) == 0 {
 		// Check for specs (if not set, use the defaults)
-		if err := client.options.LoadBRFCs(""); err != nil {
+		if err = client.options.LoadBRFCs(""); err != nil {
 			return nil, err
 		}
 	}
