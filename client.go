@@ -146,11 +146,6 @@ func (c *Client) GetUserAgent() string {
 	return c.options.userAgent
 }
 
-// GetVersion will return the version of the library
-func (c *Client) GetVersion() string {
-	return version
-}
-
 // defaultClientOptions will return an Options struct with the default settings
 //
 // Useful for starting with the default and then modifying as needed

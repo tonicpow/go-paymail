@@ -178,19 +178,6 @@ func TestClient_GetUserAgent(t *testing.T) {
 	})
 }
 
-// TestClient_GetVersion will test the method GetVersion()
-func TestClient_GetVersion(t *testing.T) {
-	t.Parallel()
-
-	t.Run("get version", func(t *testing.T) {
-		client, err := NewClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
-		ver := client.GetVersion()
-		assert.Equal(t, version, ver)
-	})
-}
-
 // ExampleNewClient example using NewClient()
 //
 // See more examples in /examples/
@@ -201,7 +188,7 @@ func ExampleNewClient() {
 		return
 	}
 	fmt.Printf("loaded client: %s", client.options.userAgent)
-	// Output:loaded client: go-paymail: v0.2.2
+	// Output:loaded client: go-paymail: v0.2.3
 }
 
 // BenchmarkNewClient benchmarks the method NewClient()

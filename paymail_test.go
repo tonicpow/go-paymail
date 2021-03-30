@@ -1,5 +1,11 @@
 package paymail
 
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
 // Default testing variables
 const (
 	testAddress   = "1Cat862cjhp8SgLLMvin5gyk5UScasg1P9"
@@ -12,3 +18,23 @@ const (
 	testPubKey    = "02ead23149a1e33df17325ec7a7ba9e0b20c674c57c630f527d69b866aa9b65b10"
 	testServerURL = "https://" + testDomain + "/api/v1/" + DefaultServiceName + "/"
 )
+
+// TestVersion will test the method Version()
+func TestVersion(t *testing.T) {
+	t.Parallel()
+
+	t.Run("get version", func(t *testing.T) {
+		ver := Version()
+		assert.Equal(t, version, ver)
+	})
+}
+
+// TestUserAgent will test the method UserAgent()
+func TestUserAgent(t *testing.T) {
+	t.Parallel()
+
+	t.Run("get user agent", func(t *testing.T) {
+		agent := UserAgent()
+		assert.Equal(t, defaultUserAgent, agent)
+	})
+}

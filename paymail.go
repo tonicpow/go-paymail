@@ -6,3 +6,13 @@
 //
 // By TonicPow Inc (https://tonicpow.com)
 package paymail
+
+// Version will return the version of the library
+func Version() string {
+	return version
+}
+
+// UserAgent will return the default user agent string
+func UserAgent() string {
+	return defaultUserAgent
+}
