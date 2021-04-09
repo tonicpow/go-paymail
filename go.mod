@@ -15,10 +15,9 @@ require (
 	github.com/mrz1836/go-sanitize v1.1.3
 	github.com/mrz1836/go-validate v0.2.0
 	github.com/stretchr/testify v1.7.0
-	github.com/ugorji/go v1.2.4 // indirect
+	github.com/ugorji/go v1.2.5 // indirect
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
-	golang.org/x/text v0.3.5 // indirect
+	golang.org/x/sys v0.0.0-20210403161142-5e06dd20ab57 // indirect
+	golang.org/x/text v0.3.6 // indirect
 )
-
-// replace github.com/go-resty/resty/v2 => github.com/go-resty/resty/v2 v2.4.0
