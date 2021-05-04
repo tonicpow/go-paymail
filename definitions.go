@@ -6,8 +6,6 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-// version is the current package version
-
 // Defaults for paymail functions
 const (
 	defaultDNSPort           = "53"                     // Default port for DNS / NameServer checks

@@ -243,7 +243,7 @@ func (c *Client) getRequest(requestURL string) (response StandardResponse, err e
 	return
 }
 
-// postRequest is a standard PORT request for all outgoing HTTP requests
+// postRequest is a standard POST request for all outgoing HTTP requests
 func (c *Client) postRequest(requestURL string, data interface{}) (response StandardResponse, err error) {
 	// Set the user agent
 	req := c.httpClient.R().SetBody(data).SetHeader("User-Agent", c.options.userAgent)
