@@ -2,17 +2,21 @@ package paymail
 
 // All BRFC IDs that have been used/referenced in the library
 const (
-	BRFCBasicAddressResolution = "759684b1a19a"       // more info: http://bsvalias.org/04-01-basic-address-resolution.html
-	BRFCP2PPaymentDestination  = "2a40af698840"       // more info: https://docs.moneybutton.com/docs/paymail-07-p2p-payment-destination.html
-	BRFCP2PTransactions        = "5f1323cddf31"       // more info: https://docs.moneybutton.com/docs/paymail-06-p2p-transactions.html
-	BRFCPaymentDestination     = "paymentDestination" // more info: http://bsvalias.org/04-01-basic-address-resolution.html
-	BRFCPayToProtocolPrefix    = "7bd25e5a1fc6"       // more info: http://bsvalias.org/04-04-payto-protocol-prefix.html
-	BRFCPki                    = "pki"                // more info: http://bsvalias.org/03-public-key-infrastructure.html
-	BRFCPkiAlternate           = "0c4339ef99c2"       // more info: http://bsvalias.org/03-public-key-infrastructure.html
-	BRFCPublicProfile          = "f12f968c92d6"       // more info: https://github.com/bitcoin-sv-specs/brfc-paymail/pull/7/files
-	BRFCReceiverApprovals      = "3d7c2ca83a46"       // more info: http://bsvalias.org/04-03-receiver-approvals.html
-	BRFCSenderValidation       = "6745385c3fc0"       // more info: http://bsvalias.org/04-02-sender-validation.html
-	BRFCVerifyPublicKeyOwner   = "a9f510c16bde"       // more info: http://bsvalias.org/05-verify-public-key-owner.html
+	BRFCBasicAddressResolution         = "759684b1a19a"       // more info: http://bsvalias.org/04-01-basic-address-resolution.html
+	BRFCP2PPaymentDestination          = "2a40af698840"       // more info: https://docs.moneybutton.com/docs/paymail-07-p2p-payment-destination.html
+	BRFCP2PPaymentDestinationWithToken = "f792b6eff07a"       // more info: https://docs.moneybutton.com/docs/paymail/paymail-11-p2p-payment-destination-tokens.html
+	BRFCP2PTransactions                = "5f1323cddf31"       // more info: https://docs.moneybutton.com/docs/paymail-06-p2p-transactions.html
+	BRFCPaymentDestination             = "paymentDestination" // more info: http://bsvalias.org/04-01-basic-address-resolution.html
+	BRFCPayToProtocolPrefix            = "7bd25e5a1fc6"       // more info: http://bsvalias.org/04-04-payto-protocol-prefix.html
+	BRFCPki                            = "pki"                // more info: http://bsvalias.org/03-public-key-infrastructure.html
+	BRFCPkiAlternate                   = "0c4339ef99c2"       // more info: http://bsvalias.org/03-public-key-infrastructure.html
+	BRFCPublicProfile                  = "f12f968c92d6"       // more info: https://github.com/bitcoin-sv-specs/brfc-paymail/pull/7/files
+	BRFCReceiverApprovals              = "3d7c2ca83a46"       // more info: http://bsvalias.org/04-03-receiver-approvals.html
+	BRFCSenderValidation               = "6745385c3fc0"       // more info: http://bsvalias.org/04-02-sender-validation.html
+	BRFCSFPAssetInformation            = "1300361cb2d4"       // more info: https://docs.moneybutton.com/docs/paymail/paymail-08-asset-information.html
+	BRFCSFPAuthoriseAction             = "95dddb461bff"       // more info: https://docs.moneybutton.com/docs/sfp/paymail-10-sfp-authorise.html
+	BRFCSFPBuildAction                 = "189e32d93d28"       // more info: https://docs.moneybutton.com/docs/sfp/paymail-09-sfp-build.html
+	BRFCVerifyPublicKeyOwner           = "a9f510c16bde"       // more info: http://bsvalias.org/05-verify-public-key-owner.html
 )
 
 // BRFCKnownSpecifications is a running list of all known BRFC specifications
@@ -156,6 +160,34 @@ const BRFCKnownSpecifications = `
    "title": "spv_channels",
    "url": "https://github.com/bitcoin-sv-specs/brfc-spvchannels",
    "version": "1.0.0-beta"
+  },
+  {
+   "author": "Fabriik",
+   "id": "1300361cb2d4",
+   "title": "Asset Information",
+   "url": "https://docs.moneybutton.com/docs/paymail/paymail-08-asset-information.html",
+   "version": "1"
+  },
+  {
+   "author": "Fabriik",
+   "id": "189e32d93d28",
+   "title": "Simple Fabriik Protocol for Tokens Build Action",
+   "url": "https://docs.moneybutton.com/docs/sfp/paymail-09-sfp-build.html",
+   "version": "1"
+  },
+  {
+   "author": "Fabriik",
+   "id": "95dddb461bff",
+   "title": "Simple Fabriik Protocol for Tokens Authorise Action",
+   "url": "https://docs.moneybutton.com/docs/sfp/paymail-10-sfp-authorise.html",
+   "version": "1"
+  },
+  {
+   "author": "Fabriik",
+   "id": "f792b6eff07a",
+   "title": "P2P Payment Destination with Tokens Support",
+   "url": "https://docs.moneybutton.com/docs/paymail/paymail-11-p2p-payment-destination-tokens.html",
+   "version": "1"
   }
 ]
 `
