@@ -250,6 +250,7 @@ linters-settings:
     ignore-words:
       - bsv
       - bitcoin
+      - authorise
   nakedret:
     # make an issue if func has more lines of code than this setting and it has naked returns; default is 30
     max-func-lines: 30
@@ -380,6 +381,10 @@ issues:
     - linters:
         - gosec
       text: "G402:"
+
+    - linters:
+        - gosec
+      text: "G101:"
 
     # Exclude some linters from running on tests files.
     - path: _test\.go

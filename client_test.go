@@ -160,7 +160,7 @@ func TestClient_GetBRFCs(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, client)
 		brfcs := client.GetBRFCs()
-		assert.Equal(t, 19, len(brfcs))
+		assert.Equal(t, 23, len(brfcs))
 		assert.Equal(t, "b2aa66e26b43", brfcs[0].ID)
 	})
 }
