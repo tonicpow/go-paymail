@@ -3,7 +3,7 @@
 
 # options for analysis running
 run:
-  # default concurrency is a available CPU number
+  # default concurrency is an available CPU number
   concurrency: 4
 
   # timeout for analysis, e.g. 30s, 5m, default is 1m
@@ -22,7 +22,7 @@ run:
   # which dirs to skip: issues from them won't be reported;
   # can use regexp here: generated.*, regexp is applied on full path;
   # default value is empty list, but default dirs are skipped independently
-  # from this option's value (see skip-dirs-use-default).
+  # of this option's value (see skip-dirs-use-default).
   # "/" will be replaced by current OS file path separator to properly work
   # on Windows.
   skip-dirs:
@@ -197,9 +197,6 @@ linters-settings:
     # put imports beginning with prefix after 3rd-party packages;
     # it's a comma-separated list of prefixes
     local-prefixes: github.com/org/project
-  golint:
-    # minimal confidence for issues, default is 0.8
-    min-confidence: 0.8
   gomnd:
     settings:
       mnd:
@@ -297,7 +294,7 @@ linters-settings:
     multi-func: false # Enforces newlines (or comments) after every multi-line function signature
   wsl:
     # If true append is only allowed to be cuddled if appending value is
-    # matching variables, fields or types on line above. Default is true.
+    # matching variables, fields or types online above. Default is true.
     strict-append: true
     # Allow calls and assignments to be cuddled as long as the lines have any
     # matching variables, fields or types. Default is true.
@@ -315,7 +312,7 @@ linters-settings:
     # Allow leading comments to be separated with empty liens
     allow-separated-leading-comment: false
   gofumpt:
-    # Choose whether or not to use the extra rules that are disabled
+    # Choose whether to use the extra rules that are disabled
     # by default
     extra-rules: false
 
@@ -337,10 +334,9 @@ linters:
     - govet
     - gosec
     - bodyclose
-    - golint
+    - revive
     - unconvert
     - dupl
-    - maligned
     - misspell
     - dogsled
     - prealloc
@@ -370,7 +366,7 @@ linters:
 
 issues:
   # List of regexps of issue texts to exclude, empty list by default.
-  # But independently from this option we use default exclude patterns,
+  # But independently of this option we use default exclude patterns,
   # it can be disabled by `exclude-use-default: false`. To list all
   # excluded by default patterns execute `golangci-lint run --help`
   exclude:
@@ -413,17 +409,17 @@ issues:
         - lll
       source: "^//go:generate "
 
-  # Independently from option `exclude` we use default exclude patterns,
+  # Independently of option `exclude` we use default exclude patterns,
   # it can be disabled by this option. To list all
   # excluded by default patterns execute `golangci-lint run --help`.
   # Default value for this option is true.
   exclude-use-default: false
 
   # The default value is false. If set to true exclude and exclude-rules
-  # regular expressions become case sensitive.
+  # regular expressions become case-sensitive.
   exclude-case-sensitive: false
 
-  # The list of ids of default excludes to include or disable. By default it's empty.
+  # The list of ids of default excludes to include or disable. By default, it's empty.
   include:
     - EXC0002 # disable excluding of issues about comments from golint
 
@@ -459,7 +455,7 @@ severity:
   default-severity: error
 
   # The default value is false.
-  # If set to true severity-rules regular expressions become case sensitive.
+  # If set to true severity-rules regular expressions become case-sensitive.
   case-sensitive: false
 
   # Default value is empty list.
