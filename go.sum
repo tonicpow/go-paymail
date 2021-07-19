@@ -27,8 +27,8 @@ github.com/matryer/respond v1.0.1 h1:RSG07jdn32pH46t4UO1TnpnKlR/ayIpEa4aiK2f9k1U
 github.com/matryer/respond v1.0.1/go.mod h1:XHpqRsK4LZQgk6twGA/CrtxNBaayoYiKUqj0Mjkj3Hg=
 github.com/miekg/dns v1.1.43 h1:JKfpVSCB84vrAmHzyrsxB5NAr5kLoMXZArPSw7Qlgyg=
 github.com/miekg/dns v1.1.43/go.mod h1:+evo5L0630/F6ca/Z9+GAqzhjGyn8/c+TBaOyfEl0V4=
-github.com/mrz1836/go-api-router v0.3.10 h1:SDtaK99jG+wNdRQiy+KOLEtsdCw+ehjaxdbP4+PEdC0=
-github.com/mrz1836/go-api-router v0.3.10/go.mod h1:AG6wPF55qOKeXpR3ankVNQlGkMTKwbZDiVtz5SUgWvc=
+github.com/mrz1836/go-api-router v0.3.11 h1:9OqWLlZKlDoM+hT+IuHp4Z9yxH9Ao7V1vk9UIrEh2cE=
+github.com/mrz1836/go-api-router v0.3.11/go.mod h1:jLfdTgljLJET/SCHyrOLK0RpeI7TT7d/uEbpq8l2hyQ=
 github.com/mrz1836/go-logger v0.2.5 h1:n4yQKHalut4MYoZsk9pXVf7bIcW9J/vdl9zYJAE67ts=
 github.com/mrz1836/go-logger v0.2.5/go.mod h1:E4gFkyzOlEb2MmaLaTYO0KUKKcsXB1KeMPhcJIGD5F4=
 github.com/mrz1836/go-parameters v0.2.7 h1:vunfOkl4+Cpyi0gqZ2YTpY4GNOHzpG1WiG/SLNjMs0s=
