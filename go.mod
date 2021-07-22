@@ -12,7 +12,7 @@ require (
 	github.com/miekg/dns v1.1.43
 	github.com/mrz1836/go-api-router v0.3.11
 	github.com/mrz1836/go-logger v0.2.5
-	github.com/mrz1836/go-sanitize v1.1.3
+	github.com/mrz1836/go-sanitize v1.1.4
 	github.com/mrz1836/go-validate v0.2.0
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect
