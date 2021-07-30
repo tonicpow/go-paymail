@@ -146,7 +146,7 @@ func (c *Client) GetUserAgent() string {
 	return c.options.userAgent
 }
 
-// defaultClientOptions will return an Options struct with the default settings
+// defaultClientOptions will return an clientOptions struct with the default settings
 //
 // Useful for starting with the default and then modifying as needed
 func defaultClientOptions() (opts *clientOptions, err error) {

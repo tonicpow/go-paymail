@@ -133,7 +133,7 @@ func (b *BRFCSpec) Validate() (valid bool, id string, err error) {
 		return
 	}
 
-	// Set the ID generated (for external comparison etc)
+	// Set the ID generated (for external comparison etc.)
 	id = tempBRFC.ID
 
 	// Test if the ID generated matches what was set previously

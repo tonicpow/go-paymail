@@ -26,7 +26,7 @@ func Handlers() *httprouter.Router {
 	registerPaymailRoutes(r)
 
 	// Return the router
-	return r.HTTPRouter
+	return r.HTTPRouter.Router
 }
 
 // registerBasicRoutes will register basic server related routes
