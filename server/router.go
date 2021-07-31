@@ -3,13 +3,13 @@ package server
 import (
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
 	apirouter "github.com/mrz1836/go-api-router"
+	"github.com/newrelic/go-agent/v3/integrations/nrhttprouter"
 	"github.com/tonicpow/go-paymail"
 )
 
 // Handlers are used to isolate loading the routes (used for testing)
-func Handlers() *httprouter.Router {
+func Handlers() *nrhttprouter.Router {
 
 	// Create a new router
 	r := apirouter.New()
@@ -26,7 +26,7 @@ func Handlers() *httprouter.Router {
 	registerPaymailRoutes(r)
 
 	// Return the router
-	return r.HTTPRouter.Router
+	return r.HTTPRouter
 }
 
 // registerBasicRoutes will register basic server related routes
