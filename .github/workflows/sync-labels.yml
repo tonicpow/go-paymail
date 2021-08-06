@@ -1,3 +1,5 @@
+# Workflow: https://github.com/micnncim/action-label-syncer
+# Export your labels: https://github.com/micnncim/label-exporter
 name: Sync labels
 on:
   push:
@@ -6,7 +8,7 @@ on:
     paths:
       - .github/labels.yml
 jobs:
-  build:
+  sync-labels:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
