@@ -9,6 +9,7 @@ require (
 	github.com/go-resty/resty/v2 v2.6.0
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/julienschmidt/httprouter v1.3.0
+	github.com/libsv/go-bt v1.0.0 // indirect
 	github.com/miekg/dns v1.1.43
 	github.com/mrz1836/go-api-router v0.4.6
 	github.com/mrz1836/go-logger v0.2.5
@@ -16,8 +17,9 @@ require (
 	github.com/mrz1836/go-validate v0.2.0
 	github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.1
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
-	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d
-	google.golang.org/genproto v0.0.0-20210805201207-89edb61ffb67 // indirect
-	google.golang.org/grpc v1.39.1 // indirect
+	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
+	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d
+	golang.org/x/sys v0.0.0-20210818153620-00dd8d7831e7 // indirect
+	golang.org/x/text v0.3.7 // indirect
+	google.golang.org/genproto v0.0.0-20210816143620-e15ff196659d // indirect
 )
