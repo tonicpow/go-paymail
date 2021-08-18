@@ -6,6 +6,7 @@
 [![Report](https://goreportcard.com/badge/github.com/tonicpow/go-paymail?style=flat&v=3)](https://goreportcard.com/report/github.com/tonicpow/go-paymail)
 [![codecov](https://codecov.io/gh/tonicpow/go-paymail/branch/master/graph/badge.svg?v=3)](https://codecov.io/gh/tonicpow/go-paymail)
 [![Go](https://img.shields.io/github/go-mod/go-version/tonicpow/go-paymail?v=3)](https://golang.org/)
+[![Mergify Status](https://img.shields.io/endpoint.svg?url=https://gh.mergify.io/badges/tonicpow/go-paymail&style=flat&v=3)](https://mergify.io)
 
 <br/>
 
@@ -109,6 +110,7 @@ all                  Runs multiple commands
 clean                Remove previous builds and any test cache data
 clean-mods           Remove all the Go mod cache
 coverage             Shows the test coverage
+generate             Runs the go generate command in the base of the repo
 godocs               Sync the latest tag with GoDocs
 help                 Show this help message
 install              Install the application
@@ -127,6 +129,7 @@ test-ci              Runs all tests via CI (exports coverage)
 test-ci-no-race      Runs all tests via CI (no race) (exports coverage)
 test-ci-short        Runs unit tests via CI (exports coverage)
 test-short           Runs vet, lint and tests (excludes integration tests)
+test-unit            Runs tests and outputs coverage
 uninstall            Uninstall the application (and remove files)
 update-linter        Update the golangci-lint package (macOS only)
 vet                  Run the Go vet application
@@ -185,6 +188,9 @@ All kinds of contributions are welcome :raised_hands:!
 The most basic way to show your support is to star :star2: the project, or to raise issues :speech_balloon:. 
 You can also support this project by [becoming a sponsor on GitHub](https://github.com/sponsors/tonicpow) :clap: 
 or by making a [**bitcoin donation**](https://tonicpow.com/?utm_source=github&utm_medium=sponsor-link&utm_campaign=go-paymail&utm_term=go-paymail&utm_content=go-paymail) to ensure this journey continues indefinitely! :rocket:
+
+[![Stars](https://img.shields.io/github/stars/tonicpow/go-paymail?label=Please%20like%20us&style=social)](https://github.com/tonicpow/go-paymail/stargazers)
+
 
 <br/>
 
