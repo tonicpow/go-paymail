@@ -175,35 +175,41 @@ type DNSResolver interface {
 	LookupSRV(ctx context.Context, service, proto, name string) (string, []*net.SRV, error)
 }
 
-// NewClient creates a new client for all outgoing paymail requests
+// NewClient creates a new client for all paymail requests
 //
-// If no options are given, it will use the DefaultClientOptions()
+// If no options are given, it will use the defaultClientOptions()
 // If no client is supplied it will use a default Resty HTTP client
 func NewClient(opts ...ClientOps) (*Client, error) {
+
+	// Start with the defaults
 	defaults, err := defaultClientOptions()
 	if err != nil {
 		return nil, err
 	}
+
 	// Create a new client
 	client := &Client{
 		options: defaults,
 	}
-	// overwrite defaults with any set by user
+
+	// Overwrite defaults with any set by user
 	for _, opt := range opts {
 		opt(client.options)
 	}
-	// default brfcs
+
+	// Check for specs (if not set, use the defaults)
 	if len(client.options.brfcSpecs) == 0 {
-		// Check for specs (if not set, use the defaults)
 		if err = client.options.LoadBRFCs(""); err != nil {
 			return nil, err
 		}
 	}
+
 	// Set the resolver
 	if client.resolver == nil {
 		r := client.defaultResolver()
 		client.resolver = &r
 	}
+
 	// Set the Resty HTTP client
 	if client.httpClient == nil {
 		client.httpClient = resty.New()
