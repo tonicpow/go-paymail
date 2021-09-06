@@ -10,14 +10,11 @@ require (
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/miekg/dns v1.1.43
-	github.com/mrz1836/go-api-router v0.4.6
+	github.com/mrz1836/go-api-router v0.4.7
 	github.com/mrz1836/go-logger v0.2.5
 	github.com/mrz1836/go-sanitize v1.1.5
 	github.com/mrz1836/go-validate v0.2.0
 	github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.1
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/net v0.0.0-20210902165921-8d991716f632
-	golang.org/x/sys v0.0.0-20210902050250-f475640dd07b // indirect
-	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/genproto v0.0.0-20210831024726-fe130286e0e2 // indirect
 )
