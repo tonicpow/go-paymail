@@ -6,7 +6,9 @@
 [![Report](https://goreportcard.com/badge/github.com/tonicpow/go-paymail?style=flat&v=3)](https://goreportcard.com/report/github.com/tonicpow/go-paymail)
 [![codecov](https://codecov.io/gh/tonicpow/go-paymail/branch/master/graph/badge.svg?v=3)](https://codecov.io/gh/tonicpow/go-paymail)
 [![Go](https://img.shields.io/github/go-mod/go-version/tonicpow/go-paymail?v=3)](https://golang.org/)
+<br>
 [![Mergify Status](https://img.shields.io/endpoint.svg?url=https://gh.mergify.io/badges/tonicpow/go-paymail&style=flat&v=3)](https://mergify.io)
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/tonicpow/go-paymail)
 
 <br/>
 
@@ -196,4 +198,4 @@ or by making a [**bitcoin donation**](https://tonicpow.com/?utm_source=github&ut
 
 ## License
 
-![License](https://img.shields.io/github/license/tonicpow/go-paymail.svg?style=flat&v=3)
+[![License](https://img.shields.io/github/license/tonicpow/go-paymail.svg?style=flat&v=3)](LICENSE)
