@@ -1,6 +1,6 @@
 module github.com/tonicpow/go-paymail
 
-go 1.15
+go 1.16
 
 require (
 	github.com/bitcoinschema/go-bitcoin v0.3.19
@@ -17,5 +17,8 @@ require (
 	github.com/mrz1836/go-validate v0.2.0
 	github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.1
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/net v0.0.0-20211029224645-99673261e6eb
+	golang.org/x/net v0.0.0-20211105192438-b53810dc28af
+	golang.org/x/sys v0.0.0-20211107104306-e0b2ad06fe42 // indirect
+	google.golang.org/genproto v0.0.0-20211104193956-4c6863e31247 // indirect
+	google.golang.org/grpc v1.42.0 // indirect
 )
