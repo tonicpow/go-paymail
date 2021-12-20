@@ -37,7 +37,7 @@ func (config *Configuration) verifyPubKey(w http.ResponseWriter, req *http.Reque
 	// todo: add caching for fast responses since the pubkey will not change
 
 	// Find in mock database
-	foundPaymail := config.actions.GetPaymailByAlias(alias)
+	foundPaymail := config.actions.GetPaymailByAlias(req.Context(), alias)
 	if foundPaymail == nil {
 		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return

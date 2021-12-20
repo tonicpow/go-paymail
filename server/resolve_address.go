@@ -105,7 +105,7 @@ func (config *Configuration) resolveAddress(w http.ResponseWriter, req *http.Req
 	// todo: lookup the paymail address in a data-store, database, etc (return 404 if not found)
 
 	// Find in mock database
-	foundPaymail := config.actions.GetPaymailByAlias(alias)
+	foundPaymail := config.actions.GetPaymailByAlias(req.Context(), alias)
 	if foundPaymail == nil {
 		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return

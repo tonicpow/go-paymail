@@ -1,6 +1,10 @@
 package main
 
-import "github.com/tonicpow/go-paymail/server"
+import (
+	"context"
+
+	"github.com/tonicpow/go-paymail/server"
+)
 
 func main() {
 
@@ -9,8 +13,6 @@ func main() {
 
 	// Default server runs on port 3000 and timeout requests after 15 seconds
 	config := server.NewConfiguration("test.com", new(serverInterface))
-	config.Port = 3003
-	config.Timeout = 10
 	config.BasicRoutes.Add404Route = true
 	config.BasicRoutes.AddHealthRoute = true
 	config.BasicRoutes.AddIndexRoute = true
@@ -22,6 +24,6 @@ func main() {
 // Example mock implementation
 type serverInterface struct{}
 
-func (s *serverInterface) GetPaymailByAlias(alias string) *server.PaymailAddress {
+func (s *serverInterface) GetPaymailByAlias(_ context.Context, alias string) *server.PaymailAddress {
 	return server.MockGetPaymailByAlias(alias)
 }
