@@ -1,5 +1,7 @@
 package server
 
+import "context"
+
 // PaymailAddress is an internal struct for paymail addresses
 type PaymailAddress struct {
 	Alias       string `json:"alias"`        // Alias or handle of the paymail
@@ -13,5 +15,5 @@ type PaymailAddress struct {
 
 // PaymailServerInterface the paymail server interface that needs to be implemented
 type PaymailServerInterface interface {
-	GetPaymailByAlias(alias string) *PaymailAddress
+	GetPaymailByAlias(ctx context.Context, alias string) *PaymailAddress
 }
