@@ -27,7 +27,7 @@ Incoming Data Object Example:
 // p2pReceiveTx will receive a P2P transaction (from previous request: P2P Payment Destination)
 //
 // Specs: https://docs.moneybutton.com/docs/paymail-06-p2p-transactions.html
-func p2pReceiveTx(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func (config *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 	// Get the params & paymail address submitted via URL request
 	params := apirouter.GetParams(req)
@@ -55,7 +55,7 @@ func p2pReceiveTx(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
 	if len(paymailAddress) == 0 {
 		ErrorResponse(w, req, ErrorInvalidParameter, "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
 		return
-	} else if domain != paymailDomain {
+	} else if domain != config.PaymailDomain {
 		ErrorResponse(w, req, ErrorUnknownDomain, "domain unknown: "+domain, http.StatusBadRequest)
 		return
 	}
@@ -83,7 +83,7 @@ func p2pReceiveTx(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
 	}
 
 	// Check signature if: 1) sender validation enabled or 2) a signature was given (optional)
-	if senderValidationEnabled || len(p2pTransaction.MetaData.Signature) > 0 {
+	if config.SenderValidationEnabled || len(p2pTransaction.MetaData.Signature) > 0 {
 
 		// Check required fields for signature validation
 		if len(p2pTransaction.MetaData.Signature) == 0 {
@@ -113,7 +113,7 @@ func p2pReceiveTx(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
 	// todo: lookup the paymail address in a data-store, database, etc - get the PubKey (return 404 if not found)
 
 	// Find in mock database
-	foundPaymail := getPaymailByAlias(alias)
+	foundPaymail := config.actions.GetPaymailByAlias(alias)
 	if foundPaymail == nil {
 		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return

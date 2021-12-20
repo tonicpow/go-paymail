@@ -25,15 +25,15 @@ type activeCapabilities struct {
 }
 
 // createCapabilities will create a default set of capabilities
-func createCapabilities() *Capabilities {
+func createCapabilities(config *Configuration) *Capabilities {
 	return &Capabilities{
 		BsvAlias: paymail.DefaultBsvAliasVersion,
 		Capabilities: &activeCapabilities{
-			ForceSenderValidation: senderValidationEnabled,
-			PaymentDestination:    serviceURL + "address/{alias}@{domain.tld}",
-			PKI:                   serviceURL + "id/{alias}@{domain.tld}",
-			PublicProfile:         serviceURL + "public-profile/{alias}@{domain.tld}",
-			VerifyPublicKey:       serviceURL + "verify-pubkey/{alias}@{domain.tld}/{pubkey}",
+			ForceSenderValidation: config.SenderValidationEnabled,
+			PaymentDestination:    config.ServiceURL + "address/{alias}@{domain.tld}",
+			PKI:                   config.ServiceURL + "id/{alias}@{domain.tld}",
+			PublicProfile:         config.ServiceURL + "public-profile/{alias}@{domain.tld}",
+			VerifyPublicKey:       config.ServiceURL + "verify-pubkey/{alias}@{domain.tld}/{pubkey}",
 		},
 	}
 }
@@ -42,6 +42,6 @@ func createCapabilities() *Capabilities {
 // and list all active capabilities of the Paymail server
 //
 // Specs: http://bsvalias.org/02-02-capability-discovery.html
-func showCapabilities(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	apirouter.ReturnResponse(w, req, http.StatusOK, createCapabilities())
+func (config *Configuration) showCapabilities(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	apirouter.ReturnResponse(w, req, http.StatusOK, config.Capabilities)
 }
