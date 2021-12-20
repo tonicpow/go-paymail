@@ -9,19 +9,8 @@ import (
 	"github.com/mrz1836/go-logger"
 )
 
-// paymailAddress is a mock table of paymail addresses for the example server
-type paymailAddress struct {
-	Alias       string `json:"alias"`        // Alias or handle of the paymail
-	Avatar      string `json:"avatar"`       // This is the url of the user (public profile)
-	ID          uint64 `json:"id"`           // Unique identifier
-	LastAddress string `json:"last_address"` // This is used as a temp address for now (should be via xPub)
-	Name        string `json:"name"`         // This is the name of the user (public profile)
-	PrivateKey  string `json:"private_key"`  // PrivateKey hex encoded
-	PubKey      string `json:"pubkey"`       // PublicKey hex encoded
-}
-
 // paymailAddressTable is the mocked data for the example server (table: paymail_address)
-var paymailAddressTable []*paymailAddress
+var paymailAddressTable []*PaymailAddress
 
 // Create the list of mock aliases to create on load
 var mockAliases = []struct {
@@ -34,8 +23,8 @@ var mockAliases = []struct {
 	{"satchmo", "https://github.com/rohenaz.png", 2, "Satchmo"},
 }
 
-// init run on load
-func init() {
+// InitMockDatabase run on load
+func InitMockDatabase() {
 
 	// Generate a paymail addresses
 	for _, mock := range mockAliases {
@@ -53,7 +42,7 @@ func init() {
 func generatePaymail(alias string, id uint64) error {
 
 	// Start a row
-	row := &paymailAddress{ID: id, Alias: alias}
+	row := &PaymailAddress{ID: id, Alias: alias}
 
 	var err error
 
@@ -78,8 +67,8 @@ func generatePaymail(alias string, id uint64) error {
 	return nil
 }
 
-// getPaymail will find a paymail address given an alias
-func getPaymailByAlias(alias string) *paymailAddress {
+// MockGetPaymailByAlias will find a paymail address given an alias
+func MockGetPaymailByAlias(alias string) *PaymailAddress {
 	alias = strings.ToLower(alias)
 	for i, row := range paymailAddressTable {
 		if alias == row.Alias {

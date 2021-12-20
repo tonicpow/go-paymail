@@ -26,7 +26,7 @@ Incoming Data Object Example:
 // resolveAddress will return the payment destination (bitcoin address) for the corresponding paymail address
 //
 // Specs: http://bsvalias.org/04-01-basic-address-resolution.html
-func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func (config *Configuration) resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 	// Get the params & paymail address submitted via URL request
 	params := apirouter.GetParams(req)
@@ -47,7 +47,7 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	if len(paymailAddress) == 0 {
 		ErrorResponse(w, req, ErrorInvalidParameter, "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
 		return
-	} else if domain != paymailDomain {
+	} else if domain != config.PaymailDomain {
 		ErrorResponse(w, req, ErrorUnknownDomain, "domain unknown: "+domain, http.StatusBadRequest)
 		return
 	}
@@ -74,7 +74,7 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	}
 
 	// Only validate signatures if sender validation is enabled (skip if disabled)
-	if senderValidationEnabled {
+	if config.SenderValidationEnabled {
 		if len(senderRequest.Signature) > 0 {
 
 			// Get the pubKey from the corresponding sender paymail address
@@ -105,7 +105,7 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	// todo: lookup the paymail address in a data-store, database, etc (return 404 if not found)
 
 	// Find in mock database
-	foundPaymail := getPaymailByAlias(alias)
+	foundPaymail := config.actions.GetPaymailByAlias(alias)
 	if foundPaymail == nil {
 		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return
@@ -122,7 +122,7 @@ func resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	}
 
 	// Create a signature of output if senderValidation is enabled
-	if senderValidationEnabled {
+	if config.SenderValidationEnabled {
 		if response.Signature, err = bitcoin.SignMessage(foundPaymail.PrivateKey, response.Output, false); err != nil {
 			ErrorResponse(w, req, ErrorInvalidSignature, "invalid signature: "+err.Error(), http.StatusUnprocessableEntity)
 			return

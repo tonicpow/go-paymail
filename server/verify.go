@@ -11,7 +11,7 @@ import (
 // verifyPubKey will return a response if the pubkey matches the paymail given
 //
 // Specs: https://bsvalias.org/05-verify-public-key-owner.html
-func verifyPubKey(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func (config *Configuration) verifyPubKey(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 	// Get the params submitted via URL request
 	params := apirouter.GetParams(req)
@@ -23,7 +23,7 @@ func verifyPubKey(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
 	if len(address) == 0 {
 		ErrorResponse(w, req, ErrorInvalidParameter, "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
 		return
-	} else if domain != paymailDomain {
+	} else if domain != config.PaymailDomain {
 		ErrorResponse(w, req, ErrorUnknownDomain, "domain unknown: "+domain, http.StatusBadRequest)
 		return
 	}
@@ -34,12 +34,10 @@ func verifyPubKey(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
 		return
 	}
 
-	// todo: lookup the paymail address in a data-store, database, etc - get the PubKey (return 404 if not found)
-
 	// todo: add caching for fast responses since the pubkey will not change
 
 	// Find in mock database
-	foundPaymail := getPaymailByAlias(alias)
+	foundPaymail := config.actions.GetPaymailByAlias(alias)
 	if foundPaymail == nil {
 		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return

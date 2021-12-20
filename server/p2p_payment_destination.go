@@ -19,7 +19,7 @@ Incoming Data Object Example:
 // p2pDestination will return a output script(s) for a destination (used with SendP2PTransaction)
 //
 // Specs: https://docs.moneybutton.com/docs/paymail-07-p2p-payment-destination.html
-func p2pDestination(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func (config *Configuration) p2pDestination(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 	// Get the params & paymail address submitted via URL request
 	params := apirouter.GetParams(req)
@@ -35,7 +35,7 @@ func p2pDestination(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	if len(paymailAddress) == 0 {
 		ErrorResponse(w, req, ErrorInvalidParameter, "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
 		return
-	} else if domain != paymailDomain {
+	} else if domain != config.PaymailDomain {
 		ErrorResponse(w, req, ErrorUnknownDomain, "domain unknown: "+domain, http.StatusBadRequest)
 		return
 	}
@@ -49,7 +49,7 @@ func p2pDestination(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	// todo: lookup the paymail address in a data-store, database, etc - get the PubKey (return 404 if not found)
 
 	// Find in mock database
-	foundPaymail := getPaymailByAlias(alias)
+	foundPaymail := config.actions.GetPaymailByAlias(alias)
 	if foundPaymail == nil {
 		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return
