@@ -16,15 +16,17 @@ type basicRoutes struct {
 
 // Configuration paymail server configuration object
 type Configuration struct {
-	BasicRoutes             *basicRoutes           `json:"basic_routes,omitempty"`
-	Capabilities            *Capabilities          `json:"capabilities,omitempty"`
-	actions                 PaymailServerInterface `json:"interface,omitempty"`
-	PaymailDomain           string                 `json:"paymail_domain,omitempty"`
-	Port                    int                    `json:"port,omitempty"`
-	SenderValidationEnabled bool                   `json:"sender_validation_enabled,omitempty"`
-	ServiceName             string                 `json:"service_name,omitempty"`
-	ServiceURL              string                 `json:"service_url,omitempty"`
-	Timeout                 int                    `json:"timeout,omitempty"`
+	BasicRoutes             *basicRoutes  `json:"basic_routes,omitempty"`
+	Capabilities            *Capabilities `json:"capabilities,omitempty"`
+	PaymailDomain           string        `json:"paymail_domain,omitempty"`
+	Port                    int           `json:"port,omitempty"`
+	SenderValidationEnabled bool          `json:"sender_validation_enabled,omitempty"`
+	ServiceName             string        `json:"service_name,omitempty"`
+	ServiceURL              string        `json:"service_url,omitempty"`
+	Timeout                 int           `json:"timeout,omitempty"`
+
+	// private
+	actions PaymailServerInterface
 }
 
 // NewConfiguration create a new Configuration for the paymail server
