@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/mrz1836/go-sanitize"
-	"github.com/tonicpow/go-paymail"
 )
 
 // Configuration paymail server configuration object
@@ -147,21 +146,4 @@ func NewConfig(serviceProvider PaymailServiceProvider, opts ...ConfigOps) (*Conf
 	config.actions = serviceProvider
 
 	return config, nil
-}
-
-// NewConfiguration create a new Configuration for the paymail server
-func NewConfiguration(paymailDomain string, serverInterface PaymailServiceProvider) *Configuration {
-	config := &Configuration{
-		BasicRoutes:             &basicRoutes{},
-		actions:                 serverInterface,
-		Port:                    DefaultServerPort,
-		SenderValidationEnabled: DefaultSenderValidation,
-		ServiceName:             paymail.DefaultServiceName,
-		// ServiceURL:              "https://" + paymailDomain + "/" + DefaultAPIVersion + "/" + paymail.DefaultServiceName + "/",
-		Timeout: DefaultTimeout,
-	}
-
-	// config.Capabilities = createCapabilities(config)
-
-	return config
 }
