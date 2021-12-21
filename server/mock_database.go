@@ -68,12 +68,12 @@ func generatePaymail(alias string, id uint64) error {
 }
 
 // MockGetPaymailByAlias will find a paymail address given an alias
-func MockGetPaymailByAlias(alias string) *PaymailAddress {
+func MockGetPaymailByAlias(alias string) (*PaymailAddress, error) {
 	alias = strings.ToLower(alias)
 	for i, row := range paymailAddressTable {
 		if alias == row.Alias {
-			return paymailAddressTable[i]
+			return paymailAddressTable[i], nil
 		}
 	}
-	return nil
+	return nil, nil
 }

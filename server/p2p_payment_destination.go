@@ -49,7 +49,11 @@ func (config *Configuration) p2pDestination(w http.ResponseWriter, req *http.Req
 	// todo: lookup the paymail address in a data-store, database, etc - get the PubKey (return 404 if not found)
 
 	// Find in mock database
-	foundPaymail := config.actions.GetPaymailByAlias(req.Context(), alias)
+	foundPaymail, err := config.actions.GetPaymailByAlias(req.Context(), alias)
+	if err != nil {
+		ErrorResponse(w, req, ErrorPaymailNotFound, err.Error(), http.StatusNotFound)
+		return
+	}
 	if foundPaymail == nil {
 		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return
@@ -62,7 +66,6 @@ func (config *Configuration) p2pDestination(w http.ResponseWriter, req *http.Req
 
 	// Generate the script
 	// todo: multiple scripts if you want to break apart (IE: over X satoshis, break apart into multiple outputs)
-	var err error
 	if output.Script, err = bitcoin.ScriptFromAddress(foundPaymail.LastAddress); err != nil {
 		ErrorResponse(w, req, ErrorScript, "error generating script: "+err.Error(), http.StatusNotFound)
 		return

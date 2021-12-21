@@ -113,7 +113,12 @@ func (config *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Reque
 	// todo: lookup the paymail address in a data-store, database, etc - get the PubKey (return 404 if not found)
 
 	// Find in mock database
-	foundPaymail := config.actions.GetPaymailByAlias(req.Context(), alias)
+	var foundPaymail *PaymailAddress
+	foundPaymail, err = config.actions.GetPaymailByAlias(req.Context(), alias)
+	if err != nil {
+		ErrorResponse(w, req, ErrorPaymailNotFound, err.Error(), http.StatusNotFound)
+		return
+	}
 	if foundPaymail == nil {
 		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return

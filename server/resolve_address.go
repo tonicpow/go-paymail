@@ -105,7 +105,11 @@ func (config *Configuration) resolveAddress(w http.ResponseWriter, req *http.Req
 	// todo: lookup the paymail address in a data-store, database, etc (return 404 if not found)
 
 	// Find in mock database
-	foundPaymail := config.actions.GetPaymailByAlias(req.Context(), alias)
+	foundPaymail, err := config.actions.GetPaymailByAlias(req.Context(), alias)
+	if err != nil {
+		ErrorResponse(w, req, err.Error(), err.Error(), http.StatusNotFound)
+		return
+	}
 	if foundPaymail == nil {
 		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return
@@ -115,7 +119,6 @@ func (config *Configuration) resolveAddress(w http.ResponseWriter, req *http.Req
 	response := &paymail.Resolution{}
 
 	// Generate the script
-	var err error
 	if response.Output, err = bitcoin.ScriptFromAddress(foundPaymail.LastAddress); err != nil {
 		ErrorResponse(w, req, ErrorScript, "error generating script: "+err.Error(), http.StatusNotFound)
 		return

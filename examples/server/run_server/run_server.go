@@ -24,6 +24,6 @@ func main() {
 // Example mock implementation
 type serverInterface struct{}
 
-func (s *serverInterface) GetPaymailByAlias(_ context.Context, alias string) *server.PaymailAddress {
+func (s *serverInterface) GetPaymailByAlias(_ context.Context, alias string) (*server.PaymailAddress, error) {
 	return server.MockGetPaymailByAlias(alias)
 }
