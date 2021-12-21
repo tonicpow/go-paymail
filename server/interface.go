@@ -15,5 +15,5 @@ type PaymailAddress struct {
 
 // PaymailServerInterface the paymail server interface that needs to be implemented
 type PaymailServerInterface interface {
-	GetPaymailByAlias(ctx context.Context, alias string) *PaymailAddress
+	GetPaymailByAlias(ctx context.Context, alias string) (*PaymailAddress, error)
 }
