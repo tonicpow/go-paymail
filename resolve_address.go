@@ -2,6 +2,7 @@ package paymail
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -12,6 +13,11 @@ import (
 // Resolution is the response from the ResolveAddress() request
 type Resolution struct {
 	StandardResponse
+	ResolutionInformation
+}
+
+// ResolutionInformation is just the information needed to respond
+type ResolutionInformation struct {
 	Address   string `json:"address,omitempty"`   // Legacy BSV address derived from the output script (custom for our Go package)
 	Output    string `json:"output"`              // hex-encoded Bitcoin script, which the sender MUST use during the construction of a payment transaction
 	Signature string `json:"signature,omitempty"` // This is used if SenderValidation is enforced (signature of "output" value)
@@ -30,22 +36,22 @@ func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderReque
 
 	// Basic requirements for the request
 	if len(alias) == 0 {
-		err = fmt.Errorf("missing alias")
+		err = errors.New("missing alias")
 		return
 	} else if len(domain) == 0 {
-		err = fmt.Errorf("missing domain")
+		err = errors.New("missing domain")
 		return
 	}
 
 	// Basic requirements for request
 	if senderRequest == nil {
-		err = fmt.Errorf("senderReqeuest cannot be nil")
+		err = errors.New("senderRequest cannot be nil")
 		return
 	} else if len(senderRequest.Dt) == 0 {
-		err = fmt.Errorf("time is required on senderReqeuest")
+		err = errors.New("time is required on senderRequest")
 		return
 	} else if len(senderRequest.SenderHandle) == 0 {
-		err = fmt.Errorf("sender handle is required on senderReqeuest")
+		err = errors.New("sender handle is required on senderRequest")
 		return
 	}
 
@@ -67,7 +73,7 @@ func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderReque
 
 		// Paymail address not found?
 		if response.StatusCode == http.StatusNotFound {
-			err = fmt.Errorf("paymail address not found")
+			err = errors.New("paymail address not found")
 		} else {
 			serverError := &ServerError{}
 			if err = json.Unmarshal(resp.Body, serverError); err != nil {
@@ -86,7 +92,7 @@ func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderReque
 
 	// Check for an output
 	if len(response.Output) == 0 {
-		err = fmt.Errorf("missing an output value")
+		err = errors.New("missing an output value")
 		return
 	}
 

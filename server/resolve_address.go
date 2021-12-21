@@ -26,11 +26,21 @@ Incoming Data Object Example:
 // resolveAddress will return the payment destination (bitcoin address) for the corresponding paymail address
 //
 // Specs: http://bsvalias.org/04-01-basic-address-resolution.html
-func (config *Configuration) resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func (c *Configuration) resolveAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 	// Get the params & paymail address submitted via URL request
 	params := apirouter.GetParams(req)
 	incomingPaymail := params.GetString("paymailAddress")
+
+	// Parse, sanitize and basic validation
+	alias, domain, paymailAddress := paymail.SanitizePaymail(incomingPaymail)
+	if len(paymailAddress) == 0 {
+		ErrorResponse(w, req, ErrorInvalidParameter, "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
+		return
+	} else if !c.IsAllowedDomain(domain) {
+		ErrorResponse(w, req, ErrorUnknownDomain, "domain unknown: "+domain, http.StatusBadRequest)
+		return
+	}
 
 	// Start the SenderRequest
 	senderRequest := &paymail.SenderRequest{
@@ -40,16 +50,6 @@ func (config *Configuration) resolveAddress(w http.ResponseWriter, req *http.Req
 		SenderHandle: params.GetString("senderHandle"),
 		SenderName:   params.GetString("senderName"),
 		Signature:    params.GetString("signature"),
-	}
-
-	// Parse, sanitize and basic validation
-	alias, domain, paymailAddress := paymail.SanitizePaymail(incomingPaymail)
-	if len(paymailAddress) == 0 {
-		ErrorResponse(w, req, ErrorInvalidParameter, "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
-		return
-	} else if domain != config.PaymailDomain {
-		ErrorResponse(w, req, ErrorUnknownDomain, "domain unknown: "+domain, http.StatusBadRequest)
-		return
 	}
 
 	// Check for required fields
@@ -74,7 +74,7 @@ func (config *Configuration) resolveAddress(w http.ResponseWriter, req *http.Req
 	}
 
 	// Only validate signatures if sender validation is enabled (skip if disabled)
-	if config.SenderValidationEnabled {
+	if c.SenderValidationEnabled {
 		if len(senderRequest.Signature) > 0 {
 
 			// Get the pubKey from the corresponding sender paymail address
@@ -102,34 +102,23 @@ func (config *Configuration) resolveAddress(w http.ResponseWriter, req *http.Req
 		}
 	}
 
-	// todo: lookup the paymail address in a data-store, database, etc (return 404 if not found)
-
-	// Find in mock database
-	foundPaymail, err := config.actions.GetPaymailByAlias(req.Context(), alias)
+	// Get from the data layer
+	foundPaymail, err := c.actions.GetPaymailByAlias(req.Context(), alias, domain)
 	if err != nil {
-		ErrorResponse(w, req, err.Error(), err.Error(), http.StatusNotFound)
+		ErrorResponse(w, req, ErrorFindingPaymail, err.Error(), http.StatusExpectationFailed)
 		return
-	}
-	if foundPaymail == nil {
+	} else if foundPaymail == nil {
 		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return
 	}
 
-	// Start the response
-	response := &paymail.Resolution{}
-
-	// Generate the script
-	if response.Output, err = bitcoin.ScriptFromAddress(foundPaymail.LastAddress); err != nil {
-		ErrorResponse(w, req, ErrorScript, "error generating script: "+err.Error(), http.StatusNotFound)
+	// Get the resolution information
+	var response *paymail.ResolutionInformation
+	if response, err = c.actions.CreateAddressResolutionResponse(
+		req.Context(), alias, domain, c.SenderValidationEnabled,
+	); err != nil {
+		ErrorResponse(w, req, ErrorScript, "error creating output script: "+err.Error(), http.StatusExpectationFailed)
 		return
-	}
-
-	// Create a signature of output if senderValidation is enabled
-	if config.SenderValidationEnabled {
-		if response.Signature, err = bitcoin.SignMessage(foundPaymail.PrivateKey, response.Output, false); err != nil {
-			ErrorResponse(w, req, ErrorInvalidSignature, "invalid signature: "+err.Error(), http.StatusUnprocessableEntity)
-			return
-		}
 	}
 
 	// Return the response

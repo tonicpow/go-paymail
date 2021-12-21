@@ -27,7 +27,7 @@ Incoming Data Object Example:
 // p2pReceiveTx will receive a P2P transaction (from previous request: P2P Payment Destination)
 //
 // Specs: https://docs.moneybutton.com/docs/paymail-06-p2p-transactions.html
-func (config *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func (c *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 	// Get the params & paymail address submitted via URL request
 	params := apirouter.GetParams(req)
@@ -55,7 +55,7 @@ func (config *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Reque
 	if len(paymailAddress) == 0 {
 		ErrorResponse(w, req, ErrorInvalidParameter, "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
 		return
-	} else if domain != config.PaymailDomain {
+	} else if !c.IsAllowedDomain(domain) {
 		ErrorResponse(w, req, ErrorUnknownDomain, "domain unknown: "+domain, http.StatusBadRequest)
 		return
 	}
@@ -83,7 +83,7 @@ func (config *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Reque
 	}
 
 	// Check signature if: 1) sender validation enabled or 2) a signature was given (optional)
-	if config.SenderValidationEnabled || len(p2pTransaction.MetaData.Signature) > 0 {
+	if c.SenderValidationEnabled || len(p2pTransaction.MetaData.Signature) > 0 {
 
 		// Check required fields for signature validation
 		if len(p2pTransaction.MetaData.Signature) == 0 {
@@ -110,13 +110,11 @@ func (config *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Reque
 
 	// todo: lookup the reference number in a data-store (get additional information)
 
-	// todo: lookup the paymail address in a data-store, database, etc - get the PubKey (return 404 if not found)
-
-	// Find in mock database
+	// Get from the data layer
 	var foundPaymail *PaymailAddress
-	foundPaymail, err = config.actions.GetPaymailByAlias(req.Context(), alias)
+	foundPaymail, err = c.actions.GetPaymailByAlias(req.Context(), alias, domain)
 	if err != nil {
-		ErrorResponse(w, req, ErrorPaymailNotFound, err.Error(), http.StatusNotFound)
+		ErrorResponse(w, req, ErrorFindingPaymail, err.Error(), http.StatusExpectationFailed)
 		return
 	}
 	if foundPaymail == nil {

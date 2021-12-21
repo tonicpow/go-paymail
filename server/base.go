@@ -19,10 +19,12 @@ func health(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 
 // notFound handles all 404 requests
 func notFound(w http.ResponseWriter, req *http.Request) {
-	ErrorResponse(w, req, "request-404", "request not found", http.StatusNotFound)
+
+	// todo: use error codes?
+	ErrorResponse(w, req, ErrorRequestNotFound, "request not found", http.StatusNotFound)
 }
 
 // methodNotAllowed handles all 405 requests
 func methodNotAllowed(w http.ResponseWriter, req *http.Request) {
-	ErrorResponse(w, req, "method-405", "method "+req.Method+" not allowed", http.StatusMethodNotAllowed)
+	ErrorResponse(w, req, ErrorMethodNotFound, "method "+req.Method+" not allowed", http.StatusMethodNotAllowed)
 }

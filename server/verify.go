@@ -11,7 +11,7 @@ import (
 // verifyPubKey will return a response if the pubkey matches the paymail given
 //
 // Specs: https://bsvalias.org/05-verify-public-key-owner.html
-func (config *Configuration) verifyPubKey(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func (c *Configuration) verifyPubKey(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 	// Get the params submitted via URL request
 	params := apirouter.GetParams(req)
@@ -23,7 +23,7 @@ func (config *Configuration) verifyPubKey(w http.ResponseWriter, req *http.Reque
 	if len(address) == 0 {
 		ErrorResponse(w, req, ErrorInvalidParameter, "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
 		return
-	} else if domain != config.PaymailDomain {
+	} else if !c.IsAllowedDomain(domain) {
 		ErrorResponse(w, req, ErrorUnknownDomain, "domain unknown: "+domain, http.StatusBadRequest)
 		return
 	}
@@ -34,12 +34,10 @@ func (config *Configuration) verifyPubKey(w http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	// todo: add caching for fast responses since the pubkey will not change
-
-	// Find in mock database
-	foundPaymail, err := config.actions.GetPaymailByAlias(req.Context(), alias)
+	// Get from the data layer
+	foundPaymail, err := c.actions.GetPaymailByAlias(req.Context(), alias, domain)
 	if err != nil {
-		ErrorResponse(w, req, ErrorPaymailNotFound, err.Error(), http.StatusNotFound)
+		ErrorResponse(w, req, ErrorFindingPaymail, err.Error(), http.StatusExpectationFailed)
 		return
 	}
 	if foundPaymail == nil {
@@ -49,7 +47,7 @@ func (config *Configuration) verifyPubKey(w http.ResponseWriter, req *http.Reque
 
 	// Return the response
 	apirouter.ReturnResponse(w, req, http.StatusOK, &paymail.Verification{
-		BsvAlias: paymail.DefaultBsvAliasVersion,
+		BsvAlias: c.BSVAliasVersion,
 		Handle:   address,
 		PubKey:   incomingPubKey, // todo: should this be the incoming or found pubkey?
 		Match:    foundPaymail.PubKey == incomingPubKey,

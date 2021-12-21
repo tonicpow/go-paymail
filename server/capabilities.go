@@ -9,31 +9,21 @@ import (
 )
 
 // Capabilities is the standard response for returning the Paymail capabilities
-// FYI - could not use paymail.Capabilities because it uses map[string]interface{}
 type Capabilities struct {
-	BsvAlias     string              `json:"bsvalias"`     // Version of the bsvalias
-	Capabilities *activeCapabilities `json:"capabilities"` // List of the capabilities
+	BsvAlias     string                 `json:"bsvalias"`     // Version of the bsvalias
+	Capabilities map[string]interface{} `json:"capabilities"` // List of the capabilities
 }
 
-// activeCapabilities is used to display only the active capabilities of the Paymail server
-type activeCapabilities struct {
-	ForceSenderValidation bool   `json:"6745385c3fc0"`       // Will force sender to have a signature if enabled
-	PaymentDestination    string `json:"paymentDestination"` // Resolve an address aka Payment Destination - Alternate: 759684b1a19a
-	PKI                   string `json:"pki"`                // Get public key information - Alternate: 0c4339ef99c2
-	PublicProfile         string `json:"f12f968c92d6"`       // Returns a public profile
-	VerifyPublicKey       string `json:"a9f510c16bde"`       // Verify a given pubkey
-}
-
-// createCapabilities will create a default set of capabilities
-func createCapabilities(config *Configuration) *Capabilities {
+// genericCapabilities will make generic capabilities
+func genericCapabilities(bsvAliasVersion string, senderValidation bool) *Capabilities {
 	return &Capabilities{
-		BsvAlias: paymail.DefaultBsvAliasVersion,
-		Capabilities: &activeCapabilities{
-			ForceSenderValidation: config.SenderValidationEnabled,
-			PaymentDestination:    config.ServiceURL + "address/{alias}@{domain.tld}",
-			PKI:                   config.ServiceURL + "id/{alias}@{domain.tld}",
-			PublicProfile:         config.ServiceURL + "public-profile/{alias}@{domain.tld}",
-			VerifyPublicKey:       config.ServiceURL + "verify-pubkey/{alias}@{domain.tld}/{pubkey}",
+		BsvAlias: bsvAliasVersion,
+		Capabilities: map[string]interface{}{
+			paymail.BRFCPaymentDestination:   "/address/{alias}@{domain.tld}",
+			paymail.BRFCPki:                  "/id/{alias}@{domain.tld}",
+			paymail.BRFCPublicProfile:        "/public-profile/{alias}@{domain.tld}",
+			paymail.BRFCSenderValidation:     senderValidation,
+			paymail.BRFCVerifyPublicKeyOwner: "/verify-pubkey/{alias}@{domain.tld}/{pubkey}",
 		},
 	}
 }
@@ -42,6 +32,17 @@ func createCapabilities(config *Configuration) *Capabilities {
 // and list all active capabilities of the Paymail server
 //
 // Specs: http://bsvalias.org/02-02-capability-discovery.html
-func (config *Configuration) showCapabilities(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	apirouter.ReturnResponse(w, req, http.StatusOK, config.Capabilities)
+func (c *Configuration) showCapabilities(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+
+	// Check the domain (allowed, and used for capabilities response)
+	// todo: bake this into middleware? This is protecting the "req" domain name (like CORs)
+	domain := getHost(req)
+	if !c.IsAllowedDomain(domain) {
+		ErrorResponse(w, req, ErrorUnknownDomain, "domain unknown: "+domain, http.StatusBadRequest)
+		return
+	}
+
+	// Set the service URL
+	c.EnrichCapabilities(domain)
+	apirouter.ReturnResponse(w, req, http.StatusOK, c.Capabilities)
 }

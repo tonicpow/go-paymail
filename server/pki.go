@@ -11,7 +11,7 @@ import (
 // showPKI will return the public key information for the corresponding paymail address
 //
 // Specs: http://bsvalias.org/03-public-key-infrastructure.html
-func (config *Configuration) showPKI(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func (c *Configuration) showPKI(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 	// Get the params & paymail address submitted via URL request
 	params := apirouter.GetParams(req)
@@ -22,19 +22,15 @@ func (config *Configuration) showPKI(w http.ResponseWriter, req *http.Request, _
 	if len(address) == 0 {
 		ErrorResponse(w, req, ErrorInvalidParameter, "invalid paymail: "+incomingPaymail, http.StatusBadRequest)
 		return
-	} else if domain != config.PaymailDomain {
+	} else if !c.IsAllowedDomain(domain) {
 		ErrorResponse(w, req, ErrorUnknownDomain, "domain unknown: "+domain, http.StatusBadRequest)
 		return
 	}
 
-	// todo: lookup the paymail address in a data-store, database, etc - get the PubKey (return 404 if not found)
-
-	// todo: add caching for fast responses since the pubkey will not change
-
-	// Find in mock database
-	foundPaymail, err := config.actions.GetPaymailByAlias(req.Context(), alias)
+	// Get from the data layer
+	foundPaymail, err := c.actions.GetPaymailByAlias(req.Context(), alias, domain)
 	if err != nil {
-		ErrorResponse(w, req, ErrorPaymailNotFound, err.Error(), http.StatusNotFound)
+		ErrorResponse(w, req, ErrorFindingPaymail, err.Error(), http.StatusExpectationFailed)
 		return
 	}
 	if foundPaymail == nil {
@@ -44,7 +40,7 @@ func (config *Configuration) showPKI(w http.ResponseWriter, req *http.Request, _
 
 	// Return the response
 	apirouter.ReturnResponse(w, req, http.StatusOK, &paymail.PKI{
-		BsvAlias: paymail.DefaultBsvAliasVersion,
+		BsvAlias: c.BSVAliasVersion,
 		Handle:   address,
 		PubKey:   foundPaymail.PubKey,
 	})

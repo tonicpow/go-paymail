@@ -2,6 +2,7 @@ package paymail
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -26,6 +27,13 @@ type PaymentRequest struct {
 // The reference is unique for the payment destination request
 type PaymentDestination struct {
 	StandardResponse
+	PaymentDestinationInformation
+}
+
+// PaymentDestinationInformation is the information for the response
+//
+// The reference is unique for the payment destination request
+type PaymentDestinationInformation struct {
 	Outputs   []*PaymentOutput `json:"outputs"`   // A list of outputs
 	Reference string           `json:"reference"` // A reference for the payment, created by the receiver of the transaction
 }
@@ -43,7 +51,8 @@ type PaymentOutput struct {
 // GetP2PPaymentDestination will return list of outputs for the P2P transactions to use
 //
 // Specs: https://docs.moneybutton.com/docs/paymail-07-p2p-payment-destination.html
-func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentRequest *PaymentRequest) (response *PaymentDestination, err error) {
+func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string,
+	paymentRequest *PaymentRequest) (response *PaymentDestination, err error) {
 
 	// Require a valid url
 	if len(p2pURL) == 0 || !strings.Contains(p2pURL, "https://") {
@@ -53,23 +62,26 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 
 	// Basic requirements for request
 	if paymentRequest == nil {
-		err = fmt.Errorf("paymentRequest cannot be nil")
+		err = errors.New("paymentRequest cannot be nil")
 		return
 	} else if paymentRequest.Satoshis == 0 {
-		err = fmt.Errorf("satoshis is required")
+		err = errors.New("satoshis is required")
 		return
 	} else if len(alias) == 0 {
-		err = fmt.Errorf("missing alias")
+		err = errors.New("missing alias")
 		return
 	} else if len(domain) == 0 {
-		err = fmt.Errorf("missing domain")
+		err = errors.New("missing domain")
 		return
 	}
 
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request
 	// https://<host-discovery-target>/api/rawtx/{alias}@{domain.tld}
 	// https://<host-discovery-target>/api/p2p-payment-destination/{alias}@{domain.tld}
-	reqURL := strings.Replace(strings.Replace(p2pURL, "{alias}", alias, -1), "{domain.tld}", domain, -1)
+	reqURL := strings.Replace(
+		strings.Replace(p2pURL, "{alias}", alias, -1),
+		"{domain.tld}", domain, -1,
+	)
 
 	// Fire the POST request
 	var resp StandardResponse
@@ -81,17 +93,21 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 	response = &PaymentDestination{StandardResponse: resp}
 
 	// Test the status code
-	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {
+	if response.StatusCode != http.StatusOK &&
+		response.StatusCode != http.StatusNotModified {
 
 		// Paymail address not found?
 		if response.StatusCode == http.StatusNotFound {
-			err = fmt.Errorf("paymail address not found")
+			err = errors.New("paymail address not found")
 		} else {
 			serverError := &ServerError{}
 			if err = json.Unmarshal(resp.Body, serverError); err != nil {
 				return
 			}
-			err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, serverError.Message)
+			err = fmt.Errorf(
+				"bad response from paymail provider: code %d, message: %s",
+				response.StatusCode, serverError.Message,
+			)
 		}
 
 		return
@@ -104,13 +120,13 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 
 	// Check for a reference number
 	if len(response.Reference) == 0 {
-		err = fmt.Errorf("missing a returned reference value")
+		err = errors.New("missing a returned reference value")
 		return
 	}
 
 	// No outputs?
 	if len(response.Outputs) == 0 {
-		err = fmt.Errorf("missing a returned output")
+		err = errors.New("missing a returned output")
 		return
 	}
 
@@ -124,7 +140,9 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string, paymentR
 		}
 
 		// Extract the address
-		if response.Outputs[index].Address, err = bitcoin.GetAddressFromScript(out.Script); err != nil {
+		if response.Outputs[index].Address, err = bitcoin.GetAddressFromScript(
+			out.Script,
+		); err != nil {
 			return
 		}
 	}

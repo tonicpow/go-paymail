@@ -1,19 +1,14 @@
 package server
 
-import "context"
+import (
+	"context"
 
-// PaymailAddress is an internal struct for paymail addresses
-type PaymailAddress struct {
-	Alias       string `json:"alias"`        // Alias or handle of the paymail
-	Avatar      string `json:"avatar"`       // This is the url of the user (public profile)
-	ID          uint64 `json:"id"`           // Unique identifier
-	LastAddress string `json:"last_address"` // This is used as a temp address for now (should be via xPub)
-	Name        string `json:"name"`         // This is the name of the user (public profile)
-	PrivateKey  string `json:"private_key"`  // PrivateKey hex encoded
-	PubKey      string `json:"pubkey"`       // PublicKey hex encoded
-}
+	"github.com/tonicpow/go-paymail"
+)
 
-// PaymailServerInterface the paymail server interface that needs to be implemented
-type PaymailServerInterface interface {
-	GetPaymailByAlias(ctx context.Context, alias string) (*PaymailAddress, error)
+// PaymailServiceProvider the paymail server interface that needs to be implemented
+type PaymailServiceProvider interface {
+	GetPaymailByAlias(ctx context.Context, alias, domain string) (*PaymailAddress, error)
+	CreateAddressResolutionResponse(ctx context.Context, alias, domain string, senderValidation bool) (*paymail.ResolutionInformation, error)
+	CreateP2PDestinationResponse(ctx context.Context, alias, domain string, satoshis uint64) (*paymail.PaymentDestinationInformation, error)
 }

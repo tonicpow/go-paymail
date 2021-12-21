@@ -1,29 +1,35 @@
 package main
 
 import (
-	"context"
+	"log"
+	"time"
 
 	"github.com/tonicpow/go-paymail/server"
 )
 
 func main() {
 
-	// initialize the mock database - only for testing
-	server.InitMockDatabase()
+	// initialize the demo database
+	if err := InitDemoDatabase(); err != nil {
+		log.Fatal(err.Error())
+	}
 
-	// Default server runs on port 3000 and timeout requests after 15 seconds
-	config := server.NewConfiguration("test.com", new(serverInterface))
-	config.BasicRoutes.Add404Route = true
-	config.BasicRoutes.AddHealthRoute = true
-	config.BasicRoutes.AddIndexRoute = true
-	config.BasicRoutes.AddNotAllowed = true
+	// Custom server with lots of customizable goodies
+	config, err := server.NewConfig(
+		new(demoServiceProvider),
+		server.WithBasicRoutes(),
+		server.WithDomain("localhost"), // todo: make this work locally?
+		server.WithDomain("another.com"),
+		server.WithDomain("test.com"),
+		server.WithGenericCapabilities(),
+		server.WithPort(3000),
+		server.WithServiceName("BsvAliasCustom"),
+		server.WithTimeout(15*time.Second),
+	)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
-	server.Start(config)
-}
-
-// Example mock implementation
-type serverInterface struct{}
-
-func (s *serverInterface) GetPaymailByAlias(_ context.Context, alias string) (*server.PaymailAddress, error) {
-	return server.MockGetPaymailByAlias(alias)
+	// Create & start the server
+	server.Start(server.Create(config))
 }
