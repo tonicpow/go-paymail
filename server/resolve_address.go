@@ -103,8 +103,12 @@ func (c *Configuration) resolveAddress(w http.ResponseWriter, req *http.Request,
 		}
 	}
 
+	// Create the metadata struct
+	md := CreateMetadata(req, alias, domain, "")
+	md.ResolveAddress = senderRequest
+
 	// Get from the data layer
-	foundPaymail, err := c.actions.GetPaymailByAlias(req.Context(), alias, domain)
+	foundPaymail, err := c.actions.GetPaymailByAlias(req.Context(), alias, domain, md)
 	if err != nil {
 		ErrorResponse(w, req, ErrorFindingPaymail, err.Error(), http.StatusExpectationFailed)
 		return
@@ -116,7 +120,7 @@ func (c *Configuration) resolveAddress(w http.ResponseWriter, req *http.Request,
 	// Get the resolution information
 	var response *paymail.ResolutionInformation
 	if response, err = c.actions.CreateAddressResolutionResponse(
-		req.Context(), alias, domain, c.SenderValidationEnabled,
+		req.Context(), alias, domain, c.SenderValidationEnabled, md,
 	); err != nil {
 		ErrorResponse(w, req, ErrorScript, "error creating output script: "+err.Error(), http.StatusExpectationFailed)
 		return

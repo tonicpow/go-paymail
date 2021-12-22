@@ -113,12 +113,19 @@ func (c *Configuration) AddDomain(domain string) (err error) {
 }
 
 // EnrichCapabilities will update the capabilities with the appropriate service url
-func (c *Configuration) EnrichCapabilities(domain string) {
+func (c *Configuration) EnrichCapabilities(domain string) *Capabilities {
+	capabilities := &Capabilities{
+		BsvAlias:     c.Capabilities.BsvAlias,
+		Capabilities: make(map[string]interface{}),
+	}
 	for key, val := range c.Capabilities.Capabilities {
 		if w, ok := val.(string); ok {
-			c.Capabilities.Capabilities[key] = GenerateServiceURL(c.Prefix, domain, c.APIVersion, c.ServiceName) + w
+			capabilities.Capabilities[key] = GenerateServiceURL(c.Prefix, domain, c.APIVersion, c.ServiceName) + w
+		} else {
+			capabilities.Capabilities[key] = val
 		}
 	}
+	return capabilities
 }
 
 // GenerateServiceURL will create the service URL

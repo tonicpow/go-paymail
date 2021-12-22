@@ -27,8 +27,11 @@ func (c *Configuration) showPKI(w http.ResponseWriter, req *http.Request, _ http
 		return
 	}
 
+	// Create the metadata struct
+	md := CreateMetadata(req, alias, domain, "")
+
 	// Get from the data layer
-	foundPaymail, err := c.actions.GetPaymailByAlias(req.Context(), alias, domain)
+	foundPaymail, err := c.actions.GetPaymailByAlias(req.Context(), alias, domain, md)
 	if err != nil {
 		ErrorResponse(w, req, ErrorFindingPaymail, err.Error(), http.StatusExpectationFailed)
 		return

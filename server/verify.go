@@ -34,8 +34,11 @@ func (c *Configuration) verifyPubKey(w http.ResponseWriter, req *http.Request, _
 		return
 	}
 
+	// Create the metadata struct
+	md := CreateMetadata(req, alias, domain, "")
+
 	// Get from the data layer
-	foundPaymail, err := c.actions.GetPaymailByAlias(req.Context(), alias, domain)
+	foundPaymail, err := c.actions.GetPaymailByAlias(req.Context(), alias, domain, md)
 	if err != nil {
 		ErrorResponse(w, req, ErrorFindingPaymail, err.Error(), http.StatusExpectationFailed)
 		return
@@ -48,7 +51,7 @@ func (c *Configuration) verifyPubKey(w http.ResponseWriter, req *http.Request, _
 	apirouter.ReturnResponse(w, req, http.StatusOK, &paymail.Verification{
 		BsvAlias: c.BSVAliasVersion,
 		Handle:   address,
-		PubKey:   incomingPubKey, // todo: should this be the incoming or found pubkey?
+		PubKey:   foundPaymail.PubKey,
 		Match:    foundPaymail.PubKey == incomingPubKey,
 	})
 }

@@ -7,26 +7,26 @@ import (
 	"strings"
 
 	"github.com/bitcoinschema/go-bitcoin"
+	"github.com/libsv/go-bt"
 	"github.com/mrz1836/go-logger"
 	"github.com/tonicpow/go-paymail"
-	"github.com/tonicpow/go-paymail/server"
 )
 
 // paymailAddressTable is the demo data for the example server (table: paymail_address)
-var demoPaymailAddressTable []*server.PaymailAddress
+var demoPaymailAddressTable []*paymail.AddressInformation
 
 // Create the list of demo aliases to create on load
 var demoAliases = []struct {
 	alias  string
 	domain string
 	avatar string
-	id     uint64
+	id     string
 	name   string
 }{
-	{"mrz", "test.com", "https://github.com/mrz1836.png", 1, "MrZ"},
-	{"mrz", "another.com", "https://github.com/mrz1836.png", 4, "MrZ"},
-	{"satchmo", "test.com", "https://github.com/rohenaz.png", 2, "Satchmo"},
-	{"siggi", "test.com", "https://github.com/icellan.png", 3, "Siggi"},
+	{"mrz", "test.com", "https://github.com/mrz1836.png", "1", "MrZ"},
+	{"mrz", "another.com", "https://github.com/mrz1836.png", "4", "MrZ"},
+	{"satchmo", "test.com", "https://github.com/rohenaz.png", "2", "Satchmo"},
+	{"siggi", "test.com", "https://github.com/icellan.png", "3", "Siggi"},
 }
 
 // InitDemoDatabase creates demo data for the database based on the given aliases
@@ -41,7 +41,7 @@ func InitDemoDatabase() error {
 			demo.name,
 			demo.id,
 		); err != nil {
-			return fmt.Errorf("failed to create paymail address in demo database for alias: %s id: %d", demo.alias, demo.id)
+			return fmt.Errorf("failed to create paymail address in demo database for alias: %s id: %s", demo.alias, demo.id)
 		}
 	}
 
@@ -51,10 +51,10 @@ func InitDemoDatabase() error {
 // generateDemoPaymail will make a new row in the demo database
 //
 // NOTE: creates a private key and pubkey
-func generateDemoPaymail(alias, domain, avatar, name string, id uint64) (err error) {
+func generateDemoPaymail(alias, domain, avatar, name, id string) (err error) {
 
 	// Start a row
-	row := &server.PaymailAddress{
+	row := &paymail.AddressInformation{
 		Alias:  alias,
 		Avatar: avatar,
 		Domain: domain,
@@ -88,7 +88,7 @@ func generateDemoPaymail(alias, domain, avatar, name string, id uint64) (err err
 }
 
 // DemoGetPaymailByAlias will find a paymail address given an alias
-func DemoGetPaymailByAlias(alias, domain string) (*server.PaymailAddress, error) {
+func DemoGetPaymailByAlias(alias, domain string) (*paymail.AddressInformation, error) {
 	for i, row := range demoPaymailAddressTable {
 		if strings.EqualFold(alias, row.Alias) && strings.EqualFold(domain, row.Domain) {
 			return demoPaymailAddressTable[i], nil
@@ -130,7 +130,7 @@ func DemoCreateAddressResolutionResponse(_ context.Context, alias, domain string
 }
 
 // DemoCreateP2PDestinationResponse will create a basic resolution response for the demo
-func DemoCreateP2PDestinationResponse(ctx context.Context, alias, domain string,
+func DemoCreateP2PDestinationResponse(_ context.Context, alias, domain string,
 	satoshis uint64) (*paymail.PaymentDestinationInformation, error) {
 
 	// Get the paymail record
@@ -160,12 +160,22 @@ func DemoCreateP2PDestinationResponse(ctx context.Context, alias, domain string,
 
 // DemoRecordTransaction will record the tx in the datalayer
 func DemoRecordTransaction(_ context.Context,
-	p2pTx *paymail.P2PTransaction) (*paymail.P2PTransactionResponse, error) {
+	p2pTx *paymail.P2PTransaction) (*paymail.P2PTransactionInformation, error) {
 
 	// Record the transaction
 	logger.Data(2, logger.DEBUG, "recording tx...", logger.MakeParameter("reference", p2pTx.Reference))
 
 	// Broadcast etc...
 
-	return nil, nil
+	// Convert the hex to a bt tx
+	tx, err := bt.NewTxFromString(p2pTx.Hex)
+	if err != nil {
+		return nil, err
+	}
+
+	// Demo response
+	return &paymail.P2PTransactionInformation{
+		Note: p2pTx.MetaData.Note,
+		TxID: tx.GetTxID(),
+	}, nil
 }

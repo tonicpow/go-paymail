@@ -31,5 +31,5 @@ func main() {
 	}
 
 	// Create & start the server
-	server.Start(server.Create(config))
+	server.StartServer(server.CreateServer(config))
 }

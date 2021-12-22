@@ -43,6 +43,5 @@ func (c *Configuration) showCapabilities(w http.ResponseWriter, req *http.Reques
 	}
 
 	// Set the service URL
-	c.EnrichCapabilities(domain)
-	apirouter.ReturnResponse(w, req, http.StatusOK, c.Capabilities)
+	apirouter.ReturnResponse(w, req, http.StatusOK, c.EnrichCapabilities(domain))
 }

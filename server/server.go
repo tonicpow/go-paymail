@@ -8,8 +8,8 @@ import (
 	"github.com/mrz1836/go-logger"
 )
 
-// Create will create a basic Paymail Server
-func Create(c *Configuration) *http.Server {
+// CreateServer will create a basic Paymail Server
+func CreateServer(c *Configuration) *http.Server {
 	return &http.Server{
 		Addr:         fmt.Sprintf(":%d", c.Port), // Address to run the server on
 		Handler:      Handlers(c),                // Load all the routes
@@ -18,8 +18,8 @@ func Create(c *Configuration) *http.Server {
 	}
 }
 
-// Start will run the Paymail server
-func Start(srv *http.Server) {
+// StartServer will run the Paymail server
+func StartServer(srv *http.Server) {
 	logger.Data(2, logger.DEBUG, "starting go paymail server...", logger.MakeParameter("address", srv.Addr))
 	logger.Fatalln(srv.ListenAndServe())
 }

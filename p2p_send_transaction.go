@@ -2,6 +2,7 @@ package paymail
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -30,7 +31,7 @@ type P2PTransaction struct {
 
 // P2PMetaData is an object containing data associated with the P2P transaction
 type P2PMetaData struct {
-	Note      string `json:"note,omitempty"`      // A human readable bit of information about the payment
+	Note      string `json:"note,omitempty"`      // A human-readable bit of information about the payment
 	PubKey    string `json:"pubkey,omitempty"`    // Public key to validate the signature (if signature is given)
 	Sender    string `json:"sender,omitempty"`    // The paymail of the person that originated the transaction
 	Signature string `json:"signature,omitempty"` // A signature of the tx id made by the sender
@@ -39,36 +40,42 @@ type P2PMetaData struct {
 // P2PTransactionResponse is the response to the request
 type P2PTransactionResponse struct {
 	StandardResponse
-	Note string `json:"note"` // Some human readable note
+	P2PTransactionInformation
+}
+
+// P2PTransactionInformation is the response to the request
+type P2PTransactionInformation struct {
+	Note string `json:"note"` // Some human-readable note
 	TxID string `json:"txid"` // The txid of the broadcasted tx
 }
 
 // SendP2PTransaction will submit a transaction hex string (tx_hex) to a paymail provider
 //
 // Specs: https://docs.moneybutton.com/docs/paymail-06-p2p-transactions.html
-func (c *Client) SendP2PTransaction(p2pURL, alias, domain string, transaction *P2PTransaction) (response *P2PTransactionResponse, err error) {
+func (c *Client) SendP2PTransaction(p2pURL, alias, domain string,
+	transaction *P2PTransaction) (response *P2PTransactionResponse, err error) {
 
 	// Require a valid url
 	if len(p2pURL) == 0 || !strings.Contains(p2pURL, "https://") {
 		err = fmt.Errorf("invalid url: %s", p2pURL)
 		return
 	} else if len(alias) == 0 {
-		err = fmt.Errorf("missing alias")
+		err = errors.New("missing alias")
 		return
 	} else if len(domain) == 0 {
-		err = fmt.Errorf("missing domain")
+		err = errors.New("missing domain")
 		return
 	}
 
 	// Basic requirements for request
 	if transaction == nil {
-		err = fmt.Errorf("transaction cannot be nil")
+		err = errors.New("transaction cannot be nil")
 		return
 	} else if len(transaction.Hex) == 0 {
-		err = fmt.Errorf("hex is required")
+		err = errors.New("hex is required")
 		return
 	} else if len(transaction.Reference) == 0 {
-		err = fmt.Errorf("reference is required")
+		err = errors.New("reference is required")
 		return
 	}
 
@@ -91,7 +98,7 @@ func (c *Client) SendP2PTransaction(p2pURL, alias, domain string, transaction *P
 
 		// Paymail address not found?
 		if response.StatusCode == http.StatusNotFound {
-			err = fmt.Errorf("paymail address not found")
+			err = errors.New("paymail address not found")
 		} else {
 			serverError := &ServerError{}
 			if err = json.Unmarshal(resp.Body, serverError); err != nil {
@@ -110,7 +117,7 @@ func (c *Client) SendP2PTransaction(p2pURL, alias, domain string, transaction *P
 
 	// Check for a reference number
 	if len(response.TxID) == 0 {
-		err = fmt.Errorf("missing a returned txid")
+		err = errors.New("missing a returned txid")
 		return
 	}
 

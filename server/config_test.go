@@ -59,14 +59,14 @@ func TestConfiguration_EnrichCapabilities(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, c)
 
-		c.EnrichCapabilities(testDomain)
-		assert.Equal(t, 5, len(c.Capabilities.Capabilities))
+		capabilities := c.EnrichCapabilities(testDomain)
+		assert.Equal(t, 5, len(capabilities.Capabilities))
 		assert.Equal(t, paymail.DefaultBsvAliasVersion, c.Capabilities.BsvAlias)
-		assert.Equal(t, "https://"+testDomain+"/v1/bsvalias/address/{alias}@{domain.tld}", c.Capabilities.Capabilities[paymail.BRFCPaymentDestination])
-		assert.Equal(t, "https://"+testDomain+"/v1/bsvalias/id/{alias}@{domain.tld}", c.Capabilities.Capabilities[paymail.BRFCPki])
-		assert.Equal(t, "https://"+testDomain+"/v1/bsvalias/public-profile/{alias}@{domain.tld}", c.Capabilities.Capabilities[paymail.BRFCPublicProfile])
-		assert.Equal(t, "https://"+testDomain+"/v1/bsvalias/verify-pubkey/{alias}@{domain.tld}/{pubkey}", c.Capabilities.Capabilities[paymail.BRFCVerifyPublicKeyOwner])
-		assert.Equal(t, false, c.Capabilities.Capabilities[paymail.BRFCSenderValidation])
+		assert.Equal(t, "https://"+testDomain+"/v1/bsvalias/address/{alias}@{domain.tld}", capabilities.Capabilities[paymail.BRFCPaymentDestination])
+		assert.Equal(t, "https://"+testDomain+"/v1/bsvalias/id/{alias}@{domain.tld}", capabilities.Capabilities[paymail.BRFCPki])
+		assert.Equal(t, "https://"+testDomain+"/v1/bsvalias/public-profile/{alias}@{domain.tld}", capabilities.Capabilities[paymail.BRFCPublicProfile])
+		assert.Equal(t, "https://"+testDomain+"/v1/bsvalias/verify-pubkey/{alias}@{domain.tld}/{pubkey}", capabilities.Capabilities[paymail.BRFCVerifyPublicKeyOwner])
+		assert.Equal(t, false, capabilities.Capabilities[paymail.BRFCSenderValidation])
 	})
 
 	t.Run("multiple times", func(t *testing.T) {
@@ -75,14 +75,11 @@ func TestConfiguration_EnrichCapabilities(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, c)
 
-		c.EnrichCapabilities(testDomain)
-		assert.Equal(t, 5, len(c.Capabilities.Capabilities))
+		capabilities := c.EnrichCapabilities(testDomain)
+		assert.Equal(t, 5, len(capabilities.Capabilities))
 
-		c.EnrichCapabilities(testDomain)
-		assert.Equal(t, 5, len(c.Capabilities.Capabilities))
-
-		c.EnrichCapabilities(testDomain)
-		assert.Equal(t, 5, len(c.Capabilities.Capabilities))
+		capabilities = c.EnrichCapabilities(testDomain)
+		assert.Equal(t, 5, len(capabilities.Capabilities))
 	})
 }
 

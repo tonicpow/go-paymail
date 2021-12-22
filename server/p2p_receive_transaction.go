@@ -77,7 +77,7 @@ func (c *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Request, _
 	}
 
 	// Start the final response
-	response := &paymail.P2PTransactionResponse{
+	response := &paymail.P2PTransactionInformation{
 		Note: p2pTransaction.MetaData.Note,
 		TxID: transaction.GetTxID(),
 	}
@@ -108,9 +108,12 @@ func (c *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Request, _
 		}
 	}
 
+	// Create the metadata struct
+	md := CreateMetadata(req, alias, domain, "")
+
 	// Get from the data layer
-	var foundPaymail *PaymailAddress
-	foundPaymail, err = c.actions.GetPaymailByAlias(req.Context(), alias, domain)
+	var foundPaymail *paymail.AddressInformation
+	foundPaymail, err = c.actions.GetPaymailByAlias(req.Context(), alias, domain, md)
 	if err != nil {
 		ErrorResponse(w, req, ErrorFindingPaymail, err.Error(), http.StatusExpectationFailed)
 		return
@@ -121,7 +124,7 @@ func (c *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Request, _
 
 	// Record the transaction (verify, save, broadcast...)
 	if response, err = c.actions.RecordTransaction(
-		req.Context(), p2pTransaction,
+		req.Context(), p2pTransaction, md,
 	); err != nil {
 		ErrorResponse(w, req, ErrorRecordingTx, err.Error(), http.StatusExpectationFailed)
 		return

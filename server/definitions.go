@@ -2,15 +2,16 @@ package server
 
 import (
 	"time"
+
+	"github.com/tonicpow/go-paymail"
 )
 
 // Server default values
 const (
-	DefaultServerPort       = 3000             // Port for the server
-	DefaultPaymailDomain    = "localhost"      // Domain (if not set)
 	DefaultAPIVersion       = "v1"             // Version of API
 	DefaultPrefix           = "https://"       // Paymail specs require SSL
 	DefaultSenderValidation = false            // If true, it requires extra sender validation
+	DefaultServerPort       = 3000             // Port for the server
 	DefaultTimeout          = 15 * time.Second // Default timeouts
 )
 
@@ -22,21 +23,14 @@ type basicRoutes struct {
 	AddNotAllowed  bool `json:"add_not_allowed,omitempty"`
 }
 
-// PaymailAddress is an internal struct for paymail addresses and their corresponding information
-type PaymailAddress struct {
-	Alias       string `json:"alias"`        // Alias or handle of the paymail
-	Avatar      string `json:"avatar"`       // This is the url of the user (public profile)
-	Domain      string `json:"domain"`       // Domain of the paymail
-	ID          uint64 `json:"id"`           // Unique identifier
-	LastAddress string `json:"last_address"` // This is used as a temp address for now (should be via xPub)
-	Name        string `json:"name"`         // This is the name of the user (public profile)
-	PrivateKey  string `json:"private_key"`  // PrivateKey hex encoded
-	PubKey      string `json:"pubkey"`       // PublicKey hex encoded
-}
-
-// AddressResolutionOutput is an internal struct for the old address resolution
-type AddressResolutionOutput struct {
-	LastAddress  string `json:"last_address"`  // This is used as a temp address for now (should be via xPub)
-	OutputScript string `json:"output_script"` // This is the output script
-	Signature    string `json:"signature"`     // This the signature if it was required
+// RequestMetadata is the struct with extra metadata
+type RequestMetadata struct {
+	Alias              string                  `json:"alias,omitempty"`               // Alias of the paymail
+	Domain             string                  `json:"domain,omitempty"`              // Domain of the request
+	IPAddress          string                  `json:"ip_address,omitempty"`          // IP address of the requesting user
+	Note               string                  `json:"note,omitempty"`                // Generic note field used for extra information
+	PaymentDestination *paymail.PaymentRequest `json:"payment_destination,omitempty"` // Information from the P2P Payment Destination request
+	RequestURI         string                  `json:"request_uri,omitempty"`         // Full requesting URL path
+	ResolveAddress     *paymail.SenderRequest  `json:"resolve_address,omitempty"`     // Information from the Resolve Address request
+	UserAgent          string                  `json:"user_agent,omitempty"`          // User agent of the requesting user
 }
