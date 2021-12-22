@@ -91,11 +91,13 @@ func (c *Configuration) AddDomain(domain string) (err error) {
 
 	// Sanity check
 	if len(domain) == 0 {
-		return errors.New("domain is missing")
+		return ErrDomainMissing
 	}
 
 	// Sanitize and standardize
-	domain, err = sanitize.Domain(domain, false, true)
+	domain, err = sanitize.Domain(
+		domain, false, true,
+	)
 	if err != nil {
 		return
 	}
@@ -121,7 +123,24 @@ func (c *Configuration) EnrichCapabilities(domain string) {
 
 // GenerateServiceURL will create the service URL
 func GenerateServiceURL(prefix, domain, apiVersion, serviceName string) string {
-	return prefix + domain + "/" + apiVersion + "/" + serviceName
+
+	// Require prefix or domain
+	if len(prefix) == 0 || len(domain) == 0 {
+		return ""
+	}
+	u := prefix + domain
+
+	// Set the api version
+	if len(apiVersion) > 0 {
+		u = u + "/" + apiVersion
+	}
+
+	// Set the service name
+	if len(serviceName) > 0 {
+		u = u + "/" + serviceName
+	}
+
+	return u
 }
 
 // NewConfig will make a new server configuration

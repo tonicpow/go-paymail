@@ -140,7 +140,9 @@ func getSenderPubKey(senderPaymailAddress string) (*bsvec.PublicKey, error) {
 	// Get the capabilities
 	// This is required first to get the corresponding PKI endpoint url
 	var capabilities *paymail.Capabilities
-	if capabilities, err = client.GetCapabilities(domain, paymail.DefaultPort); err != nil {
+	if capabilities, err = client.GetCapabilities(
+		domain, paymail.DefaultPort,
+	); err != nil {
 		return nil, err
 	}
 
@@ -149,7 +151,9 @@ func getSenderPubKey(senderPaymailAddress string) (*bsvec.PublicKey, error) {
 
 	// Get the actual PKI
 	var pki *paymail.PKI
-	if pki, err = client.GetPKI(pkiURL, alias, domain); err != nil {
+	if pki, err = client.GetPKI(
+		pkiURL, alias, domain,
+	); err != nil {
 		return nil, err
 	}
 

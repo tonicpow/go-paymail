@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"net/http"
 
 	apirouter "github.com/mrz1836/go-api-router"
@@ -23,6 +24,11 @@ const (
 	ErrorRequestNotFound     = "request-404"
 	ErrorScript              = "script-error"
 	ErrorUnknownDomain       = "unknown-domain"
+)
+
+var (
+	// ErrDomainMissing is the error for missing domain
+	ErrDomainMissing = errors.New("domain is missing")
 )
 
 // ErrorResponse is a standard way to return errors to the client

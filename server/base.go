@@ -19,8 +19,6 @@ func health(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 
 // notFound handles all 404 requests
 func notFound(w http.ResponseWriter, req *http.Request) {
-
-	// todo: use error codes?
 	ErrorResponse(w, req, ErrorRequestNotFound, "request not found", http.StatusNotFound)
 }
 
