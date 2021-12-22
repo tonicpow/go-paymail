@@ -35,11 +35,10 @@ func WithGenericCapabilities() ConfigOps {
 }
 
 // WithCapabilities will modify the capabilities
-// todo: finish this - make it work better, safer
 func WithCapabilities(capabilities *Capabilities) ConfigOps {
 	return func(c *Configuration) {
 		if capabilities != nil {
-			// todo: validate capabilities
+			// todo: validate that these are valid capabilities (string->url path)
 			c.Capabilities = capabilities
 		}
 	}

@@ -70,11 +70,11 @@ func (c *Configuration) IsAllowedDomain(domain string) (success bool) {
 	if domain, err = sanitize.Domain(
 		domain, false, true,
 	); err != nil {
+		// todo: log the error? This should rarely occur
 		return
 	}
 
 	// Loop all domains check
-	// todo: make this faster with an init that creates a hash map?
 	for _, d := range c.PaymailDomains {
 		if strings.EqualFold(d.Name, domain) {
 			success = true

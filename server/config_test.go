@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -10,51 +9,145 @@ import (
 	"github.com/tonicpow/go-paymail"
 )
 
-// Mock implementation of a service provider
-type mockServiceProvider struct {
-	// Extend your dependencies or custom values
-}
-
-// GetPaymailByAlias is a demo implementation of this interface
-func (m *mockServiceProvider) GetPaymailByAlias(_ context.Context, alias, domain string,
-	_ *RequestMetadata) (*paymail.AddressInformation, error) {
-
-	// Get the data from the demo database
-	return nil, nil
-}
-
-// CreateAddressResolutionResponse is a demo implementation of this interface
-func (m *mockServiceProvider) CreateAddressResolutionResponse(ctx context.Context, alias, domain string,
-	senderValidation bool, _ *RequestMetadata) (*paymail.ResolutionInformation, error) {
-
-	// Generate a new destination / output for the basic address resolution
-	return nil, nil
-}
-
-// CreateP2PDestinationResponse is a demo implementation of this interface
-func (m *mockServiceProvider) CreateP2PDestinationResponse(ctx context.Context, alias, domain string,
-	satoshis uint64, _ *RequestMetadata) (*paymail.PaymentDestinationInformation, error) {
-
-	// Generate a new destination for the p2p request
-	return nil, nil
-}
-
-// RecordTransaction is a demo implementation of this interface
-func (m *mockServiceProvider) RecordTransaction(ctx context.Context,
-	p2pTx *paymail.P2PTransaction, _ *RequestMetadata) (*paymail.P2PTransactionInformation, error) {
-
-	// Record the tx into your datastore layer
-	return nil, nil
+// testConfig loads a basic test configuration
+func testConfig(t *testing.T, domain string) *Configuration {
+	c, err := NewConfig(
+		new(mockServiceProvider),
+		WithDomain(domain),
+		WithGenericCapabilities(),
+	)
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	return c
 }
 
 // TestConfiguration_Validate will test the method Validate()
 func TestConfiguration_Validate(t *testing.T) {
-	// todo: finish test!
+	t.Parallel()
+
+	t.Run("missing domain", func(t *testing.T) {
+		c := &Configuration{}
+		err := c.Validate()
+		require.Error(t, err)
+		assert.ErrorIs(t, err, ErrDomainMissing)
+	})
+
+	t.Run("missing port", func(t *testing.T) {
+		c := &Configuration{
+			PaymailDomains: []*Domain{{Name: "test.com"}},
+		}
+		err := c.Validate()
+		require.Error(t, err)
+		assert.ErrorIs(t, err, ErrPortMissing)
+	})
+
+	t.Run("missing service name", func(t *testing.T) {
+		c := &Configuration{
+			Port:           12345,
+			PaymailDomains: []*Domain{{Name: "test.com"}},
+		}
+		err := c.Validate()
+		require.Error(t, err)
+		assert.ErrorIs(t, err, ErrServiceNameMissing)
+	})
+
+	t.Run("invalid service name", func(t *testing.T) {
+		c := &Configuration{
+			Port:           12345,
+			ServiceName:    "$*%*",
+			PaymailDomains: []*Domain{{Name: "test.com"}},
+		}
+		err := c.Validate()
+		require.Error(t, err)
+		assert.ErrorIs(t, err, ErrServiceNameMissing)
+	})
+
+	t.Run("missing capabilities", func(t *testing.T) {
+		c := &Configuration{
+			Port:           12345,
+			ServiceName:    "test",
+			PaymailDomains: []*Domain{{Name: "test.com"}},
+		}
+		err := c.Validate()
+		require.Error(t, err)
+		assert.ErrorIs(t, err, ErrCapabilitiesMissing)
+	})
+
+	t.Run("invalid capabilities", func(t *testing.T) {
+		c := &Configuration{
+			Port:           12345,
+			ServiceName:    "test",
+			PaymailDomains: []*Domain{{Name: "test.com"}},
+			Capabilities: &Capabilities{
+				BsvAlias: "",
+			},
+		}
+		err := c.Validate()
+		require.Error(t, err)
+		assert.ErrorIs(t, err, ErrBsvAliasMissing)
+	})
+
+	t.Run("zero capabilities", func(t *testing.T) {
+		c := &Configuration{
+			Port:           12345,
+			ServiceName:    "test",
+			PaymailDomains: []*Domain{{Name: "test.com"}},
+			Capabilities: &Capabilities{
+				BsvAlias: "test",
+			},
+		}
+		err := c.Validate()
+		require.Error(t, err)
+		assert.ErrorIs(t, err, ErrCapabilitiesMissing)
+	})
+
+	t.Run("basic valid configuration", func(t *testing.T) {
+		c := &Configuration{
+			Port:           12345,
+			ServiceName:    "test",
+			PaymailDomains: []*Domain{{Name: "test.com"}},
+			Capabilities:   genericCapabilities("test", false),
+		}
+		err := c.Validate()
+		require.NoError(t, err)
+	})
 }
 
 // TestConfiguration_IsAllowedDomain will test the method IsAllowedDomain()
 func TestConfiguration_IsAllowedDomain(t *testing.T) {
-	// todo: finish test!
+	t.Parallel()
+
+	t.Run("empty domain", func(t *testing.T) {
+		c := testConfig(t, "test.com")
+		require.NotNil(t, c)
+
+		success := c.IsAllowedDomain("")
+		assert.Equal(t, false, success)
+	})
+
+	t.Run("domain found", func(t *testing.T) {
+		c := testConfig(t, "test.com")
+		require.NotNil(t, c)
+
+		success := c.IsAllowedDomain("test.com")
+		assert.Equal(t, true, success)
+	})
+
+	t.Run("sanitized domain found", func(t *testing.T) {
+		c := testConfig(t, "test.com")
+		require.NotNil(t, c)
+
+		success := c.IsAllowedDomain("WWW.test.COM")
+		assert.Equal(t, true, success)
+	})
+
+	t.Run("both domains are sanitized", func(t *testing.T) {
+		c := testConfig(t, "WwW.Test.Com")
+		require.NotNil(t, c)
+
+		success := c.IsAllowedDomain("WWW.test.COM")
+		assert.Equal(t, true, success)
+	})
 }
 
 // TestConfiguration_AddDomain will test the method AddDomain()
@@ -63,11 +156,10 @@ func TestConfiguration_AddDomain(t *testing.T) {
 
 	t.Run("no domain", func(t *testing.T) {
 		testDomain := "test.com"
-		c, err := NewConfig(new(mockServiceProvider), WithDomain(testDomain), WithGenericCapabilities())
-		require.NoError(t, err)
+		c := testConfig(t, testDomain)
 		require.NotNil(t, c)
 
-		err = c.AddDomain("")
+		err := c.AddDomain("")
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, ErrDomainMissing)
 	})
@@ -75,16 +167,28 @@ func TestConfiguration_AddDomain(t *testing.T) {
 	t.Run("sanitized domain", func(t *testing.T) {
 		testDomain := "WWW.TEST.COM"
 		addDomain := "testER.com"
-		c, err := NewConfig(new(mockServiceProvider), WithDomain(testDomain), WithGenericCapabilities())
-		require.NoError(t, err)
+		c := testConfig(t, testDomain)
 		require.NotNil(t, c)
 
-		err = c.AddDomain(addDomain)
-		assert.NoError(t, err)
+		err := c.AddDomain(addDomain)
+		require.NoError(t, err)
 
 		assert.Equal(t, 2, len(c.PaymailDomains))
 		assert.Equal(t, "test.com", c.PaymailDomains[0].Name)
 		assert.Equal(t, "tester.com", c.PaymailDomains[1].Name)
+	})
+
+	t.Run("domain already exists", func(t *testing.T) {
+		testDomain := "test.com"
+		addDomain := "test.com"
+		c := testConfig(t, testDomain)
+		require.NotNil(t, c)
+
+		err := c.AddDomain(addDomain)
+		require.NoError(t, err)
+
+		assert.Equal(t, 1, len(c.PaymailDomains))
+		assert.Equal(t, "test.com", c.PaymailDomains[0].Name)
 	})
 }
 
@@ -94,8 +198,7 @@ func TestConfiguration_EnrichCapabilities(t *testing.T) {
 
 	t.Run("basic enrich", func(t *testing.T) {
 		testDomain := "test.com"
-		c, err := NewConfig(new(mockServiceProvider), WithDomain(testDomain), WithGenericCapabilities())
-		require.NoError(t, err)
+		c := testConfig(t, testDomain)
 		require.NotNil(t, c)
 
 		capabilities := c.EnrichCapabilities(testDomain)
@@ -110,8 +213,7 @@ func TestConfiguration_EnrichCapabilities(t *testing.T) {
 
 	t.Run("multiple times", func(t *testing.T) {
 		testDomain := "test.com"
-		c, err := NewConfig(new(mockServiceProvider), WithDomain("test.com"), WithGenericCapabilities())
-		require.NoError(t, err)
+		c := testConfig(t, testDomain)
 		require.NotNil(t, c)
 
 		capabilities := c.EnrichCapabilities(testDomain)
@@ -163,14 +265,14 @@ func TestNewConfig(t *testing.T) {
 
 	t.Run("no values and no provider", func(t *testing.T) {
 		c, err := NewConfig(nil)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.ErrorIs(t, err, ErrServiceProviderNil)
 		assert.Nil(t, c)
 	})
 
 	t.Run("missing domain", func(t *testing.T) {
 		c, err := NewConfig(new(mockServiceProvider))
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.ErrorIs(t, err, ErrDomainMissing)
 		assert.Nil(t, c)
 	})
@@ -180,8 +282,8 @@ func TestNewConfig(t *testing.T) {
 			new(mockServiceProvider),
 			WithDomain("test.com"),
 		)
-		assert.NoError(t, err)
-		assert.NotNil(t, c)
+		require.NoError(t, err)
+		require.NotNil(t, c)
 		assert.Equal(t, 5, len(c.Capabilities.Capabilities))
 		assert.Equal(t, "test.com", c.PaymailDomains[0].Name)
 	})
@@ -192,8 +294,8 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithPort(12345),
 		)
-		assert.NoError(t, err)
-		assert.NotNil(t, c)
+		require.NoError(t, err)
+		require.NotNil(t, c)
 		assert.Equal(t, 12345, c.Port)
 	})
 
@@ -203,8 +305,8 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithTimeout(10*time.Second),
 		)
-		assert.NoError(t, err)
-		assert.NotNil(t, c)
+		require.NoError(t, err)
+		require.NotNil(t, c)
 		assert.Equal(t, 10*time.Second, c.Timeout)
 	})
 
@@ -214,8 +316,8 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithServiceName("custom"),
 		)
-		assert.NoError(t, err)
-		assert.NotNil(t, c)
+		require.NoError(t, err)
+		require.NotNil(t, c)
 		assert.Equal(t, "custom", c.ServiceName)
 	})
 
@@ -225,9 +327,21 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithSenderValidation(),
 		)
-		assert.NoError(t, err)
-		assert.NotNil(t, c)
+		require.NoError(t, err)
+		require.NotNil(t, c)
 		assert.Equal(t, true, c.SenderValidationEnabled)
+	})
+
+	t.Run("with custom capabilities", func(t *testing.T) {
+		c, err := NewConfig(
+			new(mockServiceProvider),
+			WithDomain("test.com"),
+			WithCapabilities(genericCapabilities("test", false)),
+		)
+		require.NoError(t, err)
+		require.NotNil(t, c)
+		assert.Equal(t, 5, len(c.Capabilities.Capabilities))
+		assert.Equal(t, "test", c.Capabilities.BsvAlias)
 	})
 
 	t.Run("with basic routes", func(t *testing.T) {
@@ -236,9 +350,9 @@ func TestNewConfig(t *testing.T) {
 			WithDomain("test.com"),
 			WithBasicRoutes(),
 		)
-		assert.NoError(t, err)
-		assert.NotNil(t, c)
-		assert.NotNil(t, c.BasicRoutes)
+		require.NoError(t, err)
+		require.NotNil(t, c)
+		require.NotNil(t, c.BasicRoutes)
 		assert.Equal(t, true, c.BasicRoutes.Add404Route)
 		assert.Equal(t, true, c.BasicRoutes.AddIndexRoute)
 		assert.Equal(t, true, c.BasicRoutes.AddHealthRoute)
