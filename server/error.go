@@ -30,6 +30,21 @@ const (
 var (
 	// ErrDomainMissing is the error for missing domain
 	ErrDomainMissing = errors.New("domain is missing")
+
+	// ErrServiceProviderNil is the error for having a nil service provider
+	ErrServiceProviderNil = errors.New("service provider is nil")
+
+	// ErrPortMissing is when the port is not found
+	ErrPortMissing = errors.New("missing a port")
+
+	// ErrServiceNameMissing is when the service name is not found
+	ErrServiceNameMissing = errors.New("missing service name")
+
+	// ErrCapabilitiesMissing is when the capabilities struct is nil or not set
+	ErrCapabilitiesMissing = errors.New("missing capabilities struct")
+
+	// ErrBsvAliasMissing is when the bsv alias version is missing
+	ErrBsvAliasMissing = errors.New("missing bsv alias version")
 )
 
 // ErrorResponse is a standard way to return errors to the client

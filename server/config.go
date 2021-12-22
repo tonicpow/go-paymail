@@ -1,7 +1,6 @@
 package server
 
 import (
-	"errors"
 	"strings"
 	"time"
 
@@ -35,12 +34,12 @@ func (c *Configuration) Validate() error {
 
 	// Requires domains for the server to run
 	if len(c.PaymailDomains) == 0 {
-		return errors.New("missing a paymail domain")
+		return ErrDomainMissing
 	}
 
 	// Requires a port
 	if c.Port <= 0 {
-		return errors.New("missing a port")
+		return ErrPortMissing
 	}
 
 	// todo: validate the []domains
@@ -48,16 +47,16 @@ func (c *Configuration) Validate() error {
 	// Sanitize and standardize the service name
 	c.ServiceName = sanitize.PathName(c.ServiceName)
 	if len(c.ServiceName) == 0 {
-		return errors.New("missing service name")
+		return ErrServiceNameMissing
 	}
 
 	// Validate (basic checks for existence of capabilities)
 	if c.Capabilities == nil {
-		return errors.New("missing capabilities struct")
+		return ErrCapabilitiesMissing
 	} else if len(c.Capabilities.BsvAlias) == 0 {
-		return errors.New("missing bsv alias version")
+		return ErrBsvAliasMissing
 	} else if len(c.Capabilities.Capabilities) == 0 {
-		return errors.New("missing capabilities")
+		return ErrCapabilitiesMissing
 	}
 
 	return nil
@@ -153,15 +152,18 @@ func GenerateServiceURL(prefix, domain, apiVersion, serviceName string) string {
 // NewConfig will make a new server configuration
 func NewConfig(serviceProvider PaymailServiceProvider, opts ...ConfigOps) (*Configuration, error) {
 
+	// Check that a service provider is set
+	if serviceProvider == nil {
+		return nil, ErrServiceProviderNil
+	}
+
 	// Create the base configuration
 	config := defaultConfigOptions()
 
-	// Overwrite defaults with any set by user
+	// Overwrite defaults
 	for _, opt := range opts {
 		opt(config)
 	}
-
-	// todo: generic capabilities
 
 	// Validate the configuration
 	if err := config.Validate(); err != nil {
