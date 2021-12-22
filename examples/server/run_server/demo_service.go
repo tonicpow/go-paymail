@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/bitcoinschema/go-bitcoin"
+	"github.com/mrz1836/go-logger"
 	"github.com/tonicpow/go-paymail"
 	"github.com/tonicpow/go-paymail/server"
 )
@@ -155,4 +156,16 @@ func DemoCreateP2PDestinationResponse(ctx context.Context, alias, domain string,
 		Outputs:   []*paymail.PaymentOutput{output},
 		Reference: "1234567890", // todo: this should be unique per request
 	}, nil
+}
+
+// DemoRecordTransaction will record the tx in the datalayer
+func DemoRecordTransaction(_ context.Context,
+	p2pTx *paymail.P2PTransaction) (*paymail.P2PTransactionResponse, error) {
+
+	// Record the transaction
+	logger.Data(2, logger.DEBUG, "recording tx...", logger.MakeParameter("reference", p2pTx.Reference))
+
+	// Broadcast etc...
+
+	return nil, nil
 }

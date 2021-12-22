@@ -34,3 +34,11 @@ func (d *demoServiceProvider) CreateP2PDestinationResponse(ctx context.Context, 
 	// Generate a new destination for the p2p request
 	return DemoCreateP2PDestinationResponse(ctx, alias, domain, satoshis)
 }
+
+// RecordTransaction is a demo implementation of this interface
+func (d *demoServiceProvider) RecordTransaction(ctx context.Context,
+	p2pTx *paymail.P2PTransaction) (*paymail.P2PTransactionResponse, error) {
+
+	// Record the tx into your datastore layer
+	return DemoRecordTransaction(ctx, p2pTx)
+}

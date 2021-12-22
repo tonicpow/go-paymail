@@ -21,6 +21,7 @@ const (
 	ErrorMissingReference    = "missing-reference"
 	ErrorMissingSatoshis     = "missing-satoshis"
 	ErrorPaymailNotFound     = "not-found"
+	ErrorRecordingTx         = "error-recording-tx"
 	ErrorRequestNotFound     = "request-404"
 	ErrorScript              = "script-error"
 	ErrorUnknownDomain       = "unknown-domain"

@@ -119,11 +119,13 @@ func (c *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Request, _
 		return
 	}
 
-	// todo: lookup the reference number in a data-store (get additional information)
-
-	// todo: broadcast the tx
-
-	// todo: update the data-store with the reference number
+	// Record the transaction (verify, save, broadcast...)
+	if response, err = c.actions.RecordTransaction(
+		req.Context(), p2pTransaction,
+	); err != nil {
+		ErrorResponse(w, req, ErrorRecordingTx, err.Error(), http.StatusExpectationFailed)
+		return
+	}
 
 	// Return the response
 	apirouter.ReturnResponse(w, req, http.StatusOK, response)
