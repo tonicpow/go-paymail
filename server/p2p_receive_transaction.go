@@ -108,19 +108,18 @@ func (c *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Request, _
 		}
 	}
 
-	// todo: lookup the reference number in a data-store (get additional information)
-
 	// Get from the data layer
 	var foundPaymail *PaymailAddress
 	foundPaymail, err = c.actions.GetPaymailByAlias(req.Context(), alias, domain)
 	if err != nil {
 		ErrorResponse(w, req, ErrorFindingPaymail, err.Error(), http.StatusExpectationFailed)
 		return
-	}
-	if foundPaymail == nil {
+	} else if foundPaymail == nil {
 		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return
 	}
+
+	// todo: lookup the reference number in a data-store (get additional information)
 
 	// todo: broadcast the tx
 

@@ -39,8 +39,7 @@ func (c *Configuration) verifyPubKey(w http.ResponseWriter, req *http.Request, _
 	if err != nil {
 		ErrorResponse(w, req, ErrorFindingPaymail, err.Error(), http.StatusExpectationFailed)
 		return
-	}
-	if foundPaymail == nil {
+	} else if foundPaymail == nil {
 		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return
 	}

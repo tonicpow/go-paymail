@@ -50,8 +50,7 @@ func (c *Configuration) p2pDestination(w http.ResponseWriter, req *http.Request,
 	if err != nil {
 		ErrorResponse(w, req, ErrorFindingPaymail, err.Error(), http.StatusExpectationFailed)
 		return
-	}
-	if foundPaymail == nil {
+	} else if foundPaymail == nil {
 		ErrorResponse(w, req, ErrorPaymailNotFound, "paymail not found", http.StatusNotFound)
 		return
 	}

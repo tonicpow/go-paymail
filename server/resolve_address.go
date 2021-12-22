@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/bitcoinschema/go-bitcoin"
 	"github.com/bitcoinsv/bsvd/bsvec"
@@ -132,7 +133,7 @@ func getSenderPubKey(senderPaymailAddress string) (*bsvec.PublicKey, error) {
 	alias, domain, _ := paymail.SanitizePaymail(senderPaymailAddress)
 
 	// Load the client
-	client, err := paymail.NewClient(nil, nil, nil)
+	client, err := paymail.NewClient(paymail.WithHTTPTimeout(15 * time.Second))
 	if err != nil {
 		return nil, err
 	}
