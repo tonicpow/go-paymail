@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/bitcoinschema/go-bitcoin"
-	"github.com/libsv/go-bt"
 	"github.com/mrz1836/go-logger"
 	"github.com/tonicpow/go-paymail"
 )
@@ -167,15 +168,21 @@ func DemoRecordTransaction(_ context.Context,
 
 	// Broadcast etc...
 
-	// Convert the hex to a bt tx
-	tx, err := bt.NewTxFromString(p2pTx.Hex)
-	if err != nil {
-		return nil, err
-	}
+	// Convert the hex to TxID
+	/*
+		tx, err := bt.NewTxFromString(p2pTx.Hex)
+		if err != nil {
+			return nil, err
+		}
+	*/
+
+	// Creating a FAKE tx id for this demo
+	hash := sha256.Sum256([]byte(p2pTx.Hex))
+	fakeTxID := hex.EncodeToString(hash[:])
 
 	// Demo response
 	return &paymail.P2PTransactionInformation{
 		Note: p2pTx.MetaData.Note,
-		TxID: tx.GetTxID(),
+		TxID: fakeTxID,
 	}, nil
 }
