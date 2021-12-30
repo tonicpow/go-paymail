@@ -115,7 +115,7 @@ func (c *Client) SendP2PTransaction(p2pURL, alias, domain string,
 		return
 	}
 
-	// Check for a reference number
+	// Check for a TX ID
 	if len(response.TxID) == 0 {
 		err = errors.New("missing a returned txid")
 		return
