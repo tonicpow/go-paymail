@@ -7,26 +7,24 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/tonicpow/go-paymail/tester"
 )
 
 // newTestClient will return a client for testing purposes
 func newTestClient() (*Client, error) {
 	// Create a Resty Client
-	client := resty.New()
-
-	// Get the underlying HTTP Client and set it to Mock
-	httpmock.ActivateNonDefault(client.GetClient())
+	client := tester.MockResty()
 
 	// Create a new client
 	newClient, err := NewClient(WithRequestTracing(), WithDNSTimeout(15*time.Second))
 	if err != nil {
 		return nil, err
 	}
-	newClient.WithCustomHTTPClient(client)
+	_ = newClient.WithCustomHTTPClient(client)
+
 	// Set the customer resolver with known defaults
-	r := newCustomResolver(
+	r := tester.NewCustomResolver(
 		newClient.resolver,
 		map[string][]string{
 			testDomain:      {"44.225.125.175", "35.165.117.200", "54.190.182.236"},
@@ -45,6 +43,7 @@ func newTestClient() (*Client, error) {
 
 	// Set the custom resolver
 	newClient.WithCustomResolver(r)
+
 	// Return the mocking client
 	return newClient, nil
 }
@@ -136,7 +135,7 @@ func TestNewClient(t *testing.T) {
 	})
 
 	t.Run("custom resolver", func(t *testing.T) {
-		r := newCustomResolver(nil, nil, nil, nil)
+		r := tester.NewCustomResolver(nil, nil, nil, nil)
 		client, err := NewClient()
 		assert.NotNil(t, client)
 		assert.NoError(t, err)
@@ -178,6 +177,19 @@ func TestClient_GetUserAgent(t *testing.T) {
 	})
 }
 
+// TestClient_GetResolver will test the method GetResolver()
+func TestClient_GetResolver(t *testing.T) {
+	t.Parallel()
+
+	t.Run("get resolver", func(t *testing.T) {
+		client, err := NewClient()
+		assert.NoError(t, err)
+		assert.NotNil(t, client)
+		r := client.GetResolver()
+		assert.NotNil(t, r)
+	})
+}
+
 // ExampleNewClient example using NewClient()
 //
 // See more examples in /examples/
@@ -188,7 +200,7 @@ func ExampleNewClient() {
 		return
 	}
 	fmt.Printf("loaded client: %s", client.options.userAgent)
-	// Output:loaded client: go-paymail: v0.4.3
+	// Output:loaded client: go-paymail: v0.4.4
 }
 
 // BenchmarkNewClient benchmarks the method NewClient()
