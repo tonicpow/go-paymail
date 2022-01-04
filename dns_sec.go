@@ -172,33 +172,33 @@ func (c *Client) CheckDNSSEC(domain string) (result *DNSCheckResult) {
 	}
 
 	// Resolve the domain NSEC
-	var nsec *dns.NSEC
-	if nsec, err = resolveDomainNSEC(domain, c.options.nameServer, c.options.dnsPort); err != nil {
+	var nSec *dns.NSEC
+	if nSec, err = resolveDomainNSEC(domain, c.options.nameServer, c.options.dnsPort); err != nil {
 		result.ErrorMessage = fmt.Sprintf("failed in resolveDomainNSEC: %s", err.Error())
 		return
-	} else if nsec != nil {
+	} else if nSec != nil {
 		result.NSEC.Type = "nsec"
-		result.NSEC.NSEC = nsec
+		result.NSEC.NSEC = nSec
 	}
 
 	// Resolve the domain NSEC3
-	var nsec3 *dns.NSEC3
-	if nsec3, err = resolveDomainNSEC3(domain, c.options.nameServer, c.options.dnsPort); err != nil {
+	var nSec3 *dns.NSEC3
+	if nSec3, err = resolveDomainNSEC3(domain, c.options.nameServer, c.options.dnsPort); err != nil {
 		result.ErrorMessage = fmt.Sprintf("failed in resolveDomainNSEC3: %s", err.Error())
 		return
-	} else if nsec3 != nil {
+	} else if nSec3 != nil {
 		result.NSEC.Type = "nsec3"
-		result.NSEC.NSEC3 = nsec3
+		result.NSEC.NSEC3 = nSec3
 	}
 
 	// Resolve the domain NSEC3PARAM
-	var nsec3param *dns.NSEC3PARAM
-	if nsec3param, err = resolveDomainNSEC3PARAM(domain, c.options.nameServer, c.options.dnsPort); err != nil {
+	var nSec3param *dns.NSEC3PARAM
+	if nSec3param, err = resolveDomainNSEC3PARAM(domain, c.options.nameServer, c.options.dnsPort); err != nil {
 		result.ErrorMessage = fmt.Sprintf("failed in resolveDomainNSEC3PARAM: %s", err.Error())
 		return
-	} else if nsec3param != nil {
+	} else if nSec3param != nil {
 		result.NSEC.Type = "nsec3param"
-		result.NSEC.NSEC3PARAM = nsec3param
+		result.NSEC.NSEC3PARAM = nSec3param
 	}
 
 	// Check the keys and set the DNSSEC flag
