@@ -15,10 +15,7 @@ func TestClient_CheckDNSSEC(t *testing.T) {
 		t.Skip("skipping integration testing in short mode")
 	}
 
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
+	client := newTestClient(t)
 
 	var tests = []struct {
 		host          string

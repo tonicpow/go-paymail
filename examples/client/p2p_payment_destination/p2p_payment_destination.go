@@ -16,7 +16,7 @@ func main() {
 
 	// Get the capabilities
 	// This is required first to get the corresponding P2P PaymentResolution endpoint url
-	var capabilities *paymail.Capabilities
+	var capabilities *paymail.CapabilitiesResponse
 	if capabilities, err = client.GetCapabilities("moneybutton.com", paymail.DefaultPort); err != nil {
 		log.Fatal("error getting capabilities: " + err.Error())
 	}
@@ -29,7 +29,7 @@ func main() {
 	paymentRequest := &paymail.PaymentRequest{Satoshis: 1000}
 
 	// Get the P2P destination
-	var destination *paymail.PaymentDestination
+	var destination *paymail.PaymentDestinationResponse
 	destination, err = client.GetP2PPaymentDestination(p2pURL, "mrz", "moneybutton.com", paymentRequest)
 	if err != nil {
 		log.Fatal("error getting destination: " + err.Error())

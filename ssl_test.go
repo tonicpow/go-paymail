@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestClient_CheckSSL will test the method CheckSSL()
@@ -16,9 +17,7 @@ func TestClient_CheckSSL(t *testing.T) {
 		t.Skip("skipping integration testing in short mode")
 	}
 
-	client, err := newTestClient()
-	assert.NoError(t, err)
-	assert.NotNil(t, client)
+	client := newTestClient(t)
 
 	t.Run("valid ssl certs", func(t *testing.T) {
 		var tests = []struct {
@@ -27,11 +26,10 @@ func TestClient_CheckSSL(t *testing.T) {
 			{"google.com"},
 			{"mrz1818.com"},
 		}
-		var valid bool
 		for _, test := range tests {
 			t.Run("checking: "+test.host, func(t *testing.T) {
-				valid, err = client.CheckSSL(test.host)
-				assert.NoError(t, err)
+				valid, err := client.CheckSSL(test.host)
+				require.NoError(t, err)
 				assert.Equal(t, true, valid)
 			})
 		}
@@ -45,11 +43,10 @@ func TestClient_CheckSSL(t *testing.T) {
 			{""},
 			{"domaindoesntexistatall101910.co"},
 		}
-		var valid bool
 		for _, test := range tests {
 			t.Run("checking: "+test.host, func(t *testing.T) {
-				valid, err = client.CheckSSL(test.host)
-				assert.Error(t, err)
+				valid, err := client.CheckSSL(test.host)
+				require.Error(t, err)
 				assert.Equal(t, false, valid)
 			})
 		}

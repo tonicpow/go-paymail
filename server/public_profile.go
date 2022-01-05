@@ -41,7 +41,7 @@ func (c *Configuration) publicProfile(w http.ResponseWriter, req *http.Request, 
 	}
 
 	// Return the response
-	apirouter.ReturnResponse(w, req, http.StatusOK, &paymail.PublicProfile{
+	apirouter.ReturnResponse(w, req, http.StatusOK, &paymail.PublicProfilePayload{
 		Avatar: foundPaymail.Avatar,
 		Name:   foundPaymail.Name,
 	})

@@ -118,7 +118,7 @@ func (c *Configuration) resolveAddress(w http.ResponseWriter, req *http.Request,
 	}
 
 	// Get the resolution information
-	var response *paymail.ResolutionInformation
+	var response *paymail.ResolutionPayload
 	if response, err = c.actions.CreateAddressResolutionResponse(
 		req.Context(), alias, domain, c.SenderValidationEnabled, md,
 	); err != nil {
@@ -144,7 +144,7 @@ func getSenderPubKey(senderPaymailAddress string) (*bsvec.PublicKey, error) {
 
 	// Get the capabilities
 	// This is required first to get the corresponding PKI endpoint url
-	var capabilities *paymail.Capabilities
+	var capabilities *paymail.CapabilitiesResponse
 	if capabilities, err = client.GetCapabilities(
 		domain, paymail.DefaultPort,
 	); err != nil {
@@ -155,7 +155,7 @@ func getSenderPubKey(senderPaymailAddress string) (*bsvec.PublicKey, error) {
 	pkiURL := capabilities.GetString(paymail.BRFCPki, paymail.BRFCPkiAlternate)
 
 	// Get the actual PKI
-	var pki *paymail.PKI
+	var pki *paymail.PKIResponse
 	if pki, err = client.GetPKI(
 		pkiURL, alias, domain,
 	); err != nil {

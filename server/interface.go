@@ -13,14 +13,14 @@ type PaymailServiceProvider interface {
 		alias, domain string,
 		senderValidation bool,
 		metaData *RequestMetadata,
-	) (*paymail.ResolutionInformation, error)
+	) (*paymail.ResolutionPayload, error)
 
 	CreateP2PDestinationResponse(
 		ctx context.Context,
 		alias, domain string,
 		satoshis uint64,
 		metaData *RequestMetadata,
-	) (*paymail.PaymentDestinationInformation, error)
+	) (*paymail.PaymentDestinationPayload, error)
 
 	GetPaymailByAlias(
 		ctx context.Context,
@@ -32,5 +32,5 @@ type PaymailServiceProvider interface {
 		ctx context.Context,
 		p2pTx *paymail.P2PTransaction,
 		metaData *RequestMetadata,
-	) (*paymail.P2PTransactionInformation, error)
+	) (*paymail.P2PTransactionPayload, error)
 }

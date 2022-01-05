@@ -18,7 +18,7 @@ func defaultConfigOptions() *Configuration {
 		APIVersion:              DefaultAPIVersion,
 		BasicRoutes:             &basicRoutes{},
 		BSVAliasVersion:         paymail.DefaultBsvAliasVersion,
-		Capabilities:            genericCapabilities(paymail.DefaultBsvAliasVersion, DefaultSenderValidation),
+		Capabilities:            GenericCapabilities(paymail.DefaultBsvAliasVersion, DefaultSenderValidation),
 		Port:                    DefaultServerPort,
 		Prefix:                  DefaultPrefix,
 		SenderValidationEnabled: DefaultSenderValidation,
@@ -30,12 +30,12 @@ func defaultConfigOptions() *Configuration {
 // WithGenericCapabilities will load the generic Paymail capabilities
 func WithGenericCapabilities() ConfigOps {
 	return func(c *Configuration) {
-		c.Capabilities = genericCapabilities(c.BSVAliasVersion, c.SenderValidationEnabled)
+		c.Capabilities = GenericCapabilities(c.BSVAliasVersion, c.SenderValidationEnabled)
 	}
 }
 
 // WithCapabilities will modify the capabilities
-func WithCapabilities(capabilities *Capabilities) ConfigOps {
+func WithCapabilities(capabilities *paymail.CapabilitiesPayload) ConfigOps {
 	return func(c *Configuration) {
 		if capabilities != nil {
 			// todo: validate that these are valid capabilities (string->url path)

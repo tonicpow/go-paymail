@@ -5,20 +5,21 @@ import (
 	"time"
 
 	"github.com/mrz1836/go-sanitize"
+	"github.com/tonicpow/go-paymail"
 )
 
 // Configuration paymail server configuration object
 type Configuration struct {
-	APIVersion              string        `json:"api_version"`
-	BasicRoutes             *basicRoutes  `json:"basic_routes"`
-	BSVAliasVersion         string        `json:"bsv_alias_version"`
-	Capabilities            *Capabilities `json:"capabilities"`
-	PaymailDomains          []*Domain     `json:"paymail_domains"`
-	Port                    int           `json:"port"`
-	Prefix                  string        `json:"prefix"`
-	SenderValidationEnabled bool          `json:"sender_validation_enabled"`
-	ServiceName             string        `json:"service_name"`
-	Timeout                 time.Duration `json:"timeout"`
+	APIVersion              string                       `json:"api_version"`
+	BasicRoutes             *basicRoutes                 `json:"basic_routes"`
+	BSVAliasVersion         string                       `json:"bsv_alias_version"`
+	Capabilities            *paymail.CapabilitiesPayload `json:"capabilities"`
+	PaymailDomains          []*Domain                    `json:"paymail_domains"`
+	Port                    int                          `json:"port"`
+	Prefix                  string                       `json:"prefix"`
+	SenderValidationEnabled bool                         `json:"sender_validation_enabled"`
+	ServiceName             string                       `json:"service_name"`
+	Timeout                 time.Duration                `json:"timeout"`
 
 	// private
 	actions PaymailServiceProvider
@@ -112,8 +113,8 @@ func (c *Configuration) AddDomain(domain string) (err error) {
 }
 
 // EnrichCapabilities will update the capabilities with the appropriate service url
-func (c *Configuration) EnrichCapabilities(domain string) *Capabilities {
-	capabilities := &Capabilities{
+func (c *Configuration) EnrichCapabilities(domain string) *paymail.CapabilitiesPayload {
+	capabilities := &paymail.CapabilitiesPayload{
 		BsvAlias:     c.Capabilities.BsvAlias,
 		Capabilities: make(map[string]interface{}),
 	}

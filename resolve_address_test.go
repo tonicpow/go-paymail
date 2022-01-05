@@ -8,6 +8,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestClient_ResolveAddress will test the method ResolveAddress()
@@ -15,9 +16,7 @@ func TestClient_ResolveAddress(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
 
 	t.Run("successful response", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockResolveAddress(http.StatusOK)
 
@@ -27,21 +26,18 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, testDomain, senderRequest,
 		)
-		assert.NoError(t, err)
-		assert.NotNil(t, resolution)
+		require.NoError(t, err)
+		require.NotNil(t, resolution)
 		assert.Equal(t, http.StatusOK, resolution.StatusCode)
 		assert.Equal(t, testAddress, resolution.Address)
 		assert.Equal(t, testOutput, resolution.Output)
 	})
 
 	t.Run("successful response - status not modified", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockResolveAddress(http.StatusNotModified)
 
@@ -51,21 +47,18 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, testDomain, senderRequest,
 		)
-		assert.NoError(t, err)
-		assert.NotNil(t, resolution)
+		require.NoError(t, err)
+		require.NotNil(t, resolution)
 		assert.Equal(t, http.StatusNotModified, resolution.StatusCode)
 		assert.Equal(t, testAddress, resolution.Address)
 		assert.Equal(t, testOutput, resolution.Output)
 	})
 
 	t.Run("invalid url", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockResolveAddress(http.StatusOK)
 
@@ -75,33 +68,27 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			"invalid-url", testAlias, testDomain, senderRequest,
 		)
-		assert.Error(t, err)
-		assert.Nil(t, resolution)
+		require.Error(t, err)
+		require.Nil(t, resolution)
 	})
 
 	t.Run("sender request is nil", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockResolveAddress(http.StatusOK)
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, testDomain, nil,
 		)
-		assert.Error(t, err)
-		assert.Nil(t, resolution)
+		require.Error(t, err)
+		require.Nil(t, resolution)
 	})
 
 	t.Run("sender request - dt invalid", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockResolveAddress(http.StatusOK)
 
@@ -111,18 +98,15 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, testDomain, senderRequest,
 		)
-		assert.Error(t, err)
-		assert.Nil(t, resolution)
+		require.Error(t, err)
+		require.Nil(t, resolution)
 	})
 
 	t.Run("sender request - sender handle invalid", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockResolveAddress(http.StatusOK)
 
@@ -132,18 +116,15 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, testDomain, senderRequest,
 		)
-		assert.Error(t, err)
-		assert.Nil(t, resolution)
+		require.Error(t, err)
+		require.Nil(t, resolution)
 	})
 
 	t.Run("missing alias", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockResolveAddress(http.StatusOK)
 
@@ -153,18 +134,15 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", "", testDomain, senderRequest,
 		)
-		assert.Error(t, err)
-		assert.Nil(t, resolution)
+		require.Error(t, err)
+		require.Nil(t, resolution)
 	})
 
 	t.Run("missing domain", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockResolveAddress(http.StatusOK)
 
@@ -174,18 +152,15 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, "", senderRequest,
 		)
-		assert.Error(t, err)
-		assert.Nil(t, resolution)
+		require.Error(t, err)
+		require.Nil(t, resolution)
 	})
 
 	t.Run("bad request", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
@@ -201,19 +176,16 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, testDomain, senderRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, resolution)
+		require.Error(t, err)
+		require.NotNil(t, resolution)
 		assert.Equal(t, http.StatusBadRequest, resolution.StatusCode)
 	})
 
 	t.Run("http error", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
@@ -226,18 +198,15 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, testDomain, senderRequest,
 		)
-		assert.Error(t, err)
-		assert.Nil(t, resolution)
+		require.Error(t, err)
+		require.Nil(t, resolution)
 	})
 
 	t.Run("bad error", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
@@ -253,19 +222,16 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, testDomain, senderRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, resolution)
+		require.Error(t, err)
+		require.NotNil(t, resolution)
 		assert.Equal(t, http.StatusBadRequest, resolution.StatusCode)
 	})
 
 	t.Run("paymail not found", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
@@ -281,19 +247,16 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, testDomain, senderRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, resolution)
+		require.Error(t, err)
+		require.NotNil(t, resolution)
 		assert.Equal(t, http.StatusNotFound, resolution.StatusCode)
 	})
 
 	t.Run("invalid json", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
@@ -309,20 +272,17 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, testDomain, senderRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, resolution)
+		require.Error(t, err)
+		require.NotNil(t, resolution)
 		assert.Equal(t, http.StatusOK, resolution.StatusCode)
 		assert.Equal(t, "", resolution.Output)
 	})
 
 	t.Run("missing output", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
@@ -338,20 +298,17 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, testDomain, senderRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, resolution)
+		require.Error(t, err)
+		require.NotNil(t, resolution)
 		assert.Equal(t, http.StatusOK, resolution.StatusCode)
 		assert.Equal(t, "", resolution.Output)
 	})
 
 	t.Run("invalid output", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
@@ -367,20 +324,17 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, testDomain, senderRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, resolution)
+		require.Error(t, err)
+		require.NotNil(t, resolution)
 		assert.Equal(t, http.StatusOK, resolution.StatusCode)
 		assert.Equal(t, "12345678", resolution.Output)
 	})
 
 	t.Run("invalid output hex", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
@@ -396,20 +350,17 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, testDomain, senderRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, resolution)
+		require.Error(t, err)
+		require.NotNil(t, resolution)
 		assert.Equal(t, http.StatusOK, resolution.StatusCode)
 		assert.Equal(t, "7e00bb007d4960727eb11d92a052502c", resolution.Output)
 	})
 
 	t.Run("invalid output hex length", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"address/"+testAlias+"@"+testDomain,
@@ -425,12 +376,11 @@ func TestClient_ResolveAddress(t *testing.T) {
 			SenderName:   testName,
 		}
 
-		var resolution *Resolution
-		resolution, err = client.ResolveAddress(
+		resolution, err := client.ResolveAddress(
 			testServerURL+"address/{alias}@{domain.tld}", testAlias, testDomain, senderRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, resolution)
+		require.Error(t, err)
+		require.NotNil(t, resolution)
 		assert.Equal(t, http.StatusOK, resolution.StatusCode)
 		assert.Equal(t, "0", resolution.Output)
 	})
@@ -452,11 +402,7 @@ func mockResolveAddress(statusCode int) {
 // See more examples in /examples/
 func ExampleClient_ResolveAddress() {
 	// Load the client
-	client, err := newTestClient()
-	if err != nil {
-		fmt.Printf("error loading client: %s", err.Error())
-		return
-	}
+	client := newTestClient(nil)
 
 	mockResolveAddress(http.StatusOK)
 
@@ -468,8 +414,7 @@ func ExampleClient_ResolveAddress() {
 	}
 
 	// Fire the request
-	var resolution *Resolution
-	resolution, err = client.ResolveAddress(
+	resolution, err := client.ResolveAddress(
 		testServerURL+"address/{alias}@{domain.tld}",
 		testAlias, testDomain, senderRequest,
 	)
@@ -483,7 +428,7 @@ func ExampleClient_ResolveAddress() {
 
 // BenchmarkClient_ResolveAddress benchmarks the method ResolveAddress()
 func BenchmarkClient_ResolveAddress(b *testing.B) {
-	client, _ := newTestClient()
+	client := newTestClient(nil)
 
 	// Sender Request
 	senderRequest := &SenderRequest{

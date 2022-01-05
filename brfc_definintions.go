@@ -45,7 +45,7 @@ const BRFCKnownSpecifications = `
    "alias": "paymentDestination",
    "author": "andy (nChain), Ryan X. Charles (Money Button)",
    "id": "759684b1a19a",
-   "title": "bsvalias Payment Addressing (Basic Address Resolution)",
+   "title": "bsvalias Payment Addressing (Basic Address ResolutionResponse)",
    "url": "http://bsvalias.org/04-01-basic-address-resolution.html",
    "version": "1"
   },

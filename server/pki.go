@@ -41,7 +41,7 @@ func (c *Configuration) showPKI(w http.ResponseWriter, req *http.Request, _ http
 	}
 
 	// Return the response
-	apirouter.ReturnResponse(w, req, http.StatusOK, &paymail.PKI{
+	apirouter.ReturnResponse(w, req, http.StatusOK, &paymail.PKIPayload{
 		BsvAlias: c.BSVAliasVersion,
 		Handle:   address,
 		PubKey:   foundPaymail.PubKey,

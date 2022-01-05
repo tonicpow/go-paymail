@@ -7,6 +7,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestClient_GetPublicProfile will test the method GetPublicProfile()
@@ -14,80 +15,63 @@ func TestClient_GetPublicProfile(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
 
 	t.Run("successful response", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockGetPublicProfile(http.StatusOK)
 
-		var profile *PublicProfile
-		profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.NoError(t, err)
-		assert.NotNil(t, profile)
+		profile, err := client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
+		require.NoError(t, err)
+		require.NotNil(t, profile)
 		assert.Equal(t, http.StatusOK, profile.StatusCode)
 		assert.Equal(t, testName, profile.Name)
 		assert.Equal(t, testAvatar, profile.Avatar)
 	})
 
 	t.Run("successful response - status not modified", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockGetPublicProfile(http.StatusNotModified)
 
-		var profile *PublicProfile
-		profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.NoError(t, err)
-		assert.NotNil(t, profile)
+		profile, err := client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
+		require.NoError(t, err)
+		require.NotNil(t, profile)
 		assert.Equal(t, http.StatusNotModified, profile.StatusCode)
 		assert.Equal(t, testName, profile.Name)
 		assert.Equal(t, testAvatar, profile.Avatar)
 	})
 
 	t.Run("missing url", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockGetPublicProfile(http.StatusOK)
 
-		var profile *PublicProfile
-		profile, err = client.GetPublicProfile("invalid-url", testAlias, testDomain)
-		assert.Error(t, err)
-		assert.Nil(t, profile)
+		profile, err := client.GetPublicProfile("invalid-url", testAlias, testDomain)
+		require.Error(t, err)
+		require.Nil(t, profile)
 	})
 
 	t.Run("missing alias", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockGetPublicProfile(http.StatusOK)
 
-		var profile *PublicProfile
-		profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", "", testDomain)
-		assert.Error(t, err)
-		assert.Nil(t, profile)
+		profile, err := client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", "", testDomain)
+		require.Error(t, err)
+		require.Nil(t, profile)
 	})
 
 	t.Run("missing domain", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockGetPublicProfile(http.StatusOK)
 
-		var profile *PublicProfile
-		profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, "")
-		assert.Error(t, err)
-		assert.Nil(t, profile)
+		profile, err := client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, "")
+		require.Error(t, err)
+		require.Nil(t, profile)
 	})
 
 	t.Run("bad request", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
@@ -97,33 +81,27 @@ func TestClient_GetPublicProfile(t *testing.T) {
 			),
 		)
 
-		var profile *PublicProfile
-		profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.Error(t, err)
-		assert.NotNil(t, profile)
+		profile, err := client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
+		require.Error(t, err)
+		require.NotNil(t, profile)
 		assert.Equal(t, http.StatusBadRequest, profile.StatusCode)
 	})
 
 	t.Run("http error", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
 			httpmock.NewErrorResponder(fmt.Errorf("error in request")),
 		)
 
-		var profile *PublicProfile
-		profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.Error(t, err)
-		assert.Nil(t, profile)
+		profile, err := client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
+		require.Error(t, err)
+		require.Nil(t, profile)
 	})
 
 	t.Run("error occurred", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
@@ -133,17 +111,14 @@ func TestClient_GetPublicProfile(t *testing.T) {
 			),
 		)
 
-		var profile *PublicProfile
-		profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.Error(t, err)
-		assert.NotNil(t, profile)
+		profile, err := client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
+		require.Error(t, err)
+		require.NotNil(t, profile)
 		assert.Equal(t, http.StatusBadRequest, profile.StatusCode)
 	})
 
 	t.Run("invalid json", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"public-profile/"+testAlias+"@"+testDomain,
@@ -153,10 +128,9 @@ func TestClient_GetPublicProfile(t *testing.T) {
 			),
 		)
 
-		var profile *PublicProfile
-		profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.Error(t, err)
-		assert.NotNil(t, profile)
+		profile, err := client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
+		require.Error(t, err)
+		require.NotNil(t, profile)
 		assert.Equal(t, http.StatusOK, profile.StatusCode)
 		assert.Equal(t, "", profile.Name)
 		assert.Equal(t, "", profile.Avatar)
@@ -178,17 +152,12 @@ func mockGetPublicProfile(statusCode int) {
 // See more examples in /examples/
 func ExampleClient_GetPublicProfile() {
 	// Load the client
-	client, err := newTestClient()
-	if err != nil {
-		fmt.Printf("error loading client: %s", err.Error())
-		return
-	}
+	client := newTestClient(nil)
 
 	mockGetPublicProfile(http.StatusOK)
 
 	// Get profile
-	var profile *PublicProfile
-	profile, err = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
+	profile, err := client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)
 	if err != nil {
 		fmt.Printf("error getting profile: " + err.Error())
 		return
@@ -199,7 +168,7 @@ func ExampleClient_GetPublicProfile() {
 
 // BenchmarkClient_GetPublicProfile benchmarks the method GetPublicProfile()
 func BenchmarkClient_GetPublicProfile(b *testing.B) {
-	client, _ := newTestClient()
+	client := newTestClient(nil)
 	mockGetPublicProfile(http.StatusOK)
 	for i := 0; i < b.N; i++ {
 		_, _ = client.GetPublicProfile(testServerURL+"public-profile/{alias}@{domain.tld}", testAlias, testDomain)

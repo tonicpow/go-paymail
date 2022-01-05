@@ -77,7 +77,7 @@ func (c *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Request, _
 	}
 
 	// Start the final response
-	response := &paymail.P2PTransactionInformation{
+	response := &paymail.P2PTransactionPayload{
 		Note: p2pTransaction.MetaData.Note,
 		TxID: transaction.GetTxID(),
 	}

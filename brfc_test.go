@@ -156,10 +156,7 @@ func TestClientOptions_LoadBRFCs(t *testing.T) {
 	// t.Parallel() cannot use newTestClient() race condition
 
 	// Create a client with options
-	client, err := newTestClient()
-	if err != nil {
-		t.Fatalf("error loading client: %s", err.Error())
-	}
+	client := newTestClient(t)
 
 	var tests = []struct {
 		specJSON       string
@@ -173,7 +170,7 @@ func TestClientOptions_LoadBRFCs(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if err = client.options.LoadBRFCs(test.specJSON); err != nil && !test.expectedError {
+		if err := client.options.LoadBRFCs(test.specJSON); err != nil && !test.expectedError {
 			t.Errorf("%s Failed: [%s] inputted, [%d] expected specs and error not expected but got: %s", t.Name(), test.specJSON, test.expectedLength, err.Error())
 		} else if err == nil && test.expectedError {
 			t.Errorf("%s Failed: [%s] inputted, [%d] expected specs and error was expected", t.Name(), test.specJSON, test.expectedLength)

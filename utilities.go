@@ -11,7 +11,7 @@ import (
 
 // SanitisedPaymail contains elements of a sanitized paymail address.
 // All elements are lowercased.
-type SanitisedPaymail struct{
+type SanitisedPaymail struct {
 	Alias, Domain, Address string
 }
 
@@ -19,14 +19,14 @@ type SanitisedPaymail struct{
 // convert to a paymail address if it's a handle,
 // validate that address, then sanitize it if it is valid.
 // If the address or handle isn't valid, an error will be returned.
-func ValidateAndSanitisePaymail(paymail string, isBeta bool) (*SanitisedPaymail, error){
+func ValidateAndSanitisePaymail(paymail string, isBeta bool) (*SanitisedPaymail, error) {
 	h := ConvertHandle(paymail, isBeta)
-	if err := ValidatePaymail(h); err != nil{
+	if err := ValidatePaymail(h); err != nil {
 		return nil, err
 	}
-	a,d,ad := SanitizePaymail(h)
+	a, d, ad := SanitizePaymail(h)
 	return &SanitisedPaymail{
-		Alias:  a,
+		Alias:   a,
 		Domain:  d,
 		Address: ad,
 	}, nil
@@ -128,4 +128,17 @@ func ValidateTimestamp(timestamp string) error {
 	}
 
 	return nil
+}
+
+// replaceAliasDomain will replace the alias and domain with the correct values
+func replaceAliasDomain(urlString, alias, domain string) string {
+	return strings.Replace(
+		strings.Replace(urlString, "{alias}", alias, -1),
+		"{domain.tld}", domain, -1,
+	)
+}
+
+// replacePubKey will replace the PubKey with the correct values
+func replacePubKey(urlString, pubKey string) string {
+	return strings.Replace(urlString, "{pubkey}", pubKey, -1)
 }

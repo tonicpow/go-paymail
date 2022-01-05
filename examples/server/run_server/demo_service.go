@@ -100,7 +100,7 @@ func DemoGetPaymailByAlias(alias, domain string) (*paymail.AddressInformation, e
 
 // DemoCreateAddressResolutionResponse will create a new destination for the address resolution
 func DemoCreateAddressResolutionResponse(_ context.Context, alias, domain string,
-	senderValidation bool) (*paymail.ResolutionInformation, error) {
+	senderValidation bool) (*paymail.ResolutionPayload, error) {
 
 	// Get the paymail record
 	p, err := DemoGetPaymailByAlias(alias, domain)
@@ -109,7 +109,7 @@ func DemoCreateAddressResolutionResponse(_ context.Context, alias, domain string
 	}
 
 	// Start the response
-	response := &paymail.ResolutionInformation{}
+	response := &paymail.ResolutionPayload{}
 
 	// Generate the script
 	if response.Output, err = bitcoin.ScriptFromAddress(
@@ -132,7 +132,7 @@ func DemoCreateAddressResolutionResponse(_ context.Context, alias, domain string
 
 // DemoCreateP2PDestinationResponse will create a basic resolution response for the demo
 func DemoCreateP2PDestinationResponse(_ context.Context, alias, domain string,
-	satoshis uint64) (*paymail.PaymentDestinationInformation, error) {
+	satoshis uint64) (*paymail.PaymentDestinationPayload, error) {
 
 	// Get the paymail record
 	p, err := DemoGetPaymailByAlias(alias, domain)
@@ -153,7 +153,7 @@ func DemoCreateP2PDestinationResponse(_ context.Context, alias, domain string,
 	}
 
 	// Create the response
-	return &paymail.PaymentDestinationInformation{
+	return &paymail.PaymentDestinationPayload{
 		Outputs:   []*paymail.PaymentOutput{output},
 		Reference: "1234567890", // todo: this should be unique per request
 	}, nil
@@ -161,7 +161,7 @@ func DemoCreateP2PDestinationResponse(_ context.Context, alias, domain string,
 
 // DemoRecordTransaction will record the tx in the datalayer
 func DemoRecordTransaction(_ context.Context,
-	p2pTx *paymail.P2PTransaction) (*paymail.P2PTransactionInformation, error) {
+	p2pTx *paymail.P2PTransaction) (*paymail.P2PTransactionPayload, error) {
 
 	// Record the transaction
 	logger.Data(2, logger.DEBUG, "recording tx...", logger.MakeParameter("reference", p2pTx.Reference))
@@ -181,7 +181,7 @@ func DemoRecordTransaction(_ context.Context,
 	fakeTxID := hex.EncodeToString(hash[:])
 
 	// Demo response
-	return &paymail.P2PTransactionInformation{
+	return &paymail.P2PTransactionPayload{
 		Note: p2pTx.MetaData.Note,
 		TxID: fakeTxID,
 	}, nil

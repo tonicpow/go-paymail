@@ -22,18 +22,18 @@ type PaymentRequest struct {
 	Satoshis uint64 `json:"satoshis"` // The amount, in Satoshis, that the sender intends to transfer to the receiver
 }
 
-// PaymentDestination is the response from the GetP2PPaymentDestination() request
+// PaymentDestinationResponse is the response from the GetP2PPaymentDestination() request
 //
 // The reference is unique for the payment destination request
-type PaymentDestination struct {
+type PaymentDestinationResponse struct {
 	StandardResponse
-	PaymentDestinationInformation
+	PaymentDestinationPayload
 }
 
-// PaymentDestinationInformation is the information for the response
+// PaymentDestinationPayload is the payload from the response
 //
 // The reference is unique for the payment destination request
-type PaymentDestinationInformation struct {
+type PaymentDestinationPayload struct {
 	Outputs   []*PaymentOutput `json:"outputs"`   // A list of outputs
 	Reference string           `json:"reference"` // A reference for the payment, created by the receiver of the transaction
 }
@@ -52,7 +52,7 @@ type PaymentOutput struct {
 //
 // Specs: https://docs.moneybutton.com/docs/paymail-07-p2p-payment-destination.html
 func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string,
-	paymentRequest *PaymentRequest) (response *PaymentDestination, err error) {
+	paymentRequest *PaymentRequest) (response *PaymentDestinationResponse, err error) {
 
 	// Require a valid url
 	if len(p2pURL) == 0 || !strings.Contains(p2pURL, "https://") {
@@ -78,10 +78,7 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string,
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request
 	// https://<host-discovery-target>/api/rawtx/{alias}@{domain.tld}
 	// https://<host-discovery-target>/api/p2p-payment-destination/{alias}@{domain.tld}
-	reqURL := strings.Replace(
-		strings.Replace(p2pURL, "{alias}", alias, -1),
-		"{domain.tld}", domain, -1,
-	)
+	reqURL := replaceAliasDomain(p2pURL, alias, domain)
 
 	// Fire the POST request
 	var resp StandardResponse
@@ -90,7 +87,7 @@ func (c *Client) GetP2PPaymentDestination(p2pURL, alias, domain string,
 	}
 
 	// Start the response
-	response = &PaymentDestination{StandardResponse: resp}
+	response = &PaymentDestinationResponse{StandardResponse: resp}
 
 	// Test the status code
 	if response.StatusCode != http.StatusOK &&

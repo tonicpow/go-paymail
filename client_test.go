@@ -8,24 +8,31 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tonicpow/go-paymail/tester"
 )
 
 // newTestClient will return a client for testing purposes
-func newTestClient() (*Client, error) {
+func newTestClient(t *testing.T) *Client {
+
 	// Create a Resty Client
-	client := tester.MockResty()
+	httpClient := tester.MockResty()
+	if t != nil {
+		require.NotNil(t, httpClient)
+	}
 
 	// Create a new client
-	newClient, err := NewClient(WithRequestTracing(), WithDNSTimeout(15*time.Second))
-	if err != nil {
-		return nil, err
+	client, err := NewClient(WithRequestTracing(), WithDNSTimeout(15*time.Second))
+	if t != nil {
+		require.NotNil(t, client)
+		require.NoError(t, err)
 	}
-	_ = newClient.WithCustomHTTPClient(client)
+
+	_ = client.WithCustomHTTPClient(httpClient)
 
 	// Set the customer resolver with known defaults
 	r := tester.NewCustomResolver(
-		newClient.resolver,
+		client.GetResolver(),
 		map[string][]string{
 			testDomain:      {"44.225.125.175", "35.165.117.200", "54.190.182.236"},
 			"norecords.com": {},
@@ -42,10 +49,8 @@ func newTestClient() (*Client, error) {
 	)
 
 	// Set the custom resolver
-	newClient.WithCustomResolver(r)
-
-	// Return the mocking client
-	return newClient, nil
+	client.WithCustomResolver(r)
+	return client
 }
 
 // TestNewClient will test the method NewClient()
@@ -200,7 +205,7 @@ func ExampleNewClient() {
 		return
 	}
 	fmt.Printf("loaded client: %s", client.options.userAgent)
-	// Output:loaded client: go-paymail: v0.4.4
+	// Output:loaded client: go-paymail: v0.5.0
 }
 
 // BenchmarkNewClient benchmarks the method NewClient()

@@ -7,15 +7,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestClient_GetSRVRecord will test the method GetSRVRecord()
 func TestClient_GetSRVRecord(t *testing.T) {
 	// t.Parallel() (turned off - race condition)
 
-	client, err := newTestClient()
-	assert.NoError(t, err)
-	assert.NotNil(t, client)
+	client := newTestClient(t)
 
 	t.Run("valid cases", func(t *testing.T) {
 
@@ -50,12 +49,11 @@ func TestClient_GetSRVRecord(t *testing.T) {
 				10,
 			},
 		}
-		var srv *net.SRV
 		for _, test := range tests {
 			t.Run(test.name, func(t *testing.T) {
-				srv, err = client.GetSRVRecord(test.service, test.protocol, test.domainName)
-				assert.NoError(t, err)
-				assert.NotNil(t, srv)
+				srv, err := client.GetSRVRecord(test.service, test.protocol, test.domainName)
+				require.NoError(t, err)
+				require.NotNil(t, srv)
 				assert.Equal(t, test.expectedPort, srv.Port)
 				assert.Equal(t, test.expectedPriority, srv.Priority)
 				assert.Equal(t, test.expectedWeight, srv.Weight)
@@ -82,12 +80,11 @@ func TestClient_GetSRVRecord(t *testing.T) {
 			{"invalid cname", "invalid", DefaultProtocol, testDomain},
 			{"no records", DefaultServiceName, DefaultProtocol, "norecords.com"},
 		}
-		var srv *net.SRV
 		for _, test := range tests {
 			t.Run(test.name, func(t *testing.T) {
-				srv, err = client.GetSRVRecord(test.service, test.protocol, test.domainName)
-				assert.Error(t, err)
-				assert.Nil(t, srv)
+				srv, err := client.GetSRVRecord(test.service, test.protocol, test.domainName)
+				require.Error(t, err)
+				require.Nil(t, srv)
 			})
 		}
 	})
@@ -97,7 +94,7 @@ func TestClient_GetSRVRecord(t *testing.T) {
 //
 // See more examples in /examples/
 func ExampleClient_GetSRVRecord() {
-	client, _ := newTestClient()
+	client := newTestClient(nil)
 	srv, _ := client.GetSRVRecord(DefaultServiceName, DefaultProtocol, testDomain)
 	fmt.Printf("port: %d priority: %d weight: %d target: %s", srv.Port, srv.Priority, srv.Weight, srv.Target)
 	// Output:port: 443 priority: 10 weight: 10 target: www.test.com
@@ -105,7 +102,7 @@ func ExampleClient_GetSRVRecord() {
 
 // BenchmarkClient_GetSRVRecord benchmarks the method GetSRVRecord()
 func BenchmarkClient_GetSRVRecord(b *testing.B) {
-	client, _ := newTestClient()
+	client := newTestClient(nil)
 	for i := 0; i < b.N; i++ {
 		_, _ = client.GetSRVRecord(DefaultServiceName, DefaultProtocol, testDomain)
 	}
@@ -115,9 +112,7 @@ func BenchmarkClient_GetSRVRecord(b *testing.B) {
 func TestClient_ValidateSRVRecord(t *testing.T) {
 	// t.Parallel() (turned off - race condition)
 
-	client, err := newTestClient()
-	assert.NoError(t, err)
-	assert.NotNil(t, client)
+	client := newTestClient(t)
 
 	t.Run("valid cases", func(t *testing.T) {
 		var tests = []struct {
@@ -154,8 +149,8 @@ func TestClient_ValidateSRVRecord(t *testing.T) {
 		}
 		for _, test := range tests {
 			t.Run(test.name, func(t *testing.T) {
-				err = client.ValidateSRVRecord(context.Background(), test.srv, test.port, test.priority, test.weight)
-				assert.NoError(t, err)
+				err := client.ValidateSRVRecord(context.Background(), test.srv, test.port, test.priority, test.weight)
+				require.NoError(t, err)
 			})
 		}
 	})
@@ -262,8 +257,8 @@ func TestClient_ValidateSRVRecord(t *testing.T) {
 		}
 		for _, test := range tests {
 			t.Run(test.name, func(t *testing.T) {
-				err = client.ValidateSRVRecord(context.Background(), test.srv, test.port, test.priority, test.weight)
-				assert.Error(t, err)
+				err := client.ValidateSRVRecord(context.Background(), test.srv, test.port, test.priority, test.weight)
+				require.Error(t, err)
 			})
 		}
 	})
@@ -273,7 +268,7 @@ func TestClient_ValidateSRVRecord(t *testing.T) {
 //
 // See more examples in /examples/
 func ExampleClient_ValidateSRVRecord() {
-	client, _ := newTestClient()
+	client := newTestClient(nil)
 	err := client.ValidateSRVRecord(
 		context.Background(),
 		&net.SRV{
@@ -294,7 +289,7 @@ func ExampleClient_ValidateSRVRecord() {
 
 // BenchmarkClient_ValidateSRVRecord benchmarks the method ValidateSRVRecord()
 func BenchmarkClient_ValidateSRVRecord(b *testing.B) {
-	client, _ := newTestClient()
+	client := newTestClient(nil)
 	for i := 0; i < b.N; i++ {
 		_ = client.ValidateSRVRecord(
 			context.Background(),

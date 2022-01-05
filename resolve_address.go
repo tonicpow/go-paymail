@@ -10,14 +10,14 @@ import (
 	"github.com/bitcoinschema/go-bitcoin"
 )
 
-// Resolution is the response from the ResolveAddress() request
-type Resolution struct {
+// ResolutionResponse is the response from the ResolveAddress() request
+type ResolutionResponse struct {
 	StandardResponse
-	ResolutionInformation
+	ResolutionPayload
 }
 
-// ResolutionInformation is just the information needed to respond
-type ResolutionInformation struct {
+// ResolutionPayload is the payload from the response
+type ResolutionPayload struct {
 	Address   string `json:"address,omitempty"`   // Legacy BSV address derived from the output script (custom for our Go package)
 	Output    string `json:"output"`              // hex-encoded Bitcoin script, which the sender MUST use during the construction of a payment transaction
 	Signature string `json:"signature,omitempty"` // This is used if SenderValidation is enforced (signature of "output" value)
@@ -26,7 +26,7 @@ type ResolutionInformation struct {
 // ResolveAddress will return a hex-encoded Bitcoin script if successful
 //
 // Specs: http://bsvalias.org/04-01-basic-address-resolution.html
-func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderRequest *SenderRequest) (response *Resolution, err error) {
+func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderRequest *SenderRequest) (response *ResolutionResponse, err error) {
 
 	// Require a valid url
 	if len(resolutionURL) == 0 || !strings.Contains(resolutionURL, "https://") {
@@ -57,7 +57,7 @@ func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderReque
 
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request
 	// https://<host-discovery-target>/{alias}@{domain.tld}/payment-destination
-	reqURL := strings.Replace(strings.Replace(resolutionURL, "{alias}", alias, -1), "{domain.tld}", domain, -1)
+	reqURL := replaceAliasDomain(resolutionURL, alias, domain)
 
 	// Fire the POST request
 	var resp StandardResponse
@@ -66,7 +66,7 @@ func (c *Client) ResolveAddress(resolutionURL, alias, domain string, senderReque
 	}
 
 	// Start the response
-	response = &Resolution{StandardResponse: resp}
+	response = &ResolutionResponse{StandardResponse: resp}
 
 	// Test the status code
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {

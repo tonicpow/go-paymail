@@ -7,6 +7,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestClient_GetP2PPaymentDestination will test the method GetP2PPaymentDestination()
@@ -14,23 +15,20 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
 
 	t.Run("successful response", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockP2PPaymentDestination(http.StatusOK)
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			paymentRequest,
 		)
-		assert.NoError(t, err)
-		assert.NotNil(t, destination)
+		require.NoError(t, err)
+		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusOK, destination.StatusCode)
 		assert.NotEqual(t, 0, len(destination.Outputs))
 		assert.NotEqual(t, 0, len(destination.Reference))
@@ -38,23 +36,20 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 	})
 
 	t.Run("successful response - status not modified", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockP2PPaymentDestination(http.StatusNotModified)
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			paymentRequest,
 		)
-		assert.NoError(t, err)
-		assert.NotNil(t, destination)
+		require.NoError(t, err)
+		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusNotModified, destination.StatusCode)
 		assert.NotEqual(t, 0, len(destination.Outputs))
 		assert.NotEqual(t, 0, len(destination.Reference))
@@ -62,102 +57,85 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 	})
 
 	t.Run("bad url", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockP2PPaymentDestination(http.StatusOK)
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination("invalid-url", testAlias, testDomain, paymentRequest)
-		assert.Error(t, err)
+		destination, err := client.GetP2PPaymentDestination("invalid-url", testAlias, testDomain, paymentRequest)
+		require.Error(t, err)
 		assert.Nil(t, destination)
 	})
 
 	t.Run("payment is nil", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockP2PPaymentDestination(http.StatusOK)
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			nil,
 		)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, destination)
 	})
 
 	t.Run("missing alias", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockP2PPaymentDestination(http.StatusOK)
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			"",
 			testDomain,
 			paymentRequest,
 		)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, destination)
 	})
 
 	t.Run("missing domain", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockP2PPaymentDestination(http.StatusOK)
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			"",
 			paymentRequest,
 		)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, destination)
 	})
 
 	t.Run("missing satoshis", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockP2PPaymentDestination(http.StatusOK)
 
 		paymentRequest := &PaymentRequest{Satoshis: 0}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			paymentRequest,
 		)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, destination)
 	})
 
 	t.Run("bad request", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
@@ -169,22 +147,19 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			paymentRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, destination)
+		require.Error(t, err)
+		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusBadRequest, destination.StatusCode)
 	})
 
 	t.Run("http error", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
@@ -193,21 +168,18 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			paymentRequest,
 		)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, destination)
 	})
 
 	t.Run("address not found", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
@@ -219,22 +191,19 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			paymentRequest,
 		)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.NotNil(t, destination)
 		assert.Equal(t, http.StatusNotFound, destination.StatusCode)
 	})
 
 	t.Run("error in json", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
@@ -246,22 +215,19 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			paymentRequest,
 		)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.NotNil(t, destination)
 		assert.Equal(t, http.StatusBadRequest, destination.StatusCode)
 	})
 
 	t.Run("invalid json", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
@@ -273,23 +239,20 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			paymentRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, destination)
+		require.Error(t, err)
+		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusOK, destination.StatusCode)
 		assert.Equal(t, 0, len(destination.Outputs))
 	})
 
 	t.Run("missing reference", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
@@ -301,23 +264,20 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			paymentRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, destination)
+		require.Error(t, err)
+		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusOK, destination.StatusCode)
 		assert.Equal(t, 0, len(destination.Reference))
 	})
 
 	t.Run("missing outputs", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
@@ -329,23 +289,20 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			paymentRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, destination)
+		require.Error(t, err)
+		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusOK, destination.StatusCode)
 		assert.Equal(t, 0, len(destination.Outputs))
 	})
 
 	t.Run("invalid script", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
@@ -357,23 +314,20 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			paymentRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, destination)
+		require.Error(t, err)
+		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusOK, destination.StatusCode)
 		assert.Equal(t, 0, len(destination.Outputs[0].Address))
 	})
 
 	t.Run("empty script", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
@@ -385,24 +339,21 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			paymentRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, destination)
+		require.Error(t, err)
+		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusOK, destination.StatusCode)
 		assert.Equal(t, 0, len(destination.Outputs[0].Address))
 		assert.Equal(t, 0, len(destination.Outputs[0].Script))
 	})
 
 	t.Run("invalid hex in script", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodPost, testServerURL+"p2p-payment-destination/"+testAlias+"@"+testDomain,
@@ -414,15 +365,14 @@ func TestClient_GetP2PPaymentDestination(t *testing.T) {
 
 		paymentRequest := &PaymentRequest{Satoshis: 100}
 
-		var destination *PaymentDestination
-		destination, err = client.GetP2PPaymentDestination(
+		destination, err := client.GetP2PPaymentDestination(
 			testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 			testAlias,
 			testDomain,
 			paymentRequest,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, destination)
+		require.Error(t, err)
+		require.NotNil(t, destination)
 		assert.Equal(t, http.StatusOK, destination.StatusCode)
 		assert.Equal(t, 0, len(destination.Outputs[0].Address))
 		assert.Equal(t, 1, len(destination.Outputs[0].Script))
@@ -445,11 +395,7 @@ func mockP2PPaymentDestination(statusCode int) {
 // See more examples in /examples/
 func ExampleClient_GetP2PPaymentDestination() {
 	// Load the client
-	client, err := newTestClient()
-	if err != nil {
-		fmt.Printf("error loading client: %s", err.Error())
-		return
-	}
+	client := newTestClient(nil)
 
 	mockP2PPaymentDestination(http.StatusOK)
 
@@ -457,8 +403,7 @@ func ExampleClient_GetP2PPaymentDestination() {
 	paymentRequest := &PaymentRequest{Satoshis: 100}
 
 	// Fire the request
-	var destination *PaymentDestination
-	destination, err = client.GetP2PPaymentDestination(
+	destination, err := client.GetP2PPaymentDestination(
 		testServerURL+"p2p-payment-destination/{alias}@{domain.tld}",
 		testAlias,
 		testDomain,
@@ -476,7 +421,7 @@ func ExampleClient_GetP2PPaymentDestination() {
 
 // BenchmarkClient_GetP2PPaymentDestination benchmarks the method GetP2PPaymentDestination()
 func BenchmarkClient_GetP2PPaymentDestination(b *testing.B) {
-	client, _ := newTestClient()
+	client := newTestClient(nil)
 	mockP2PPaymentDestination(http.StatusOK)
 
 	// Payment Request

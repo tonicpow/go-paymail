@@ -8,15 +8,9 @@ import (
 	"github.com/tonicpow/go-paymail"
 )
 
-// Capabilities is the standard response for returning the Paymail capabilities
-type Capabilities struct {
-	BsvAlias     string                 `json:"bsvalias"`     // Version of the bsvalias
-	Capabilities map[string]interface{} `json:"capabilities"` // List of the capabilities
-}
-
-// genericCapabilities will make generic capabilities
-func genericCapabilities(bsvAliasVersion string, senderValidation bool) *Capabilities {
-	return &Capabilities{
+// GenericCapabilities will make generic capabilities
+func GenericCapabilities(bsvAliasVersion string, senderValidation bool) *paymail.CapabilitiesPayload {
+	return &paymail.CapabilitiesPayload{
 		BsvAlias: bsvAliasVersion,
 		Capabilities: map[string]interface{}{
 			paymail.BRFCPaymentDestination:   "/address/{alias}@{domain.tld}",

@@ -7,6 +7,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestClient_VerifyPubKey will test the method VerifyPubKey()
@@ -14,19 +15,16 @@ func TestClient_VerifyPubKey(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
 
 	t.Run("successful response", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockVerifyPubKey(http.StatusOK)
 
-		var verification *Verification
-		verification, err = client.VerifyPubKey(
+		verification, err := client.VerifyPubKey(
 			testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}",
 			testAlias, testDomain, testPubKey,
 		)
-		assert.NoError(t, err)
-		assert.NotNil(t, verification)
+		require.NoError(t, err)
+		require.NotNil(t, verification)
 		assert.Equal(t, DefaultBsvAliasVersion, verification.BsvAlias)
 		assert.Equal(t, http.StatusOK, verification.StatusCode)
 		assert.Equal(t, testAlias+"@"+testDomain, verification.Handle)
@@ -35,19 +33,16 @@ func TestClient_VerifyPubKey(t *testing.T) {
 	})
 
 	t.Run("successful response - status not modified", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockVerifyPubKey(http.StatusNotModified)
 
-		var verification *Verification
-		verification, err = client.VerifyPubKey(
+		verification, err := client.VerifyPubKey(
 			testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}",
 			testAlias, testDomain, testPubKey,
 		)
-		assert.NoError(t, err)
-		assert.NotNil(t, verification)
+		require.NoError(t, err)
+		require.NotNil(t, verification)
 		assert.Equal(t, DefaultBsvAliasVersion, verification.BsvAlias)
 		assert.Equal(t, http.StatusNotModified, verification.StatusCode)
 		assert.Equal(t, testAlias+"@"+testDomain, verification.Handle)
@@ -56,73 +51,59 @@ func TestClient_VerifyPubKey(t *testing.T) {
 	})
 
 	t.Run("missing url", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockVerifyPubKey(http.StatusNotModified)
 
-		var verification *Verification
-		verification, err = client.VerifyPubKey(
+		verification, err := client.VerifyPubKey(
 			"invalid-url",
 			testAlias, testDomain, testPubKey,
 		)
-		assert.Error(t, err)
-		assert.Nil(t, verification)
+		require.Error(t, err)
+		require.Nil(t, verification)
 	})
 
 	t.Run("missing alias", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockVerifyPubKey(http.StatusNotModified)
 
-		var verification *Verification
-		verification, err = client.VerifyPubKey(
+		verification, err := client.VerifyPubKey(
 			testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}",
 			"", testDomain, testPubKey,
 		)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, verification)
 	})
 
 	t.Run("missing domain", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockVerifyPubKey(http.StatusNotModified)
 
-		var verification *Verification
-		verification, err = client.VerifyPubKey(
+		verification, err := client.VerifyPubKey(
 			testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}",
 			testAlias, "", testPubKey,
 		)
-		assert.Error(t, err)
-		assert.Nil(t, verification)
+		require.Error(t, err)
+		require.Nil(t, verification)
 	})
 
 	t.Run("missing pubkey", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockVerifyPubKey(http.StatusNotModified)
 
-		var verification *Verification
-		verification, err = client.VerifyPubKey(
+		verification, err := client.VerifyPubKey(
 			testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}",
 			testAlias, testDomain, "",
 		)
-		assert.Error(t, err)
-		assert.Nil(t, verification)
+		require.Error(t, err)
+		require.Nil(t, verification)
 	})
 
 	t.Run("bad request", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
@@ -132,39 +113,33 @@ func TestClient_VerifyPubKey(t *testing.T) {
 			),
 		)
 
-		var verification *Verification
-		verification, err = client.VerifyPubKey(
+		verification, err := client.VerifyPubKey(
 			testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}",
 			testAlias, testDomain, testPubKey,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, verification)
+		require.Error(t, err)
+		require.NotNil(t, verification)
 		assert.Equal(t, http.StatusBadRequest, verification.StatusCode)
 	})
 
 	t.Run("http error", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
 			httpmock.NewErrorResponder(fmt.Errorf("error in request")),
 		)
 
-		var verification *Verification
-		verification, err = client.VerifyPubKey(
+		verification, err := client.VerifyPubKey(
 			testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}",
 			testAlias, testDomain, testPubKey,
 		)
-		assert.Error(t, err)
-		assert.Nil(t, verification)
+		require.Error(t, err)
+		require.Nil(t, verification)
 	})
 
 	t.Run("bad error", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
@@ -174,20 +149,17 @@ func TestClient_VerifyPubKey(t *testing.T) {
 			),
 		)
 
-		var verification *Verification
-		verification, err = client.VerifyPubKey(
+		verification, err := client.VerifyPubKey(
 			testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}",
 			testAlias, testDomain, testPubKey,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, verification)
+		require.Error(t, err)
+		require.NotNil(t, verification)
 		assert.Equal(t, http.StatusBadRequest, verification.StatusCode)
 	})
 
 	t.Run("bad json", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
@@ -197,13 +169,12 @@ func TestClient_VerifyPubKey(t *testing.T) {
 			),
 		)
 
-		var verification *Verification
-		verification, err = client.VerifyPubKey(
+		verification, err := client.VerifyPubKey(
 			testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}",
 			testAlias, testDomain, testPubKey,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, verification)
+		require.Error(t, err)
+		require.NotNil(t, verification)
 		assert.Equal(t, http.StatusOK, verification.StatusCode)
 		assert.Equal(t, "", verification.BsvAlias)
 		assert.Equal(t, "", verification.PubKey)
@@ -211,9 +182,7 @@ func TestClient_VerifyPubKey(t *testing.T) {
 	})
 
 	t.Run("invalid handle", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
@@ -223,21 +192,18 @@ func TestClient_VerifyPubKey(t *testing.T) {
 			),
 		)
 
-		var verification *Verification
-		verification, err = client.VerifyPubKey(
+		verification, err := client.VerifyPubKey(
 			testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}",
 			testAlias, testDomain, testPubKey,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, verification)
+		require.Error(t, err)
+		require.NotNil(t, verification)
 		assert.Equal(t, http.StatusOK, verification.StatusCode)
 		assert.Equal(t, "", verification.Handle)
 	})
 
 	t.Run("invalid bsv alias", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
@@ -247,21 +213,18 @@ func TestClient_VerifyPubKey(t *testing.T) {
 			),
 		)
 
-		var verification *Verification
-		verification, err = client.VerifyPubKey(
+		verification, err := client.VerifyPubKey(
 			testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}",
 			testAlias, testDomain, testPubKey,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, verification)
+		require.Error(t, err)
+		require.NotNil(t, verification)
 		assert.Equal(t, http.StatusOK, verification.StatusCode)
 		assert.Equal(t, "", verification.BsvAlias)
 	})
 
 	t.Run("empty pubkey", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
@@ -271,21 +234,18 @@ func TestClient_VerifyPubKey(t *testing.T) {
 			),
 		)
 
-		var verification *Verification
-		verification, err = client.VerifyPubKey(
+		verification, err := client.VerifyPubKey(
 			testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}",
 			testAlias, testDomain, testPubKey,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, verification)
+		require.Error(t, err)
+		require.NotNil(t, verification)
 		assert.Equal(t, http.StatusOK, verification.StatusCode)
 		assert.Equal(t, "", verification.PubKey)
 	})
 
 	t.Run("invalid pubkey", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"verifypubkey/"+testAlias+"@"+testDomain+"/"+testPubKey,
@@ -295,13 +255,12 @@ func TestClient_VerifyPubKey(t *testing.T) {
 			),
 		)
 
-		var verification *Verification
-		verification, err = client.VerifyPubKey(
+		verification, err := client.VerifyPubKey(
 			testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}",
 			testAlias, testDomain, testPubKey,
 		)
-		assert.Error(t, err)
-		assert.NotNil(t, verification)
+		require.Error(t, err)
+		require.NotNil(t, verification)
 		assert.Equal(t, http.StatusOK, verification.StatusCode)
 		assert.NotEqual(t, testPubKey, verification.PubKey)
 	})
@@ -327,17 +286,12 @@ func mockVerifyPubKey(statusCode int) {
 // See more examples in /examples/
 func ExampleClient_VerifyPubKey() {
 	// Load the client
-	client, err := newTestClient()
-	if err != nil {
-		fmt.Printf("error loading client: %s", err.Error())
-		return
-	}
+	client := newTestClient(nil)
 
 	mockVerifyPubKey(http.StatusOK)
 
 	// Verify PubKey
-	var verification *Verification
-	verification, err = client.VerifyPubKey(
+	verification, err := client.VerifyPubKey(
 		testServerURL+"verifypubkey/{alias}@{domain.tld}/{pubkey}",
 		testAlias, testDomain, testPubKey,
 	)
@@ -351,7 +305,7 @@ func ExampleClient_VerifyPubKey() {
 
 // BenchmarkClient_VerifyPubKey benchmarks the method VerifyPubKey()
 func BenchmarkClient_VerifyPubKey(b *testing.B) {
-	client, _ := newTestClient()
+	client := newTestClient(nil)
 	mockVerifyPubKey(http.StatusOK)
 	for i := 0; i < b.N; i++ {
 		_, _ = client.VerifyPubKey(

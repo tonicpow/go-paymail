@@ -15,7 +15,7 @@ func main() {
 	}
 
 	// Get the capabilities
-	var capabilities *paymail.Capabilities
+	var capabilities *paymail.CapabilitiesResponse
 	if capabilities, err = client.GetCapabilities("moneybutton.com", paymail.DefaultPort); err != nil {
 		log.Fatal("error getting capabilities: " + err.Error())
 	}

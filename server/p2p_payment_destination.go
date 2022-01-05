@@ -60,7 +60,7 @@ func (c *Configuration) p2pDestination(w http.ResponseWriter, req *http.Request,
 	}
 
 	// Create the response
-	var response *paymail.PaymentDestinationInformation
+	var response *paymail.PaymentDestinationPayload
 	if response, err = c.actions.CreateP2PDestinationResponse(
 		req.Context(), alias, domain, paymentRequest.Satoshis, md,
 	); err != nil {

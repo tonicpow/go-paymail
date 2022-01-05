@@ -17,9 +17,14 @@ Default:
 }
 */
 
-// Verification is the result returned from the VerifyPubKey() request
-type Verification struct {
+// VerificationResponse is the result returned from the VerifyPubKey() request
+type VerificationResponse struct {
 	StandardResponse
+	VerificationPayload
+}
+
+// VerificationPayload is the payload from the response
+type VerificationPayload struct {
 	BsvAlias string `json:"bsvalias"` // Version of the bsvalias
 	Handle   string `json:"handle"`   // The <alias>@<domain>.<tld>
 	Match    bool   `json:"match"`    // If the match was successful or not
@@ -29,7 +34,7 @@ type Verification struct {
 // VerifyPubKey will try to match a handle and pubkey
 //
 // Specs: https://bsvalias.org/05-verify-public-key-owner.html
-func (c *Client) VerifyPubKey(verifyURL, alias, domain, pubKey string) (response *Verification, err error) {
+func (c *Client) VerifyPubKey(verifyURL, alias, domain, pubKey string) (response *VerificationResponse, err error) {
 
 	// Require a valid url
 	if len(verifyURL) == 0 || !strings.Contains(verifyURL, "https://") {
@@ -51,7 +56,7 @@ func (c *Client) VerifyPubKey(verifyURL, alias, domain, pubKey string) (response
 
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request
 	// https://<host-discovery-target>/verifypubkey/{alias}@{domain.tld}/{pubkey}
-	reqURL := strings.Replace(strings.Replace(strings.Replace(verifyURL, "{pubkey}", pubKey, -1), "{alias}", alias, -1), "{domain.tld}", domain, -1)
+	reqURL := replacePubKey(replaceAliasDomain(verifyURL, alias, domain), pubKey)
 
 	// Fire the GET request
 	var resp StandardResponse
@@ -60,7 +65,7 @@ func (c *Client) VerifyPubKey(verifyURL, alias, domain, pubKey string) (response
 	}
 
 	// Start the response
-	response = &Verification{StandardResponse: resp}
+	response = &VerificationResponse{StandardResponse: resp}
 
 	// Test the status code (200 or 304 is valid)
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {

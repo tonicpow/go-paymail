@@ -16,7 +16,7 @@ func main() {
 
 	// Get the capabilities
 	// This is required first to get the corresponding PublicProfile endpoint url
-	var capabilities *paymail.Capabilities
+	var capabilities *paymail.CapabilitiesResponse
 	if capabilities, err = client.GetCapabilities("moneybutton.com", paymail.DefaultPort); err != nil {
 		log.Fatal("error getting capabilities: " + err.Error())
 	}
@@ -26,7 +26,7 @@ func main() {
 	publicProfileURL := capabilities.GetString(paymail.BRFCPublicProfile, "")
 
 	// Get the public profile
-	var profile *paymail.PublicProfile
+	var profile *paymail.PublicProfileResponse
 	if profile, err = client.GetPublicProfile(publicProfileURL, "mrz", "moneybutton.com"); err != nil {
 		log.Fatal("error getting profile: " + err.Error())
 	}

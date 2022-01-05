@@ -19,7 +19,7 @@ func (m *mockServiceProvider) GetPaymailByAlias(_ context.Context, _, _ string,
 
 // CreateAddressResolutionResponse is a demo implementation of this interface
 func (m *mockServiceProvider) CreateAddressResolutionResponse(_ context.Context, _, _ string,
-	_ bool, _ *RequestMetadata) (*paymail.ResolutionInformation, error) {
+	_ bool, _ *RequestMetadata) (*paymail.ResolutionPayload, error) {
 
 	// Generate a new destination / output for the basic address resolution
 	return nil, nil
@@ -27,7 +27,7 @@ func (m *mockServiceProvider) CreateAddressResolutionResponse(_ context.Context,
 
 // CreateP2PDestinationResponse is a demo implementation of this interface
 func (m *mockServiceProvider) CreateP2PDestinationResponse(_ context.Context, _, _ string,
-	_ uint64, _ *RequestMetadata) (*paymail.PaymentDestinationInformation, error) {
+	_ uint64, _ *RequestMetadata) (*paymail.PaymentDestinationPayload, error) {
 
 	// Generate a new destination for the p2p request
 	return nil, nil
@@ -35,7 +35,7 @@ func (m *mockServiceProvider) CreateP2PDestinationResponse(_ context.Context, _,
 
 // RecordTransaction is a demo implementation of this interface
 func (m *mockServiceProvider) RecordTransaction(_ context.Context,
-	_ *paymail.P2PTransaction, _ *RequestMetadata) (*paymail.P2PTransactionInformation, error) {
+	_ *paymail.P2PTransaction, _ *RequestMetadata) (*paymail.P2PTransactionPayload, error) {
 
 	// Record the tx into your datastore layer
 	return nil, nil

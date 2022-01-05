@@ -16,9 +16,14 @@ Default Response:
 }
 */
 
-// PKI is the result returned
-type PKI struct {
+// PKIResponse is the result returned
+type PKIResponse struct {
 	StandardResponse
+	PKIPayload
+}
+
+// PKIPayload is the payload from the response
+type PKIPayload struct {
 	BsvAlias string `json:"bsvalias"` // Version of Paymail
 	Handle   string `json:"handle"`   // The <alias>@<domain>.<tld>
 	PubKey   string `json:"pubkey"`   // The related PubKey
@@ -27,7 +32,7 @@ type PKI struct {
 // GetPKI will return a valid PKI response for a given alias@domain.tld
 //
 // Specs: http://bsvalias.org/03-public-key-infrastructure.html
-func (c *Client) GetPKI(pkiURL, alias, domain string) (response *PKI, err error) {
+func (c *Client) GetPKI(pkiURL, alias, domain string) (response *PKIResponse, err error) {
 
 	// Require a valid url
 	if len(pkiURL) == 0 || !strings.Contains(pkiURL, "https://") {
@@ -46,7 +51,7 @@ func (c *Client) GetPKI(pkiURL, alias, domain string) (response *PKI, err error)
 
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request
 	// https://<host-discovery-target>/{alias}@{domain.tld}/id
-	reqURL := strings.Replace(strings.Replace(pkiURL, "{alias}", alias, -1), "{domain.tld}", domain, -1)
+	reqURL := replaceAliasDomain(pkiURL, alias, domain)
 
 	// Fire the GET request
 	var resp StandardResponse
@@ -55,7 +60,7 @@ func (c *Client) GetPKI(pkiURL, alias, domain string) (response *PKI, err error)
 	}
 
 	// Start the response
-	response = &PKI{StandardResponse: resp}
+	response = &PKIResponse{StandardResponse: resp}
 
 	// Test the status code (200 or 304 is valid)
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {

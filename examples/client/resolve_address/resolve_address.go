@@ -17,7 +17,7 @@ func main() {
 
 	// Get the capabilities
 	// This is required first to get the corresponding AddressResolution endpoint url
-	var capabilities *paymail.Capabilities
+	var capabilities *paymail.CapabilitiesResponse
 	if capabilities, err = client.GetCapabilities("moneybutton.com", paymail.DefaultPort); err != nil {
 		log.Fatal("error getting capabilities: " + err.Error())
 	}
@@ -34,7 +34,7 @@ func main() {
 	}
 
 	// Get the address resolution results
-	var resolution *paymail.Resolution
+	var resolution *paymail.ResolutionResponse
 	if resolution, err = client.ResolveAddress(resolveURL, "mrz", "moneybutton.com", senderRequest); err != nil {
 		log.Fatal("error getting resolution: " + err.Error())
 	}

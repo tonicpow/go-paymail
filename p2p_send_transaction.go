@@ -40,11 +40,11 @@ type P2PMetaData struct {
 // P2PTransactionResponse is the response to the request
 type P2PTransactionResponse struct {
 	StandardResponse
-	P2PTransactionInformation
+	P2PTransactionPayload
 }
 
-// P2PTransactionInformation is the response to the request
-type P2PTransactionInformation struct {
+// P2PTransactionPayload is payload from the request
+type P2PTransactionPayload struct {
 	Note string `json:"note"` // Some human-readable note
 	TxID string `json:"txid"` // The txid of the broadcasted tx
 }
@@ -82,7 +82,7 @@ func (c *Client) SendP2PTransaction(p2pURL, alias, domain string,
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request
 	// https://<host-discovery-target>/api/rawtx/{alias}@{domain.tld}
 	// https://<host-discovery-target>/api/receive-transaction/{alias}@{domain.tld}
-	reqURL := strings.Replace(strings.Replace(p2pURL, "{alias}", alias, -1), "{domain.tld}", domain, -1)
+	reqURL := replaceAliasDomain(p2pURL, alias, domain)
 
 	// Fire the POST request
 	var resp StandardResponse

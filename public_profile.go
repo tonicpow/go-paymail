@@ -15,9 +15,14 @@ Default:
 }
 */
 
-// PublicProfile is the result returned from GetPublicProfile()
-type PublicProfile struct {
+// PublicProfileResponse is the result returned from GetPublicProfile()
+type PublicProfileResponse struct {
 	StandardResponse
+	PublicProfilePayload
+}
+
+// PublicProfilePayload is the payload from the response
+type PublicProfilePayload struct {
 	Avatar string `json:"avatar"` // A URL that returns a 180x180 image. It can accept an optional parameter `s` to return an image of width and height `s`. The image should be JPEG, PNG, or GIF.
 	Name   string `json:"name"`   // A string up to 100 characters long. (name or nickname)
 }
@@ -25,7 +30,7 @@ type PublicProfile struct {
 // GetPublicProfile will return a valid public profile
 //
 // Specs: https://github.com/bitcoin-sv-specs/brfc-paymail/pull/7/files
-func (c *Client) GetPublicProfile(publicProfileURL, alias, domain string) (response *PublicProfile, err error) {
+func (c *Client) GetPublicProfile(publicProfileURL, alias, domain string) (response *PublicProfileResponse, err error) {
 
 	// Require a valid url
 	if len(publicProfileURL) == 0 || !strings.Contains(publicProfileURL, "https://") {
@@ -44,7 +49,7 @@ func (c *Client) GetPublicProfile(publicProfileURL, alias, domain string) (respo
 
 	// Set the base url and path, assuming the url is from the prior GetCapabilities() request
 	// https://<host-discovery-target>/public-profile/{alias}@{domain.tld}
-	reqURL := strings.Replace(strings.Replace(publicProfileURL, "{alias}", alias, -1), "{domain.tld}", domain, -1)
+	reqURL := replaceAliasDomain(publicProfileURL, alias, domain)
 
 	// Fire the GET request
 	var resp StandardResponse
@@ -53,7 +58,7 @@ func (c *Client) GetPublicProfile(publicProfileURL, alias, domain string) (respo
 	}
 
 	// Start the response
-	response = &PublicProfile{StandardResponse: resp}
+	response = &PublicProfileResponse{StandardResponse: resp}
 
 	// Test the status code (200 or 304 is valid)
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {

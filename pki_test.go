@@ -7,6 +7,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestClient_GetPKI will test the method GetPKI()
@@ -14,16 +15,13 @@ func TestClient_GetPKI(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
 
 	t.Run("successful response", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockGetPKI(http.StatusOK)
 
-		var pki *PKI
-		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.NoError(t, err)
-		assert.NotNil(t, pki)
+		pki, err := client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		require.NoError(t, err)
+		require.NotNil(t, pki)
 		assert.Equal(t, DefaultBsvAliasVersion, pki.BsvAlias)
 		assert.Equal(t, http.StatusOK, pki.StatusCode)
 		assert.Equal(t, testAlias+"@"+testDomain, pki.Handle)
@@ -31,16 +29,13 @@ func TestClient_GetPKI(t *testing.T) {
 	})
 
 	t.Run("successful response - status not modified", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockGetPKI(http.StatusNotModified)
 
-		var pki *PKI
-		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.NoError(t, err)
-		assert.NotNil(t, pki)
+		pki, err := client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		require.NoError(t, err)
+		require.NotNil(t, pki)
 		assert.Equal(t, DefaultBsvAliasVersion, pki.BsvAlias)
 		assert.Equal(t, http.StatusNotModified, pki.StatusCode)
 		assert.Equal(t, testAlias+"@"+testDomain, pki.Handle)
@@ -48,9 +43,7 @@ func TestClient_GetPKI(t *testing.T) {
 	})
 
 	t.Run("bad request", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
@@ -60,17 +53,14 @@ func TestClient_GetPKI(t *testing.T) {
 			),
 		)
 
-		var pki *PKI
-		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.Error(t, err)
-		assert.NotNil(t, pki)
+		pki, err := client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		require.Error(t, err)
+		require.NotNil(t, pki)
 		assert.Equal(t, http.StatusBadRequest, pki.StatusCode)
 	})
 
 	t.Run("bad error", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
@@ -80,17 +70,14 @@ func TestClient_GetPKI(t *testing.T) {
 			),
 		)
 
-		var pki *PKI
-		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.Error(t, err)
-		assert.NotNil(t, pki)
+		pki, err := client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		require.Error(t, err)
+		require.NotNil(t, pki)
 		assert.Equal(t, http.StatusBadRequest, pki.StatusCode)
 	})
 
 	t.Run("invalid alias", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
@@ -100,18 +87,15 @@ func TestClient_GetPKI(t *testing.T) {
 			),
 		)
 
-		var pki *PKI
-		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.Error(t, err)
-		assert.NotNil(t, pki)
+		pki, err := client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		require.Error(t, err)
+		require.NotNil(t, pki)
 		assert.Equal(t, http.StatusOK, pki.StatusCode)
 		assert.Equal(t, "", pki.BsvAlias)
 	})
 
 	t.Run("invalid json", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
@@ -121,19 +105,16 @@ func TestClient_GetPKI(t *testing.T) {
 			),
 		)
 
-		var pki *PKI
-		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.Error(t, err)
-		assert.NotNil(t, pki)
+		pki, err := client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		require.Error(t, err)
+		require.NotNil(t, pki)
 		assert.Equal(t, http.StatusOK, pki.StatusCode)
 		assert.Equal(t, "", pki.BsvAlias)
 		assert.Equal(t, "", pki.PubKey)
 	})
 
 	t.Run("returned incorrect handle", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
@@ -143,18 +124,15 @@ func TestClient_GetPKI(t *testing.T) {
 			),
 		)
 
-		var pki *PKI
-		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.Error(t, err)
-		assert.NotNil(t, pki)
+		pki, err := client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		require.Error(t, err)
+		require.NotNil(t, pki)
 		assert.Equal(t, http.StatusOK, pki.StatusCode)
 		assert.NotEqual(t, testAlias+"@"+testDomain, pki.Handle)
 	})
 
 	t.Run("missing pubkey", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
@@ -164,19 +142,16 @@ func TestClient_GetPKI(t *testing.T) {
 			),
 		)
 
-		var pki *PKI
-		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.Error(t, err)
-		assert.NotNil(t, pki)
+		pki, err := client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		require.Error(t, err)
+		require.NotNil(t, pki)
 		assert.Equal(t, http.StatusOK, pki.StatusCode)
 		assert.Equal(t, testAlias+"@"+testDomain, pki.Handle)
 		assert.Equal(t, "", pki.PubKey)
 	})
 
 	t.Run("invalid pubkey length", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
@@ -187,68 +162,55 @@ func TestClient_GetPKI(t *testing.T) {
 			),
 		)
 
-		var pki *PKI
-		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.Error(t, err)
-		assert.NotNil(t, pki)
+		pki, err := client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		require.Error(t, err)
+		require.NotNil(t, pki)
 		assert.Equal(t, http.StatusOK, pki.StatusCode)
 		assert.Equal(t, testAlias+"@"+testDomain, pki.Handle)
 		assert.NotEqual(t, PubKeyLength, len(pki.PubKey))
 	})
 
 	t.Run("invalid url", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockGetPKI(http.StatusOK)
 
-		var pki *PKI
-		pki, err = client.GetPKI("invalid-url", testAlias, testDomain)
-		assert.Error(t, err)
-		assert.Nil(t, pki)
+		pki, err := client.GetPKI("invalid-url", testAlias, testDomain)
+		require.Error(t, err)
+		require.Nil(t, pki)
 	})
 
 	t.Run("missing alias", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockGetPKI(http.StatusOK)
 
-		var pki *PKI
-		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "", testDomain)
-		assert.Error(t, err)
-		assert.Nil(t, pki)
+		pki, err := client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", "", testDomain)
+		require.Error(t, err)
+		require.Nil(t, pki)
 	})
 
 	t.Run("missing domain", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockGetPKI(http.StatusOK)
 
-		var pki *PKI
-		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, "")
-		assert.Error(t, err)
-		assert.Nil(t, pki)
+		pki, err := client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, "")
+		require.Error(t, err)
+		require.Nil(t, pki)
 	})
 
 	t.Run("http error", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, testServerURL+"id/"+testAlias+"@"+testDomain,
 			httpmock.NewErrorResponder(fmt.Errorf("error in request")),
 		)
 
-		var pki *PKI
-		pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
-		assert.Error(t, err)
-		assert.Nil(t, pki)
+		pki, err := client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+		require.Error(t, err)
+		require.Nil(t, pki)
 	})
 }
 
@@ -270,17 +232,12 @@ func mockGetPKI(statusCode int) {
 // See more examples in /examples/
 func ExampleClient_GetPKI() {
 	// Load the client
-	client, err := newTestClient()
-	if err != nil {
-		fmt.Printf("error loading client: %s", err.Error())
-		return
-	}
+	client := newTestClient(nil)
 
 	mockGetPKI(http.StatusOK)
 
 	// Get the pki
-	var pki *PKI
-	pki, err = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
+	pki, err := client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)
 	if err != nil {
 		fmt.Printf("error getting pki: " + err.Error())
 		return
@@ -291,7 +248,7 @@ func ExampleClient_GetPKI() {
 
 // BenchmarkClient_GetPKI benchmarks the method GetPKI()
 func BenchmarkClient_GetPKI(b *testing.B) {
-	client, _ := newTestClient()
+	client := newTestClient(nil)
 	mockGetPKI(http.StatusOK)
 	for i := 0; i < b.N; i++ {
 		_, _ = client.GetPKI(testServerURL+"id/{alias}@{domain.tld}", testAlias, testDomain)

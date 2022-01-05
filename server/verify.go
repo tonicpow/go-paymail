@@ -48,7 +48,7 @@ func (c *Configuration) verifyPubKey(w http.ResponseWriter, req *http.Request, _
 	}
 
 	// Return the response
-	apirouter.ReturnResponse(w, req, http.StatusOK, &paymail.Verification{
+	apirouter.ReturnResponse(w, req, http.StatusOK, &paymail.VerificationPayload{
 		BsvAlias: c.BSVAliasVersion,
 		Handle:   address,
 		PubKey:   foundPaymail.PubKey,

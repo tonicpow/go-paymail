@@ -22,7 +22,7 @@ func (d *demoServiceProvider) GetPaymailByAlias(_ context.Context, alias, domain
 
 // CreateAddressResolutionResponse is a demo implementation of this interface
 func (d *demoServiceProvider) CreateAddressResolutionResponse(ctx context.Context, alias, domain string,
-	senderValidation bool, _ *server.RequestMetadata) (*paymail.ResolutionInformation, error) {
+	senderValidation bool, _ *server.RequestMetadata) (*paymail.ResolutionPayload, error) {
 
 	// Generate a new destination / output for the basic address resolution
 	return DemoCreateAddressResolutionResponse(ctx, alias, domain, senderValidation)
@@ -30,7 +30,7 @@ func (d *demoServiceProvider) CreateAddressResolutionResponse(ctx context.Contex
 
 // CreateP2PDestinationResponse is a demo implementation of this interface
 func (d *demoServiceProvider) CreateP2PDestinationResponse(ctx context.Context, alias, domain string,
-	satoshis uint64, _ *server.RequestMetadata) (*paymail.PaymentDestinationInformation, error) {
+	satoshis uint64, _ *server.RequestMetadata) (*paymail.PaymentDestinationPayload, error) {
 
 	// Generate a new destination for the p2p request
 	return DemoCreateP2PDestinationResponse(ctx, alias, domain, satoshis)
@@ -38,7 +38,7 @@ func (d *demoServiceProvider) CreateP2PDestinationResponse(ctx context.Context, 
 
 // RecordTransaction is a demo implementation of this interface
 func (d *demoServiceProvider) RecordTransaction(ctx context.Context,
-	p2pTx *paymail.P2PTransaction, _ *server.RequestMetadata) (*paymail.P2PTransactionInformation, error) {
+	p2pTx *paymail.P2PTransaction, _ *server.RequestMetadata) (*paymail.P2PTransactionPayload, error) {
 
 	// Record the tx into your datastore layer
 	return DemoRecordTransaction(ctx, p2pTx)

@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/go-resty/resty/v2"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestClient_GetCapabilities will test the method GetCapabilities()
@@ -15,40 +15,33 @@ func TestClient_GetCapabilities(t *testing.T) {
 	// t.Parallel() (Cannot run in parallel - issues with overriding the mock client)
 
 	t.Run("successful response", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockCapabilities(http.StatusOK)
 
-		capabilities, err := client.GetCapabilities(testDomain, DefaultPort)
-		assert.NoError(t, err)
-		assert.NotNil(t, capabilities)
-		assert.Equal(t, DefaultBsvAliasVersion, capabilities.BsvAlias)
-		assert.Equal(t, http.StatusOK, capabilities.StatusCode)
-		assert.Equal(t, true, capabilities.Has(BRFCPki, ""))
+		response, err := client.GetCapabilities(testDomain, DefaultPort)
+		require.NoError(t, err)
+		require.NotNil(t, response)
+		assert.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
+		assert.Equal(t, http.StatusOK, response.StatusCode)
+		assert.Equal(t, true, response.Has(BRFCPki, ""))
 	})
 
 	t.Run("status not modified", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		mockCapabilities(http.StatusNotModified)
 
-		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
-		assert.NoError(t, err)
-		assert.NotNil(t, capabilities)
-		assert.Equal(t, DefaultBsvAliasVersion, capabilities.BsvAlias)
-		assert.Equal(t, http.StatusNotModified, capabilities.StatusCode)
-		assert.Equal(t, true, capabilities.Has(BRFCPki, ""))
+		response, err := client.GetCapabilities(testDomain, DefaultPort)
+		require.NoError(t, err)
+		assert.NotNil(t, response)
+		assert.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
+		assert.Equal(t, http.StatusNotModified, response.StatusCode)
+		assert.Equal(t, true, response.Has(BRFCPki, ""))
 	})
 
 	t.Run("bad request", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
@@ -58,18 +51,15 @@ func TestClient_GetCapabilities(t *testing.T) {
 			),
 		)
 
-		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
-		assert.Error(t, err)
-		assert.NotNil(t, capabilities)
-		assert.Equal(t, http.StatusBadRequest, capabilities.StatusCode)
-		assert.Equal(t, 0, len(capabilities.Capabilities))
+		response, err := client.GetCapabilities(testDomain, DefaultPort)
+		require.Error(t, err)
+		assert.NotNil(t, response)
+		assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+		assert.Equal(t, 0, len(response.Capabilities))
 	})
 
 	t.Run("missing target", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
@@ -79,16 +69,13 @@ func TestClient_GetCapabilities(t *testing.T) {
 			),
 		)
 
-		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities("", DefaultPort)
-		assert.Error(t, err)
-		assert.Nil(t, capabilities)
+		response, err := client.GetCapabilities("", DefaultPort)
+		require.Error(t, err)
+		assert.Nil(t, response)
 	})
 
 	t.Run("missing port", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
@@ -98,32 +85,26 @@ func TestClient_GetCapabilities(t *testing.T) {
 			),
 		)
 
-		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities(testDomain, 0)
-		assert.Error(t, err)
-		assert.Nil(t, capabilities)
+		response, err := client.GetCapabilities(testDomain, 0)
+		require.Error(t, err)
+		assert.Nil(t, response)
 	})
 
 	t.Run("http error", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
 			httpmock.NewErrorResponder(fmt.Errorf("error in request")),
 		)
 
-		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
-		assert.Error(t, err)
-		assert.Nil(t, capabilities)
+		response, err := client.GetCapabilities(testDomain, DefaultPort)
+		require.Error(t, err)
+		assert.Nil(t, response)
 	})
 
 	t.Run("bad error in request", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
@@ -133,18 +114,15 @@ func TestClient_GetCapabilities(t *testing.T) {
 			),
 		)
 
-		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
-		assert.Error(t, err)
-		assert.NotNil(t, capabilities)
-		assert.Equal(t, http.StatusBadRequest, capabilities.StatusCode)
-		assert.Equal(t, 0, len(capabilities.Capabilities))
+		response, err := client.GetCapabilities(testDomain, DefaultPort)
+		require.Error(t, err)
+		require.NotNil(t, response)
+		assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+		assert.Equal(t, 0, len(response.Capabilities))
 	})
 
 	t.Run("invalid quotes - good response", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
@@ -155,19 +133,16 @@ func TestClient_GetCapabilities(t *testing.T) {
 			),
 		)
 
-		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
-		assert.NoError(t, err)
-		assert.NotNil(t, capabilities)
-		assert.Equal(t, DefaultBsvAliasVersion, capabilities.BsvAlias)
-		assert.Equal(t, http.StatusOK, capabilities.StatusCode)
-		assert.Equal(t, true, capabilities.Has(BRFCPki, ""))
+		response, err := client.GetCapabilities(testDomain, DefaultPort)
+		require.NoError(t, err)
+		require.NotNil(t, response)
+		assert.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
+		assert.Equal(t, http.StatusOK, response.StatusCode)
+		assert.Equal(t, true, response.Has(BRFCPki, ""))
 	})
 
 	t.Run("invalid alias", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
@@ -178,18 +153,15 @@ func TestClient_GetCapabilities(t *testing.T) {
 			),
 		)
 
-		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
-		assert.Error(t, err)
-		assert.NotNil(t, capabilities)
-		assert.NotEqual(t, DefaultBsvAliasVersion, capabilities.BsvAlias)
-		assert.Equal(t, http.StatusNotModified, capabilities.StatusCode)
+		response, err := client.GetCapabilities(testDomain, DefaultPort)
+		require.Error(t, err)
+		require.NotNil(t, response)
+		assert.NotEqual(t, DefaultBsvAliasVersion, response.BsvAlias)
+		assert.Equal(t, http.StatusNotModified, response.StatusCode)
 	})
 
 	t.Run("invalid json", func(t *testing.T) {
-		client, err := newTestClient()
-		assert.NoError(t, err)
-		assert.NotNil(t, client)
+		client := newTestClient(t)
 
 		httpmock.Reset()
 		httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
@@ -200,12 +172,11 @@ func TestClient_GetCapabilities(t *testing.T) {
 			),
 		)
 
-		var capabilities *Capabilities
-		capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
-		assert.Error(t, err)
-		assert.NotNil(t, capabilities)
-		assert.Equal(t, http.StatusNotModified, capabilities.StatusCode)
-		assert.Equal(t, 0, len(capabilities.Capabilities))
+		response, err := client.GetCapabilities(testDomain, DefaultPort)
+		require.Error(t, err)
+		require.NotNil(t, response)
+		assert.Equal(t, http.StatusNotModified, response.StatusCode)
+		assert.Equal(t, 0, len(response.Capabilities))
 	})
 }
 
@@ -227,17 +198,12 @@ func mockCapabilities(statusCode int) {
 // See more examples in /examples/
 func ExampleClient_GetCapabilities() {
 	// Load the client
-	client, err := newTestClient()
-	if err != nil {
-		fmt.Printf("error loading client: %s", err.Error())
-		return
-	}
+	client := newTestClient(nil)
 
 	mockCapabilities(http.StatusOK)
 
 	// Get the capabilities
-	var capabilities *Capabilities
-	capabilities, err = client.GetCapabilities(testDomain, DefaultPort)
+	capabilities, err := client.GetCapabilities(testDomain, DefaultPort)
 	if err != nil {
 		fmt.Printf("error getting capabilities: " + err.Error())
 		return
@@ -248,7 +214,7 @@ func ExampleClient_GetCapabilities() {
 
 // BenchmarkClient_GetCapabilities benchmarks the method GetCapabilities()
 func BenchmarkClient_GetCapabilities(b *testing.B) {
-	client, _ := newTestClient()
+	client := newTestClient(nil)
 	mockCapabilities(http.StatusOK)
 	for i := 0; i < b.N; i++ {
 		_, _ = client.GetCapabilities(testDomain, DefaultPort)
@@ -260,59 +226,53 @@ func TestCapabilities_Has(t *testing.T) {
 	t.Parallel()
 
 	var tests = []struct {
-		capabilities  *Capabilities
+		capabilities  *CapabilitiesPayload
 		brfcID        string
 		alternateID   string
 		expectedFound bool
 	}{
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": true,
 				"alternate_id": true,
 				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
 		}, "6745385c3fc0", "alternate_id", true},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": true,
 				"alternate_id": true,
 				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
 		}, "6745385c3fc0", "", true},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": true,
 				"alternate_id": true,
 				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
 		}, "alternate_id", "6745385c3fc0", true},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": true,
 				"alternate_id": true,
 				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
 		}, "6745385c3fc0", "6745385c3fc0", true},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": true,
 				"alternate_id": true,
 				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
 		}, "wrong", "wrong", false},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": true,
 				"alternate_id": true,
@@ -328,13 +288,12 @@ func TestCapabilities_Has(t *testing.T) {
 	}
 }
 
-// ExampleCapabilities_Has example using Has()
+// ExampleCapabilitiesPayload_Has example using Has()
 //
 // See more examples in /examples/
-func ExampleCapabilities_Has() {
-	capabilities := &Capabilities{
-		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-		BsvAlias:         DefaultServiceName,
+func ExampleCapabilitiesPayload_Has() {
+	capabilities := &CapabilitiesPayload{
+		BsvAlias: DefaultServiceName,
 		Capabilities: map[string]interface{}{
 			"6745385c3fc0": true,
 			"alternate_id": true,
@@ -349,9 +308,8 @@ func ExampleCapabilities_Has() {
 
 // BenchmarkCapabilities_Has benchmarks the method Has()
 func BenchmarkCapabilities_Has(b *testing.B) {
-	capabilities := &Capabilities{
-		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-		BsvAlias:         DefaultServiceName,
+	capabilities := &CapabilitiesPayload{
+		BsvAlias: DefaultServiceName,
 		Capabilities: map[string]interface{}{
 			"6745385c3fc0": true,
 			"alternate_id": true,
@@ -369,59 +327,53 @@ func TestCapabilities_GetBool(t *testing.T) {
 	t.Parallel()
 
 	var tests = []struct {
-		capabilities  *Capabilities
+		capabilities  *CapabilitiesPayload
 		brfcID        string
 		alternateID   string
 		expectedValue bool
 	}{
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": true,
 				"alternate_id": true,
 				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
 		}, "6745385c3fc0", "alternate_id", true},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": true,
 				"alternate_id": true,
 				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
 		}, "6745385c3fc0", "", true},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": true,
 				"alternate_id": true,
 				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
 		}, "alternate_id", "6745385c3fc0", true},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": true,
 				"alternate_id": true,
 				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
 		}, "6745385c3fc0", "6745385c3fc0", true},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": true,
 				"alternate_id": true,
 				"0c4339ef99c2": "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 			},
 		}, "wrong", "wrong", false},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": true,
 				"alternate_id": true,
@@ -437,13 +389,12 @@ func TestCapabilities_GetBool(t *testing.T) {
 	}
 }
 
-// ExampleCapabilities_GetBool example using GetBool()
+// ExampleCapabilitiesPayload_GetBool example using GetBool()
 //
 // See more examples in /examples/
-func ExampleCapabilities_GetBool() {
-	capabilities := &Capabilities{
-		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-		BsvAlias:         DefaultServiceName,
+func ExampleCapabilitiesPayload_GetBool() {
+	capabilities := &CapabilitiesPayload{
+		BsvAlias: DefaultServiceName,
 		Capabilities: map[string]interface{}{
 			"6745385c3fc0": true,
 			"alternate_id": true,
@@ -458,9 +409,8 @@ func ExampleCapabilities_GetBool() {
 
 // BenchmarkCapabilities_GetBool benchmarks the method GetBool()
 func BenchmarkCapabilities_GetBool(b *testing.B) {
-	capabilities := &Capabilities{
-		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-		BsvAlias:         DefaultServiceName,
+	capabilities := &CapabilitiesPayload{
+		BsvAlias: DefaultServiceName,
 		Capabilities: map[string]interface{}{
 			"6745385c3fc0": true,
 			"alternate_id": true,
@@ -479,14 +429,13 @@ func TestCapabilities_GetString(t *testing.T) {
 	t.Parallel()
 
 	var tests = []struct {
-		capabilities  *Capabilities
+		capabilities  *CapabilitiesPayload
 		brfcID        string
 		alternateID   string
 		expectedValue string
 	}{
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": false,
 				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
@@ -497,9 +446,8 @@ func TestCapabilities_GetString(t *testing.T) {
 			"0c4339ef99c2",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": false,
 				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
@@ -510,9 +458,8 @@ func TestCapabilities_GetString(t *testing.T) {
 			"pki",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": false,
 				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
@@ -523,9 +470,8 @@ func TestCapabilities_GetString(t *testing.T) {
 			"0c4339ef99c2",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": false,
 				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
@@ -536,9 +482,8 @@ func TestCapabilities_GetString(t *testing.T) {
 			"",
 			"https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
 		},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": false,
 				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
@@ -549,9 +494,8 @@ func TestCapabilities_GetString(t *testing.T) {
 			"wrong",
 			"",
 		},
-		{&Capabilities{
-			StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-			BsvAlias:         DefaultServiceName,
+		{&CapabilitiesPayload{
+			BsvAlias: DefaultServiceName,
 			Capabilities: map[string]interface{}{
 				"6745385c3fc0": false,
 				"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
@@ -571,13 +515,12 @@ func TestCapabilities_GetString(t *testing.T) {
 	}
 }
 
-// ExampleCapabilities_GetString example using GetString()
+// ExampleCapabilitiesPayload_GetString example using GetString()
 //
 // See more examples in /examples/
-func ExampleCapabilities_GetString() {
-	capabilities := &Capabilities{
-		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-		BsvAlias:         DefaultServiceName,
+func ExampleCapabilitiesPayload_GetString() {
+	capabilities := &CapabilitiesPayload{
+		BsvAlias: DefaultServiceName,
 		Capabilities: map[string]interface{}{
 			"6745385c3fc0": false,
 			"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",
@@ -592,9 +535,8 @@ func ExampleCapabilities_GetString() {
 
 // BenchmarkCapabilities_GetString benchmarks the method GetString()
 func BenchmarkCapabilities_GetString(b *testing.B) {
-	capabilities := &Capabilities{
-		StandardResponse: StandardResponse{StatusCode: http.StatusOK, Tracing: resty.TraceInfo{TotalTime: 200}},
-		BsvAlias:         DefaultServiceName,
+	capabilities := &CapabilitiesPayload{
+		BsvAlias: DefaultServiceName,
 		Capabilities: map[string]interface{}{
 			"6745385c3fc0": false,
 			"pki":          "https://domain.com/" + DefaultServiceName + "/id/{alias}@{domain.tld}",

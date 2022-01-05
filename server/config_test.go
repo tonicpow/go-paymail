@@ -78,7 +78,7 @@ func TestConfiguration_Validate(t *testing.T) {
 			Port:           12345,
 			ServiceName:    "test",
 			PaymailDomains: []*Domain{{Name: "test.com"}},
-			Capabilities: &Capabilities{
+			Capabilities: &paymail.CapabilitiesPayload{
 				BsvAlias: "",
 			},
 		}
@@ -92,7 +92,7 @@ func TestConfiguration_Validate(t *testing.T) {
 			Port:           12345,
 			ServiceName:    "test",
 			PaymailDomains: []*Domain{{Name: "test.com"}},
-			Capabilities: &Capabilities{
+			Capabilities: &paymail.CapabilitiesPayload{
 				BsvAlias: "test",
 			},
 		}
@@ -106,7 +106,7 @@ func TestConfiguration_Validate(t *testing.T) {
 			Port:           12345,
 			ServiceName:    "test",
 			PaymailDomains: []*Domain{{Name: "test.com"}},
-			Capabilities:   genericCapabilities("test", false),
+			Capabilities:   GenericCapabilities("test", false),
 		}
 		err := c.Validate()
 		require.NoError(t, err)
@@ -336,7 +336,7 @@ func TestNewConfig(t *testing.T) {
 		c, err := NewConfig(
 			new(mockServiceProvider),
 			WithDomain("test.com"),
-			WithCapabilities(genericCapabilities("test", false)),
+			WithCapabilities(GenericCapabilities("test", false)),
 		)
 		require.NoError(t, err)
 		require.NotNil(t, c)

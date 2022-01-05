@@ -20,9 +20,14 @@ Default:
 }
 */
 
-// Capabilities is the result returned (plus some custom features)
-type Capabilities struct {
+// CapabilitiesResponse is the full response returned
+type CapabilitiesResponse struct {
 	StandardResponse
+	CapabilitiesPayload
+}
+
+// CapabilitiesPayload is the actual payload response
+type CapabilitiesPayload struct {
 	BsvAlias     string                 `json:"bsvalias"`     // Version of the bsvalias
 	Capabilities map[string]interface{} `json:"capabilities"` // Raw list of the capabilities
 }
@@ -30,7 +35,7 @@ type Capabilities struct {
 // Has will check if a BRFC ID (or alternate) is found in the list of capabilities
 //
 // Alternate is used for example: "pki" is also BRFC "0c4339ef99c2"
-func (c *Capabilities) Has(brfcID, alternateID string) bool {
+func (c *CapabilitiesPayload) Has(brfcID, alternateID string) bool {
 	for key := range c.Capabilities {
 		if key == brfcID || (len(alternateID) > 0 && key == alternateID) {
 			return true
@@ -42,7 +47,7 @@ func (c *Capabilities) Has(brfcID, alternateID string) bool {
 // getValue will return the value (if found) from the capability (url or bool)
 //
 // Alternate is used for IE: pki (it breaks convention of using the BRFC ID)
-func (c *Capabilities) getValue(brfcID, alternateID string) (bool, interface{}) {
+func (c *CapabilitiesPayload) getValue(brfcID, alternateID string) (bool, interface{}) {
 	for key, val := range c.Capabilities {
 		if key == brfcID || (len(alternateID) > 0 && key == alternateID) {
 			return true, val
@@ -54,7 +59,7 @@ func (c *Capabilities) getValue(brfcID, alternateID string) (bool, interface{}) 
 // GetString will perform getValue() but cast to a string if found
 //
 // Returns an empty string if not found
-func (c *Capabilities) GetString(brfcID, alternateID string) string {
+func (c *CapabilitiesPayload) GetString(brfcID, alternateID string) string {
 	if ok, val := c.getValue(brfcID, alternateID); ok {
 		return val.(string)
 	}
@@ -64,7 +69,7 @@ func (c *Capabilities) GetString(brfcID, alternateID string) string {
 // GetBool will perform getValue() but cast to a bool if found
 //
 // Returns false if not found
-func (c *Capabilities) GetBool(brfcID, alternateID string) bool {
+func (c *CapabilitiesPayload) GetBool(brfcID, alternateID string) bool {
 	if ok, val := c.getValue(brfcID, alternateID); ok {
 		return val.(bool)
 	}
@@ -74,7 +79,7 @@ func (c *Capabilities) GetBool(brfcID, alternateID string) bool {
 // GetCapabilities will return a list of capabilities for a given domain & port
 //
 // Specs: http://bsvalias.org/02-02-capability-discovery.html
-func (c *Client) GetCapabilities(target string, port int) (response *Capabilities, err error) {
+func (c *Client) GetCapabilities(target string, port int) (response *CapabilitiesResponse, err error) {
 
 	// Basic requirements for the request
 	if len(target) == 0 {
@@ -96,7 +101,7 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 	}
 
 	// Start the response
-	response = &Capabilities{StandardResponse: resp}
+	response = &CapabilitiesResponse{StandardResponse: resp}
 
 	// Test the status code (200 or 304 is valid)
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusNotModified {
