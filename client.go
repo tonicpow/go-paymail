@@ -10,12 +10,12 @@ import (
 // Client is the Paymail client configuration and options
 type Client struct {
 	httpClient *resty.Client          // HTTP client for GET/POST requests
-	options    *clientOptions         // Options are all the default settings / configuration
+	options    *ClientOptions         // Options are all the default settings / configuration
 	resolver   interfaces.DNSResolver // Resolver for DNS look ups
 }
 
 // ClientOptions holds all the configuration for client requests and default resources
-type clientOptions struct {
+type ClientOptions struct {
 	brfcSpecs         []*BRFCSpec   // List of BRFC specifications
 	dnsPort           string        // Default DNS port for SRV checks
 	dnsTimeout        time.Duration // Default timeout in seconds for DNS fetching
@@ -31,13 +31,13 @@ type clientOptions struct {
 
 // ClientOps allow functional options to be supplied
 // that overwrite default go-paymail client options.
-type ClientOps func(c *clientOptions)
+type ClientOps func(c *ClientOptions)
 
 // NewClient creates a new client for all paymail requests
 //
 // If no options are given, it will use the defaultClientOptions()
 // If no client is supplied it will use a default Resty HTTP client
-func NewClient(opts ...ClientOps) (*Client, error) {
+func NewClient(opts ...ClientOps) (ClientInterface, error) {
 
 	// Start with the defaults
 	defaults, err := defaultClientOptions()
@@ -57,7 +57,7 @@ func NewClient(opts ...ClientOps) (*Client, error) {
 
 	// Check for specs (if not set, use the defaults)
 	if len(client.options.brfcSpecs) == 0 {
-		if err = client.options.LoadBRFCs(""); err != nil {
+		if client.options.brfcSpecs, err = LoadBRFCs(""); err != nil {
 			return nil, err
 		}
 	}
@@ -82,6 +82,11 @@ func NewClient(opts ...ClientOps) (*Client, error) {
 // GetBRFCs will return the list of specs
 func (c *Client) GetBRFCs() []*BRFCSpec {
 	return c.options.brfcSpecs
+}
+
+// GetOptions will return the Client options
+func (c *Client) GetOptions() *ClientOptions {
+	return c.options
 }
 
 // GetUserAgent will return the user agent string of the client

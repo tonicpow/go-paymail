@@ -13,7 +13,7 @@ import (
 )
 
 // newTestClient will return a client for testing purposes
-func newTestClient(t *testing.T) *Client {
+func newTestClient(t *testing.T) ClientInterface {
 
 	// Create a Resty Client
 	httpClient := tester.MockResty()
@@ -61,18 +61,18 @@ func TestNewClient(t *testing.T) {
 		client, err := NewClient()
 		assert.NoError(t, err)
 		assert.NotNil(t, client)
-		assert.Equal(t, defaultDNSTimeout, client.options.dnsTimeout)
-		assert.Equal(t, defaultDNSPort, client.options.dnsPort)
-		assert.Equal(t, defaultUserAgent, client.options.userAgent)
-		assert.Equal(t, defaultNameServerNetwork, client.options.nameServerNetwork)
-		assert.Equal(t, defaultNameServer, client.options.nameServer)
-		assert.Equal(t, defaultSSLTimeout, client.options.sslTimeout)
-		assert.Equal(t, defaultSSLDeadline, client.options.sslDeadline)
-		assert.Equal(t, defaultHTTPTimeout, client.options.httpTimeout)
-		assert.Equal(t, defaultRetryCount, client.options.retryCount)
-		assert.Equal(t, false, client.options.requestTracing)
-		assert.NotEqual(t, 0, len(client.options.brfcSpecs))
-		assert.Greater(t, len(client.options.brfcSpecs), 6)
+		assert.Equal(t, defaultDNSTimeout, client.GetOptions().dnsTimeout)
+		assert.Equal(t, defaultDNSPort, client.GetOptions().dnsPort)
+		assert.Equal(t, defaultUserAgent, client.GetOptions().userAgent)
+		assert.Equal(t, defaultNameServerNetwork, client.GetOptions().nameServerNetwork)
+		assert.Equal(t, defaultNameServer, client.GetOptions().nameServer)
+		assert.Equal(t, defaultSSLTimeout, client.GetOptions().sslTimeout)
+		assert.Equal(t, defaultSSLDeadline, client.GetOptions().sslDeadline)
+		assert.Equal(t, defaultHTTPTimeout, client.GetOptions().httpTimeout)
+		assert.Equal(t, defaultRetryCount, client.GetOptions().retryCount)
+		assert.Equal(t, false, client.GetOptions().requestTracing)
+		assert.NotEqual(t, 0, len(client.GetOptions().brfcSpecs))
+		assert.Greater(t, len(client.GetBRFCs()), 6)
 	})
 
 	t.Run("custom http client", func(t *testing.T) {
@@ -88,49 +88,49 @@ func TestNewClient(t *testing.T) {
 		client, err := NewClient(WithDNSPort("54"))
 		assert.NoError(t, err)
 		assert.NotNil(t, client)
-		assert.Equal(t, "54", client.options.dnsPort)
+		assert.Equal(t, "54", client.GetOptions().dnsPort)
 	})
 
 	t.Run("custom http timeout", func(t *testing.T) {
 		client, err := NewClient(WithHTTPTimeout(10 * time.Second))
 		assert.NoError(t, err)
 		assert.NotNil(t, client)
-		assert.Equal(t, 10*time.Second, client.options.httpTimeout)
+		assert.Equal(t, 10*time.Second, client.GetOptions().httpTimeout)
 	})
 
 	t.Run("custom name server", func(t *testing.T) {
 		client, err := NewClient(WithNameServer("9.9.9.9"))
 		assert.NoError(t, err)
 		assert.NotNil(t, client)
-		assert.Equal(t, "9.9.9.9", client.options.nameServer)
+		assert.Equal(t, "9.9.9.9", client.GetOptions().nameServer)
 	})
 
 	t.Run("custom name server network", func(t *testing.T) {
 		client, err := NewClient(WithNameServerNetwork("tcp"))
 		assert.NoError(t, err)
 		assert.NotNil(t, client)
-		assert.Equal(t, "tcp", client.options.nameServerNetwork)
+		assert.Equal(t, "tcp", client.GetOptions().nameServerNetwork)
 	})
 
 	t.Run("custom retry count", func(t *testing.T) {
 		client, err := NewClient(WithRetryCount(3))
 		assert.NoError(t, err)
 		assert.NotNil(t, client)
-		assert.Equal(t, 3, client.options.retryCount)
+		assert.Equal(t, 3, client.GetOptions().retryCount)
 	})
 
 	t.Run("custom ssl timeout", func(t *testing.T) {
 		client, err := NewClient(WithSSLTimeout(7 * time.Second))
 		assert.NoError(t, err)
 		assert.NotNil(t, client)
-		assert.Equal(t, 7*time.Second, client.options.sslTimeout)
+		assert.Equal(t, 7*time.Second, client.GetOptions().sslTimeout)
 	})
 
 	t.Run("custom ssl deadline", func(t *testing.T) {
 		client, err := NewClient(WithSSLDeadline(7 * time.Second))
 		assert.NoError(t, err)
 		assert.NotNil(t, client)
-		assert.Equal(t, 7*time.Second, client.options.sslDeadline)
+		assert.Equal(t, 7*time.Second, client.GetOptions().sslDeadline)
 	})
 
 	t.Run("custom options", func(t *testing.T) {
@@ -148,7 +148,7 @@ func TestNewClient(t *testing.T) {
 	})
 
 	t.Run("no brfcs", func(t *testing.T) {
-		var client *Client
+		var client ClientInterface
 		client, err := NewClient(WithBRFCSpecs(nil))
 		assert.NoError(t, err)
 		assert.NotNil(t, client)
@@ -204,8 +204,8 @@ func ExampleNewClient() {
 		fmt.Printf("error loading client: %s", err.Error())
 		return
 	}
-	fmt.Printf("loaded client: %s", client.options.userAgent)
-	// Output:loaded client: go-paymail: v0.5.0
+	fmt.Printf("loaded client: %s", client.GetOptions().userAgent)
+	// Output:loaded client: go-paymail: v0.6.0
 }
 
 // BenchmarkNewClient benchmarks the method NewClient()
