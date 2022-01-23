@@ -25,44 +25,46 @@ type BRFCSpec struct {
 // LoadBRFCs will load the known "default" specifications into structs from JSON
 //
 // additionSpecifications is appended to the default specs
-// BRFCKnownSpecifications is a local constant of JSON to pre-load known BRFC ids
-func (c *clientOptions) LoadBRFCs(additionalSpecifications string) (err error) {
+// BRFCKnownSpecifications is a local constant of JSON to preload known BRFC ids
+func LoadBRFCs(additionalSpecifications string) ([]*BRFCSpec, error) {
 
 	// Load the default specs
-	if err = json.Unmarshal([]byte(BRFCKnownSpecifications), &c.brfcSpecs); err != nil {
+	specs := make([]*BRFCSpec, 0)
+	if err := json.Unmarshal(
+		[]byte(BRFCKnownSpecifications), &specs,
+	); err != nil {
 		// This error case should never occur since the JSON is hardcoded, but good practice anyway
-		return
+		return nil, err
 	}
 
 	// No additional specs to process
 	if len(additionalSpecifications) == 0 {
-		return
+		return specs, nil
 	}
 
 	// Process the additional specifications
 	var tempSpecs []*BRFCSpec
-	if err = json.Unmarshal([]byte(additionalSpecifications), &tempSpecs); err != nil {
-		return
+	if err := json.Unmarshal(
+		[]byte(additionalSpecifications), &tempSpecs,
+	); err != nil {
+		return specs, err
 	}
 
 	// Add the specs to the existing specifications
 	for _, spec := range tempSpecs {
 
 		// Validate the spec before adding
-		var valid bool
-		var id string
-		if valid, id, err = spec.Validate(); err != nil {
-			return
+		if valid, id, err := spec.Validate(); err != nil {
+			return nil, err
 		} else if !valid {
-			err = fmt.Errorf("brfc: [%s] is invalid - id returned: %s vs %s", spec.Title, id, spec.ID)
-			return
+			return nil, fmt.Errorf("brfc: [%s] is invalid - id returned: %s vs %s", spec.Title, id, spec.ID)
 		}
 
 		// Add to existing list
-		c.brfcSpecs = append(c.brfcSpecs, spec)
+		specs = append(specs, spec)
 	}
 
-	return
+	return specs, nil
 }
 
 // Generate will generate a new BRFC ID from the given specification

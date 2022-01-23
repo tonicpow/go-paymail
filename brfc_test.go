@@ -151,63 +151,55 @@ func BenchmarkBRFCSpec_Validate(b *testing.B) {
 	}
 }
 
-// TestClientOptions_LoadBRFCs will test the method LoadBRFCs()
-func TestClientOptions_LoadBRFCs(t *testing.T) {
+// TestLoadBRFCs will test the method LoadBRFCs()
+func TestLoadBRFCs(t *testing.T) {
 	// t.Parallel() cannot use newTestClient() race condition
 
 	// Create a client with options
-	client := newTestClient(t)
+	// client := newTestClient(t)
 
 	var tests = []struct {
 		specJSON       string
 		expectedLength int
 		expectedError  bool
 	}{
-		{`[{"author": "andy (nChain)","id": "57dd1f54fc67","title": "BRFC Specifications","url": "http://bsvalias.org/01-02-brfc-id-assignment.html","version": "1"}]`, len(client.options.brfcSpecs) + 1, false},
-		{`[{"invalid:1}]`, len(client.options.brfcSpecs), true},
-		{`[{"author": "andy (nChain), Ryan X. Charles (Money Button)","title":"invalid-spec","id": "17dd1f54fc66"}]`, len(client.options.brfcSpecs), true},
-		{`[{"author": "andy (nChain), Ryan X. Charles (Money Button)","title":""}]`, len(client.options.brfcSpecs), true},
+		{`[{"author": "andy (nChain)","id": "57dd1f54fc67","title": "BRFC Specifications","url": "http://bsvalias.org/01-02-brfc-id-assignment.html","version": "1"}]`, 24, false},
+		{`[{"invalid:1}]`, 23, true},
+		{`[{"author": "andy (nChain), Ryan X. Charles (Money Button)","title":"invalid-spec","id": "17dd1f54fc66"}]`, 0, true},
+		{`[{"author": "andy (nChain), Ryan X. Charles (Money Button)","title":""}]`, 0, true},
 	}
 
 	for _, test := range tests {
-		if err := client.options.LoadBRFCs(test.specJSON); err != nil && !test.expectedError {
+		if specs, err := LoadBRFCs(test.specJSON); err != nil && !test.expectedError {
 			t.Errorf("%s Failed: [%s] inputted, [%d] expected specs and error not expected but got: %s", t.Name(), test.specJSON, test.expectedLength, err.Error())
 		} else if err == nil && test.expectedError {
 			t.Errorf("%s Failed: [%s] inputted, [%d] expected specs and error was expected", t.Name(), test.specJSON, test.expectedLength)
-		} else if len(client.options.brfcSpecs) != test.expectedLength {
-			t.Errorf("%s Failed: [%s] inputted, [%d] expected specs but got: %d", t.Name(), test.specJSON, test.expectedLength, len(client.options.brfcSpecs))
+		} else if len(specs) != test.expectedLength {
+			t.Errorf("%s Failed: [%s] inputted, [%d] expected specs but got: %d", t.Name(), test.specJSON, test.expectedLength, len(specs))
 		}
 	}
 }
 
-// ExampleClientOptions_LoadBRFCs example using LoadBRFCs()
+// ExampleLoadBRFCs example using LoadBRFCs()
 //
 // See more examples in /examples/
-// nolint:govet // options are now private but example still useful.
-func ExampleClientOptions_LoadBRFCs() {
-	// Create a client with options
-	client, err := NewClient()
-	if err != nil {
-		fmt.Printf("error loading client: %s", err.Error())
-		return
-	}
-
+func ExampleLoadBRFCs() {
 	// Load additional specification(s)
 	additionalSpec := `[{"author": "andy (nChain)","id": "57dd1f54fc67","title": "BRFC Specifications","url": "http://bsvalias.org/01-02-brfc-id-assignment.html","version": "1"}]`
-	if err = client.options.LoadBRFCs(additionalSpec); err != nil {
+	specs, err := LoadBRFCs(additionalSpec)
+	if err != nil {
 		fmt.Printf("error occurred: %s", err.Error())
 		return
 	}
-	fmt.Printf("total specifications found: %d", len(client.options.brfcSpecs))
+	fmt.Printf("total specifications found: %d", len(specs))
 
 	// Output:total specifications found: 24
 }
 
-// BenchmarkClientOptions_LoadBRFCs benchmarks the method LoadBRFCs()
-func BenchmarkClientOptions_LoadBRFCs(b *testing.B) {
-	client, _ := NewClient(nil, nil, nil)
+// BenchmarkLoadBRFCs benchmarks the method LoadBRFCs()
+func BenchmarkLoadBRFCs(b *testing.B) {
 	additionalSpec := `[{"author": "andy (nChain)","id": "57dd1f54fc67","title": "BRFC Specifications","url": "http://bsvalias.org/01-02-brfc-id-assignment.html","version": "1"}]`
 	for i := 0; i < b.N; i++ {
-		_ = client.options.LoadBRFCs(additionalSpec)
+		_, _ = LoadBRFCs(additionalSpec)
 	}
 }
