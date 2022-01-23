@@ -39,6 +39,11 @@ func (c *Configuration) RegisterRoutes(r *apirouter.Router) {
 // registerBasicRoutes will register basic server related routes
 func (c *Configuration) registerBasicRoutes(router *apirouter.Router) {
 
+	// Skip if not set
+	if c.BasicRoutes == nil {
+		return
+	}
+
 	// Set the main index page (navigating to slash)
 	if c.BasicRoutes.AddIndexRoute {
 		router.HTTPRouter.GET("/", router.Request(index))
