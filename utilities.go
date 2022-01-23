@@ -10,7 +10,7 @@ import (
 )
 
 // SanitisedPaymail contains elements of a sanitized paymail address.
-// All elements are lowercased.
+// All elements are lowercase.
 type SanitisedPaymail struct {
 	Alias, Domain, Address string
 }

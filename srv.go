@@ -76,7 +76,7 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 	return
 }
 
-// ValidateSRVRecord will check for a valid SRV record for paymail following specs
+// ValidateSRVRecord will check for a valid SRV record for paymail following specifications
 //
 // Specs: http://bsvalias.org/02-01-host-discovery.html
 func (c *Client) ValidateSRVRecord(ctx context.Context, srv *net.SRV, port, priority, weight uint16) error {
