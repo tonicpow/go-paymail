@@ -27,6 +27,7 @@ type ClientOptions struct {
 	sslDeadline       time.Duration // Default timeout in seconds for SSL deadline
 	sslTimeout        time.Duration // Default timeout in seconds for SSL timeout
 	userAgent         string        // User agent for all outgoing requests
+	network           Network       // The bitcoin network to operate on
 }
 
 // ClientOps allow functional options to be supplied

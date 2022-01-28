@@ -27,6 +27,32 @@ func TestClient_GetCapabilities(t *testing.T) {
 		assert.Equal(t, true, response.Has(BRFCPki, ""))
 	})
 
+	t.Run("successful testnet response", func(t *testing.T) {
+		client := newTestClient(t, WithNetwork(Testnet))
+
+		mockCapabilitiesNetwork(http.StatusOK, Testnet)
+
+		response, err := client.GetCapabilities(testDomain, DefaultPort)
+		require.NoError(t, err)
+		require.NotNil(t, response)
+		assert.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
+		assert.Equal(t, http.StatusOK, response.StatusCode)
+		assert.Equal(t, true, response.Has(BRFCPki, ""))
+	})
+
+	t.Run("successful stn response", func(t *testing.T) {
+		client := newTestClient(t, WithNetwork(STN))
+
+		mockCapabilitiesNetwork(http.StatusOK, STN)
+
+		response, err := client.GetCapabilities(testDomain, DefaultPort)
+		require.NoError(t, err)
+		require.NotNil(t, response)
+		assert.Equal(t, DefaultBsvAliasVersion, response.BsvAlias)
+		assert.Equal(t, http.StatusOK, response.StatusCode)
+		assert.Equal(t, true, response.Has(BRFCPki, ""))
+	})
+
 	t.Run("status not modified", func(t *testing.T) {
 		client := newTestClient(t)
 
@@ -182,8 +208,13 @@ func TestClient_GetCapabilities(t *testing.T) {
 
 // mockCapabilities is used for mocking the response
 func mockCapabilities(statusCode int) {
+	mockCapabilitiesNetwork(statusCode, Mainnet)
+}
+
+// mockCapabilitiesNetwork is used for mocking the response on a specific network
+func mockCapabilitiesNetwork(statusCode int, n Network) {
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName,
+	httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName+n.PaymailURLSuffix(),
 		httpmock.NewStringResponder(
 			statusCode,
 			`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","capabilities": 

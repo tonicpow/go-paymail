@@ -23,6 +23,7 @@ func defaultClientOptions() (opts *ClientOptions, err error) {
 		sslDeadline:       defaultSSLDeadline,
 		sslTimeout:        defaultSSLTimeout,
 		userAgent:         defaultUserAgent,
+		network:           Network(defaultNetwork),
 	}
 
 	// Load the default BRFC specs
@@ -115,6 +116,14 @@ func WithSSLDeadline(timeout time.Duration) ClientOps {
 func WithUserAgent(userAgent string) ClientOps {
 	return func(c *ClientOptions) {
 		c.userAgent = userAgent
+	}
+}
+
+// WithNetwork will set the client's operational network to one provided.
+// Default is mainnet.
+func WithNetwork(n Network) ClientOps {
+	return func(c *ClientOptions) {
+		c.network = n
 	}
 }
 

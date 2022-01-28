@@ -91,8 +91,8 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 	}
 
 	// Set the base url and path
-	// https://<host-discovery-target>:<host-discovery-port>/.well-known/bsvalias
-	reqURL := fmt.Sprintf("https://%s:%d/.well-known/%s", target, port, DefaultServiceName)
+	// https://<host-discovery-target>:<host-discovery-port>/.well-known/bsvalias[network]
+	reqURL := fmt.Sprintf("https://%s:%d/.well-known/%s%s", target, port, DefaultServiceName, c.options.network.PaymailURLSuffix())
 
 	// Fire the GET request
 	var resp StandardResponse
