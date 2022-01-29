@@ -13,7 +13,7 @@ import (
 )
 
 // newTestClient will return a client for testing purposes
-func newTestClient(t *testing.T) ClientInterface {
+func newTestClient(t *testing.T, opts ...ClientOps) ClientInterface {
 
 	// Create a Resty Client
 	httpClient := tester.MockResty()
@@ -22,7 +22,7 @@ func newTestClient(t *testing.T) ClientInterface {
 	}
 
 	// Create a new client
-	client, err := NewClient(WithRequestTracing(), WithDNSTimeout(15*time.Second))
+	client, err := NewClient(append([]ClientOps{WithRequestTracing(), WithDNSTimeout(15 * time.Second)}, opts...)...)
 	if t != nil {
 		require.NotNil(t, client)
 		require.NoError(t, err)
