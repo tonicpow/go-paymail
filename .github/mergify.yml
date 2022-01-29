@@ -163,6 +163,7 @@ pull_request_rules:
         - author!=mrz1836
         - author!=rohenaz
         - author!=theflyingcodr
+        - author!=Tigh-Gherr
     actions:
       comment:
         message: |
