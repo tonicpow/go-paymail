@@ -26,8 +26,8 @@ func (n Network) String() string {
 	}
 }
 
-// PaymailURLSuffix the conventional URL suffix for the network.
-func (n Network) PaymailURLSuffix() string {
+// URLSuffix the conventional URL suffix for the network.
+func (n Network) URLSuffix() string {
 	switch n {
 	case Testnet:
 		return "-testnet"

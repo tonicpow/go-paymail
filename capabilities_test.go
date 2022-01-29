@@ -214,7 +214,7 @@ func mockCapabilities(statusCode int) {
 // mockCapabilitiesNetwork is used for mocking the response on a specific network
 func mockCapabilitiesNetwork(statusCode int, n Network) {
 	httpmock.Reset()
-	httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName+n.PaymailURLSuffix(),
+	httpmock.RegisterResponder(http.MethodGet, "https://"+testDomain+":443/.well-known/"+DefaultServiceName+n.URLSuffix(),
 		httpmock.NewStringResponder(
 			statusCode,
 			`{"`+DefaultServiceName+`": "`+DefaultBsvAliasVersion+`","capabilities": 
