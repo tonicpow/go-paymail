@@ -3,9 +3,9 @@ package server
 import (
 	"net/http"
 
-	"github.com/bitcoinschema/go-bitcoin"
-	"github.com/bitcoinsv/bsvutil"
+	"github.com/bitcoinschema/go-bitcoin/v2"
 	"github.com/julienschmidt/httprouter"
+	"github.com/libsv/go-bt/v2/bscript"
 	apirouter "github.com/mrz1836/go-api-router"
 	"github.com/tonicpow/go-paymail"
 )
@@ -79,7 +79,7 @@ func (c *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Request, _
 	// Start the final response
 	response := &paymail.P2PTransactionPayload{
 		Note: p2pTransaction.MetaData.Note,
-		TxID: transaction.GetTxID(),
+		TxID: transaction.TxID(),
 	}
 
 	// Check signature if: 1) sender validation enabled or 2) a signature was given (optional)
@@ -95,14 +95,14 @@ func (c *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Request, _
 		}
 
 		// Get the address from pubKey
-		var rawAddress *bsvutil.LegacyAddressPubKeyHash
+		var rawAddress *bscript.Address
 		if rawAddress, err = bitcoin.GetAddressFromPubKeyString(p2pTransaction.MetaData.PubKey, true); err != nil {
 			ErrorResponse(w, req, ErrorInvalidPubKey, "invalid pubkey: "+err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		// Validate the signature of the tx id
-		if err = bitcoin.VerifyMessage(rawAddress.EncodeAddress(), p2pTransaction.MetaData.Signature, response.TxID); err != nil {
+		if err = bitcoin.VerifyMessage(rawAddress.AddressString, p2pTransaction.MetaData.Signature, response.TxID); err != nil {
 			ErrorResponse(w, req, ErrorInvalidSignature, "invalid signature: "+err.Error(), http.StatusBadRequest)
 			return
 		}

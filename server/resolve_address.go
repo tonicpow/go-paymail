@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/bitcoinschema/go-bitcoin"
-	"github.com/bitcoinsv/bsvd/bsvec"
-	"github.com/bitcoinsv/bsvutil"
+	"github.com/bitcoinschema/go-bitcoin/v2"
 	"github.com/julienschmidt/httprouter"
+	"github.com/libsv/go-bk/bec"
+	"github.com/libsv/go-bt/v2/bscript"
 	apirouter "github.com/mrz1836/go-api-router"
 	"github.com/tonicpow/go-paymail"
 )
@@ -86,14 +86,14 @@ func (c *Configuration) resolveAddress(w http.ResponseWriter, req *http.Request,
 			}
 
 			// Derive address from pubKey
-			var rawAddress *bsvutil.LegacyAddressPubKeyHash
+			var rawAddress *bscript.Address
 			if rawAddress, err = bitcoin.GetAddressFromPubKey(senderPubKey, true); err != nil {
 				ErrorResponse(w, req, ErrorInvalidSenderHandle, "invalid senderHandle: "+err.Error(), http.StatusBadRequest)
 				return
 			}
 
 			// Verify the signature
-			if err = senderRequest.Verify(rawAddress.EncodeAddress(), senderRequest.Signature); err != nil {
+			if err = senderRequest.Verify(rawAddress.AddressString, senderRequest.Signature); err != nil {
 				ErrorResponse(w, req, ErrorInvalidSignature, "invalid signature: "+err.Error(), http.StatusBadRequest)
 				return
 			}
@@ -131,7 +131,7 @@ func (c *Configuration) resolveAddress(w http.ResponseWriter, req *http.Request,
 }
 
 // getSenderPubKey will fetch the pubKey from a PKI request for the sender handle
-func getSenderPubKey(senderPaymailAddress string) (*bsvec.PublicKey, error) {
+func getSenderPubKey(senderPaymailAddress string) (*bec.PublicKey, error) {
 
 	// Sanitize and break apart
 	alias, domain, _ := paymail.SanitizePaymail(senderPaymailAddress)
@@ -162,6 +162,6 @@ func getSenderPubKey(senderPaymailAddress string) (*bsvec.PublicKey, error) {
 		return nil, err
 	}
 
-	// Convert the string pubKey to a bsvec.PublicKey
+	// Convert the string pubKey to a bec.PubKey
 	return bitcoin.PubKeyFromString(pki.PubKey)
 }

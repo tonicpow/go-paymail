@@ -3,7 +3,7 @@ package paymail
 import (
 	"fmt"
 
-	"github.com/bitcoinschema/go-bitcoin"
+	"github.com/bitcoinschema/go-bitcoin/v2"
 )
 
 /*

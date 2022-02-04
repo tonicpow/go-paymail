@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bitcoinschema/go-bitcoin"
+	"github.com/bitcoinschema/go-bitcoin/v2"
 	"github.com/mrz1836/go-logger"
 	"github.com/tonicpow/go-paymail"
 )
