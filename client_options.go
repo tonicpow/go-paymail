@@ -7,6 +7,10 @@ import (
 	"github.com/tonicpow/go-paymail/interfaces"
 )
 
+// ClientOps allow functional options to be supplied
+// that overwrite default go-paymail client options.
+type ClientOps func(c *ClientOptions)
+
 // defaultClientOptions will return an ClientOptions struct with the default settings
 //
 // Useful for starting with the default and then modifying as needed

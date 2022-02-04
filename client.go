@@ -7,32 +7,30 @@ import (
 	"github.com/tonicpow/go-paymail/interfaces"
 )
 
-// Client is the Paymail client configuration and options
-type Client struct {
-	httpClient *resty.Client          // HTTP client for GET/POST requests
-	options    *ClientOptions         // Options are all the default settings / configuration
-	resolver   interfaces.DNSResolver // Resolver for DNS look ups
-}
+type (
+	// Client is the Paymail client configuration and options
+	Client struct {
+		httpClient *resty.Client          // HTTP client for GET/POST requests
+		options    *ClientOptions         // Options are all the default settings / configuration
+		resolver   interfaces.DNSResolver // Resolver for DNS look ups
+	}
 
-// ClientOptions holds all the configuration for client requests and default resources
-type ClientOptions struct {
-	brfcSpecs         []*BRFCSpec   // List of BRFC specifications
-	dnsPort           string        // Default DNS port for SRV checks
-	dnsTimeout        time.Duration // Default timeout in seconds for DNS fetching
-	httpTimeout       time.Duration // Default timeout in seconds for GET requests
-	nameServer        string        // Default name server for DNS checks
-	nameServerNetwork string        // Default name server network
-	requestTracing    bool          // If enabled, it will trace the request timing
-	retryCount        int           // Default retry count for HTTP requests
-	sslDeadline       time.Duration // Default timeout in seconds for SSL deadline
-	sslTimeout        time.Duration // Default timeout in seconds for SSL timeout
-	userAgent         string        // User agent for all outgoing requests
-	network           Network       // The bitcoin network to operate on
-}
-
-// ClientOps allow functional options to be supplied
-// that overwrite default go-paymail client options.
-type ClientOps func(c *ClientOptions)
+	// ClientOptions holds all the configuration for client requests and default resources
+	ClientOptions struct {
+		brfcSpecs         []*BRFCSpec   // List of BRFC specifications
+		dnsPort           string        // Default DNS port for SRV checks
+		dnsTimeout        time.Duration // Default timeout in seconds for DNS fetching
+		httpTimeout       time.Duration // Default timeout in seconds for GET requests
+		nameServer        string        // Default name server for DNS checks
+		nameServerNetwork string        // Default name server network
+		requestTracing    bool          // If enabled, it will trace the request timing
+		retryCount        int           // Default retry count for HTTP requests
+		sslDeadline       time.Duration // Default timeout in seconds for SSL deadline
+		sslTimeout        time.Duration // Default timeout in seconds for SSL timeout
+		userAgent         string        // User agent for all outgoing requests
+		network           Network       // The bitcoin network to operate on
+	}
+)
 
 // NewClient creates a new client for all paymail requests
 //
