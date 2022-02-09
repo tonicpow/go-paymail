@@ -22,7 +22,7 @@ func (c *Configuration) p2pDestination(w http.ResponseWriter, req *http.Request,
 
 	// Get the params & paymail address submitted via URL request
 	params := apirouter.GetParams(req)
-	incomingPaymail := params.GetString("PaymailAddress")
+	incomingPaymail := params.GetString("paymailAddress")
 
 	// Parse, sanitize and basic validation
 	alias, domain, paymailAddress := paymail.SanitizePaymail(incomingPaymail)

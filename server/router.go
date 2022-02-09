@@ -79,37 +79,37 @@ func (c *Configuration) registerPaymailRoutes(router *apirouter.Router) {
 
 	// PKI request (public key information)
 	router.HTTPRouter.GET(
-		"/"+c.APIVersion+"/"+c.ServiceName+"/id/:PaymailAddress",
+		"/"+c.APIVersion+"/"+c.ServiceName+"/id/:paymailAddress",
 		router.Request(c.showPKI),
 	)
 
 	// Verify PubKey request (public key verification to paymail address)
 	router.HTTPRouter.GET(
-		"/"+c.APIVersion+"/"+c.ServiceName+"/verify-pubkey/:PaymailAddress/:pubKey",
+		"/"+c.APIVersion+"/"+c.ServiceName+"/verify-pubkey/:paymailAddress/:pubKey",
 		router.Request(c.verifyPubKey),
 	)
 
 	// Payment Destination request (address resolution)
 	router.HTTPRouter.POST(
-		"/"+c.APIVersion+"/"+c.ServiceName+"/address/:PaymailAddress",
+		"/"+c.APIVersion+"/"+c.ServiceName+"/address/:paymailAddress",
 		router.Request(c.resolveAddress),
 	)
 
 	// Public Profile request (returns Name & Avatar)
 	router.HTTPRouter.GET(
-		"/"+c.APIVersion+"/"+c.ServiceName+"/public-profile/:PaymailAddress",
+		"/"+c.APIVersion+"/"+c.ServiceName+"/public-profile/:paymailAddress",
 		router.Request(c.publicProfile),
 	)
 
 	// P2P Destination request (returns output & reference)
 	router.HTTPRouter.POST(
-		"/"+c.APIVersion+"/"+c.ServiceName+"/p2p-payment-destination/:PaymailAddress",
+		"/"+c.APIVersion+"/"+c.ServiceName+"/p2p-payment-destination/:paymailAddress",
 		router.Request(c.p2pDestination),
 	)
 
 	// P2P Receive Tx request (receives the P2P transaction, broadcasts, returns tx_id)
 	router.HTTPRouter.POST(
-		"/"+c.APIVersion+"/"+c.ServiceName+"/receive-transaction/:PaymailAddress",
+		"/"+c.APIVersion+"/"+c.ServiceName+"/receive-transaction/:paymailAddress",
 		router.Request(c.p2pReceiveTx),
 	)
 }

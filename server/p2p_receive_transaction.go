@@ -31,7 +31,7 @@ func (c *Configuration) p2pReceiveTx(w http.ResponseWriter, req *http.Request, _
 
 	// Get the params & paymail address submitted via URL request
 	params := apirouter.GetParams(req)
-	incomingPaymail := params.GetString("PaymailAddress")
+	incomingPaymail := params.GetString("paymailAddress")
 
 	// Start the P2PTransaction
 	p2pTransaction := &paymail.P2PTransaction{
