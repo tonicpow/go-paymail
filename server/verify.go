@@ -15,7 +15,7 @@ func (c *Configuration) verifyPubKey(w http.ResponseWriter, req *http.Request, _
 
 	// Get the params submitted via URL request
 	params := apirouter.GetParams(req)
-	incomingPaymail := params.GetString("paymailAddress")
+	incomingPaymail := params.GetString("PaymailAddress")
 	incomingPubKey := params.GetString("pubKey")
 
 	// Parse, sanitize and basic validation
