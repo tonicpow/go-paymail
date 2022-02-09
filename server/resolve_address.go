@@ -31,7 +31,7 @@ func (c *Configuration) resolveAddress(w http.ResponseWriter, req *http.Request,
 
 	// Get the params & paymail address submitted via URL request
 	params := apirouter.GetParams(req)
-	incomingPaymail := params.GetString("paymailAddress")
+	incomingPaymail := params.GetString("PaymailAddress")
 
 	// Parse, sanitize and basic validation
 	alias, domain, paymailAddress := paymail.SanitizePaymail(incomingPaymail)
