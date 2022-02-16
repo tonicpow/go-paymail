@@ -10,15 +10,13 @@ require (
 	github.com/libsv/go-bk v0.1.6
 	github.com/libsv/go-bt/v2 v2.1.0-beta.2.0.20211221142324-0d686850c5e0
 	github.com/miekg/dns v1.1.46
-	github.com/mrz1836/go-api-router v0.4.10
+	github.com/mrz1836/go-api-router v0.4.11
 	github.com/mrz1836/go-logger v0.2.5
 	github.com/mrz1836/go-sanitize v1.1.5
 	github.com/mrz1836/go-validate v0.2.0
 	github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.1
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/crypto v0.0.0-20220209155544-dad33157f4bf // indirect
+	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd
-	golang.org/x/sys v0.0.0-20220207234003-57398862261d // indirect
 	golang.org/x/tools v0.1.9 // indirect
-	google.golang.org/genproto v0.0.0-20220208230804-65c12eb4c068 // indirect
 )
