@@ -3,7 +3,7 @@ module github.com/tonicpow/go-paymail
 go 1.16
 
 require (
-	github.com/bitcoinschema/go-bitcoin/v2 v2.0.0-alpha.2
+	github.com/bitcoinschema/go-bitcoin/v2 v2.0.0-alpha.3
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/jarcoal/httpmock v1.1.0
 	github.com/julienschmidt/httprouter v1.3.0
@@ -17,7 +17,6 @@ require (
 	github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.1
 	github.com/stretchr/testify v1.7.1
 	github.com/ugorji/go v1.2.7 // indirect
-	golang.org/x/crypto v0.0.0-20220313003712-b769efc7c000 // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f
 	golang.org/x/sys v0.0.0-20220310020820-b874c991c1a5 // indirect
 	golang.org/x/tools v0.1.9 // indirect
