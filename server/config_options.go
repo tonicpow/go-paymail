@@ -15,15 +15,16 @@ type ConfigOps func(c *Configuration)
 // Useful for starting with the default and then modifying as needed
 func defaultConfigOptions() *Configuration {
 	return &Configuration{
-		APIVersion:              DefaultAPIVersion,
-		BasicRoutes:             &basicRoutes{},
-		BSVAliasVersion:         paymail.DefaultBsvAliasVersion,
-		Capabilities:            GenericCapabilities(paymail.DefaultBsvAliasVersion, DefaultSenderValidation),
-		Port:                    DefaultServerPort,
-		Prefix:                  DefaultPrefix,
-		SenderValidationEnabled: DefaultSenderValidation,
-		ServiceName:             paymail.DefaultServiceName,
-		Timeout:                 DefaultTimeout,
+		APIVersion:                       DefaultAPIVersion,
+		BasicRoutes:                      &basicRoutes{},
+		BSVAliasVersion:                  paymail.DefaultBsvAliasVersion,
+		Capabilities:                     GenericCapabilities(paymail.DefaultBsvAliasVersion, DefaultSenderValidation),
+		PaymailDomainsValidationDisabled: false,
+		Port:                             DefaultServerPort,
+		Prefix:                           DefaultPrefix,
+		SenderValidationEnabled:          DefaultSenderValidation,
+		ServiceName:                      paymail.DefaultServiceName,
+		Timeout:                          DefaultTimeout,
 	}
 }
 

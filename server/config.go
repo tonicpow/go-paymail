@@ -10,16 +10,17 @@ import (
 
 // Configuration paymail server configuration object
 type Configuration struct {
-	APIVersion              string                       `json:"api_version"`
-	BasicRoutes             *basicRoutes                 `json:"basic_routes"`
-	BSVAliasVersion         string                       `json:"bsv_alias_version"`
-	Capabilities            *paymail.CapabilitiesPayload `json:"capabilities"`
-	PaymailDomains          []*Domain                    `json:"paymail_domains"`
-	Port                    int                          `json:"port"`
-	Prefix                  string                       `json:"prefix"`
-	SenderValidationEnabled bool                         `json:"sender_validation_enabled"`
-	ServiceName             string                       `json:"service_name"`
-	Timeout                 time.Duration                `json:"timeout"`
+	APIVersion                       string                       `json:"api_version"`
+	BasicRoutes                      *basicRoutes                 `json:"basic_routes"`
+	BSVAliasVersion                  string                       `json:"bsv_alias_version"`
+	Capabilities                     *paymail.CapabilitiesPayload `json:"capabilities"`
+	PaymailDomains                   []*Domain                    `json:"paymail_domains"`
+	PaymailDomainsValidationDisabled bool                         `json:"paymail_domains_validation_disabled"`
+	Port                             int                          `json:"port"`
+	Prefix                           string                       `json:"prefix"`
+	SenderValidationEnabled          bool                         `json:"sender_validation_enabled"`
+	ServiceName                      string                       `json:"service_name"`
+	Timeout                          time.Duration                `json:"timeout"`
 
 	// private
 	actions PaymailServiceProvider
@@ -34,7 +35,7 @@ type Domain struct {
 func (c *Configuration) Validate() error {
 
 	// Requires domains for the server to run
-	if len(c.PaymailDomains) == 0 {
+	if len(c.PaymailDomains) == 0 && !c.PaymailDomainsValidationDisabled {
 		return ErrDomainMissing
 	}
 
@@ -65,6 +66,11 @@ func (c *Configuration) Validate() error {
 
 // IsAllowedDomain will return true if it's an allowed paymail domain
 func (c *Configuration) IsAllowedDomain(domain string) (success bool) {
+
+	if c.PaymailDomainsValidationDisabled {
+		success = true
+		return
+	}
 
 	// Sanitize the domain (standard)
 	var err error
