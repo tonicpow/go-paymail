@@ -100,3 +100,10 @@ func WithPort(port int) ConfigOps {
 		}
 	}
 }
+
+// WithDomainValidationDisabled will disabled checking domains (from request for allowed domains)
+func WithDomainValidationDisabled() ConfigOps {
+	return func(c *Configuration) {
+		c.PaymailDomainsValidationDisabled = true
+	}
+}

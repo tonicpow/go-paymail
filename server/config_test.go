@@ -392,4 +392,17 @@ func TestNewConfig(t *testing.T) {
 		assert.Equal(t, true, c.BasicRoutes.AddHealthRoute)
 		assert.Equal(t, true, c.BasicRoutes.AddNotAllowed)
 	})
+
+	t.Run("domain validation disabled", func(t *testing.T) {
+		c, err := NewConfig(
+			new(mockServiceProvider),
+			WithDomain("test.com"),
+			WithPort(12345),
+			WithDomainValidationDisabled(),
+		)
+		require.NoError(t, err)
+		require.NotNil(t, c)
+		assert.Equal(t, 12345, c.Port)
+		assert.Equal(t, true, c.PaymailDomainsValidationDisabled)
+	})
 }
