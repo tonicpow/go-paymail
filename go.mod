@@ -17,9 +17,9 @@ require (
 	github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.1
 	github.com/stretchr/testify v1.7.1
 	github.com/ugorji/go v1.2.7 // indirect
-	golang.org/x/net v0.0.0-20220225172249-27dd8689420f
-	golang.org/x/sys v0.0.0-20220310020820-b874c991c1a5 // indirect
-	golang.org/x/tools v0.1.9 // indirect
-	google.golang.org/genproto v0.0.0-20220310185008-1973136f34c6 // indirect
-	google.golang.org/grpc v1.45.0 // indirect
+	golang.org/x/crypto v0.0.0-20220321153916-2c7772ba3064 // indirect
+	golang.org/x/net v0.0.0-20220325170049-de3da57026de
+	golang.org/x/sys v0.0.0-20220330033206-e17cdc41300f // indirect
+	golang.org/x/tools v0.1.10 // indirect
+	google.golang.org/genproto v0.0.0-20220329172620-7be39ac1afc7 // indirect
 )
