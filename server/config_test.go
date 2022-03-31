@@ -111,6 +111,22 @@ func TestConfiguration_Validate(t *testing.T) {
 		err := c.Validate()
 		require.NoError(t, err)
 	})
+
+	t.Run("configuration with domain validation disabled", func(t *testing.T) {
+		c := &Configuration{
+			Port:           12345,
+			ServiceName:    "test",
+			PaymailDomains: []*Domain{},
+			Capabilities:   GenericCapabilities("test", false),
+		}
+		assert.False(t, c.PaymailDomainsValidationDisabled)
+		err := c.Validate()
+		assert.ErrorIs(t, err, ErrDomainMissing)
+
+		c.PaymailDomainsValidationDisabled = true
+		err = c.Validate()
+		assert.NoError(t, err)
+	})
 }
 
 // TestConfiguration_IsAllowedDomain will test the method IsAllowedDomain()
@@ -147,6 +163,24 @@ func TestConfiguration_IsAllowedDomain(t *testing.T) {
 
 		success := c.IsAllowedDomain("WWW.test.COM")
 		assert.Equal(t, true, success)
+	})
+
+	t.Run("domain validation on", func(t *testing.T) {
+		c := testConfig(t, "WwW.Test.Com")
+		c.PaymailDomainsValidationDisabled = false
+		require.NotNil(t, c)
+
+		assert.Equal(t, true, c.IsAllowedDomain("test.com"))
+		assert.Equal(t, false, c.IsAllowedDomain("test2.com"))
+	})
+
+	t.Run("domain validation off", func(t *testing.T) {
+		c := testConfig(t, "WwW.Test.Com")
+		c.PaymailDomainsValidationDisabled = true
+		require.NotNil(t, c)
+
+		assert.Equal(t, true, c.IsAllowedDomain("test.com"))
+		assert.Equal(t, true, c.IsAllowedDomain("test2.com"))
 	})
 }
 
