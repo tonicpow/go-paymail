@@ -76,6 +76,6 @@ type AddressInformation struct {
 	ID          string `json:"id"`           // Global unique identifier
 	LastAddress string `json:"last_address"` // This is used as a temp address for now (should be via xPub)
 	Name        string `json:"name"`         // This is the name of the user (public profile)
-	PrivateKey  string `json:"private_key"`  // PrivateKey hex encoded
+	PrivateKey  string `json:"-"`            // PrivateKey hex encoded
 	PubKey      string `json:"pubkey"`       // PublicKey hex encoded
 }
