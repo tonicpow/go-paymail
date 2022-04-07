@@ -366,6 +366,17 @@ func TestNewConfig(t *testing.T) {
 		assert.Equal(t, true, c.SenderValidationEnabled)
 	})
 
+	t.Run("with p2p capabilities", func(t *testing.T) {
+		c, err := NewConfig(
+			new(mockServiceProvider),
+			WithDomain("test.com"),
+			WithP2PCapabilities(),
+		)
+		require.NoError(t, err)
+		require.NotNil(t, c)
+		assert.Equal(t, 7, len(c.Capabilities.Capabilities))
+	})
+
 	t.Run("with custom capabilities", func(t *testing.T) {
 		c, err := NewConfig(
 			new(mockServiceProvider),

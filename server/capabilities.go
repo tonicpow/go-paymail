@@ -22,6 +22,14 @@ func GenericCapabilities(bsvAliasVersion string, senderValidation bool) *paymail
 	}
 }
 
+// P2PCapabilities will make generic capabilities & add additional p2p capabilities
+func P2PCapabilities(bsvAliasVersion string, senderValidation bool) *paymail.CapabilitiesPayload {
+	c := GenericCapabilities(bsvAliasVersion, senderValidation)
+	c.Capabilities[paymail.BRFCP2PTransactions] = "/receive-transaction/{alias}@{domain.tld}"
+	c.Capabilities[paymail.BRFCP2PPaymentDestination] = "/p2p-payment-destination/{alias}@{domain.tld}"
+	return c
+}
+
 // showCapabilities will return the service discovery results for the server
 // and list all active capabilities of the Paymail server
 //

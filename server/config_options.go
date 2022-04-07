@@ -35,6 +35,13 @@ func WithGenericCapabilities() ConfigOps {
 	}
 }
 
+// WithP2PCapabilities will load the generic & p2p capabilities
+func WithP2PCapabilities() ConfigOps {
+	return func(c *Configuration) {
+		c.Capabilities = P2PCapabilities(c.BSVAliasVersion, c.SenderValidationEnabled)
+	}
+}
+
 // WithCapabilities will modify the capabilities
 func WithCapabilities(capabilities *paymail.CapabilitiesPayload) ConfigOps {
 	return func(c *Configuration) {
@@ -101,7 +108,7 @@ func WithPort(port int) ConfigOps {
 	}
 }
 
-// WithDomainValidationDisabled will disabled checking domains (from request for allowed domains)
+// WithDomainValidationDisabled will disable checking domains (from request for allowed domains)
 func WithDomainValidationDisabled() ConfigOps {
 	return func(c *Configuration) {
 		c.PaymailDomainsValidationDisabled = true
