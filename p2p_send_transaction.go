@@ -104,7 +104,11 @@ func (c *Client) SendP2PTransaction(p2pURL, alias, domain string,
 			if err = json.Unmarshal(resp.Body, serverError); err != nil {
 				return
 			}
-			err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, serverError.Message)
+			if len(serverError.Message) == 0 {
+				err = fmt.Errorf("bad response from paymail provider: code %d, body: %s", response.StatusCode, string(resp.Body))
+			} else {
+				err = fmt.Errorf("bad response from paymail provider: code %d, message: %s", response.StatusCode, serverError.Message)
+			}
 		}
 
 		return
