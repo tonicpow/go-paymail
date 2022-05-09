@@ -61,8 +61,8 @@ github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+
 github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
 github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
 github.com/grpc-ecosystem/grpc-gateway v1.16.0/go.mod h1:BDjrQk3hbvj6Nolgz8mAMFbcEtjT1g+wF4CSlocrBnw=
-github.com/jarcoal/httpmock v1.1.0 h1:F47ChZj1Y2zFsCXxNkBPwNNKnAyOATcdQibk0qEdVCE=
-github.com/jarcoal/httpmock v1.1.0/go.mod h1:ATjnClrvW/3tijVmpL/va5Z3aAyGvqU3gCT8nX0Txik=
+github.com/jarcoal/httpmock v1.2.0 h1:gSvTxxFR/MEMfsGrvRbdfpRUMBStovlSRLw0Ep1bwwc=
+github.com/jarcoal/httpmock v1.2.0/go.mod h1:oCoTsnAz4+UoOUIf5lJOWV2QQIW5UoeUI6aM2YnWAZk=
 github.com/julienschmidt/httprouter v1.3.0 h1:U0609e9tgbseu3rBINet9P48AI/D3oJs4dN7jwJOQ1U=
 github.com/julienschmidt/httprouter v1.3.0/go.mod h1:JR6WtHb+2LUe8TCKY3cZOxFyyO8IZAc4RVcycCCAKdM=
 github.com/libsv/go-bk v0.1.6 h1:c9CiT5+64HRDbzxPl1v/oiFmbvWZTuUYqywCf+MBs/c=
@@ -71,6 +71,8 @@ github.com/libsv/go-bt/v2 v2.1.0-beta.2.0.20211221142324-0d686850c5e0 h1:YGwofFX
 github.com/libsv/go-bt/v2 v2.1.0-beta.2.0.20211221142324-0d686850c5e0/go.mod h1:KbBf6ugGNMtVwtCSUtlSAHoVhbAie4hu2VM97d1ZL8I=
 github.com/matryer/respond v1.0.1 h1:RSG07jdn32pH46t4UO1TnpnKlR/ayIpEa4aiK2f9k1U=
 github.com/matryer/respond v1.0.1/go.mod h1:XHpqRsK4LZQgk6twGA/CrtxNBaayoYiKUqj0Mjkj3Hg=
+github.com/maxatome/go-testdeep v1.11.0 h1:Tgh5efyCYyJFGUYiT0qxBSIDeXw0F5zSoatlou685kk=
+github.com/maxatome/go-testdeep v1.11.0/go.mod h1:011SgQ6efzZYAen6fDn4BqQ+lUR72ysdyKe7Dyogw70=
 github.com/miekg/dns v1.1.48 h1:Ucfr7IIVyMBz4lRE8qmGUuZ4Wt3/ZGu9hmcMT3Uu4tQ=
 github.com/miekg/dns v1.1.48/go.mod h1:e3IlAVfNqAllflbibAZEWOXOQ+Ynzk/dDozDxY7XnME=
 github.com/mrz1836/go-api-router v0.4.13 h1:7SsHaboj5DBDes6RGFNaqgqMCypwZ2dUDRPhaF2RVmI=
