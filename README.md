@@ -1,14 +1,14 @@
 # go-paymail
 > Paymail client & server library for Golang
 
-[![Release](https://img.shields.io/github/release-pre/tonicpow/go-paymail.svg?logo=github&style=flat&v=3)](https://github.com/tonicpow/go-paymail/releases)
-[![Build Status](https://img.shields.io/github/workflow/status/tonicpow/go-paymail/run-go-tests?logo=github&v=3)](https://github.com/tonicpow/go-paymail/actions)
-[![Report](https://goreportcard.com/badge/github.com/tonicpow/go-paymail?style=flat&v=3)](https://goreportcard.com/report/github.com/tonicpow/go-paymail)
-[![codecov](https://codecov.io/gh/tonicpow/go-paymail/branch/master/graph/badge.svg?v=3)](https://codecov.io/gh/tonicpow/go-paymail)
-[![Go](https://img.shields.io/github/go-mod/go-version/tonicpow/go-paymail?v=3)](https://golang.org/)
+[![Release](https://img.shields.io/github/release-pre/tonicpow/go-paymail.svg?logo=github&style=flat&v=4)](https://github.com/tonicpow/go-paymail/releases)
+[![Build Status](https://img.shields.io/github/workflow/status/tonicpow/go-paymail/run-go-tests?logo=github&v=4)](https://github.com/tonicpow/go-paymail/actions)
+[![Report](https://goreportcard.com/badge/github.com/tonicpow/go-paymail?style=flat&v=4)](https://goreportcard.com/report/github.com/tonicpow/go-paymail)
+[![codecov](https://codecov.io/gh/tonicpow/go-paymail/branch/master/graph/badge.svg?v=4)](https://codecov.io/gh/tonicpow/go-paymail)
+[![Go](https://img.shields.io/github/go-mod/go-version/tonicpow/go-paymail?v=4)](https://golang.org/)
 <br>
-[![Mergify Status](https://img.shields.io/endpoint.svg?url=https://gh.mergify.io/badges/tonicpow/go-paymail&style=flat&v=3)](https://mergify.io)
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/tonicpow/go-paymail)
+[![Mergify Status](https://img.shields.io/endpoint.svg?url=https://api.mergify.com/v1/badges/tonicpow/go-paymail&style=flat&v=4)](https://mergify.io)
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod&v=4)](https://gitpod.io/#https://github.com/tonicpow/go-paymail)
 
 <br/>
 
@@ -37,7 +37,7 @@ go get -u github.com/tonicpow/go-paymail
 ## Documentation
 View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-paymail)
 
-[![GoDoc](https://godoc.org/github.com/tonicpow/go-paymail?status.svg&style=flat)](https://pkg.go.dev/github.com/tonicpow/go-paymail)
+[![GoDoc](https://godoc.org/github.com/tonicpow/go-paymail?status.svg&style=flat&v=4)](https://pkg.go.dev/github.com/tonicpow/go-paymail)
 
 ### Features
 - [Paymail Client](client.go) (outgoing requests to other providers)
@@ -73,10 +73,10 @@ View the generated [documentation](https://pkg.go.dev/github.com/tonicpow/go-pay
 
 Client Packages:
 - [BitcoinSchema/go-bitcoin](https://github.com/BitcoinSchema/go-bitcoin)
-- [bitcoinsv/bsvd](https://github.com/bitcoinsv/bsvd)
-- [bitcoinsv/bsvutil](https://github.com/bitcoinsv/bsvutil)
 - [go-resty/resty](https://github.com/go-resty/resty/v2)
 - [jarcoal/httpmock](https://github.com/jarcoal/httpmock)
+- [libsv/go-bk](https://github.com/libsv/go-bk)
+- [libsv/go-bt](https://github.com/libsv/go-bt)
 - [miekg/dns](https://github.com/miekg/dns)
 - [mrz1836/go-sanitize](https://github.com/mrz1836/go-sanitize)
 - [mrz1836/go-validate](https://github.com/mrz1836/go-validate)
@@ -195,11 +195,11 @@ The most basic way to show your support is to star :star2: the project, or to ra
 You can also support this project by [becoming a sponsor on GitHub](https://github.com/sponsors/tonicpow) :clap: 
 or by making a [**bitcoin donation**](https://tonicpow.com/?utm_source=github&utm_medium=sponsor-link&utm_campaign=go-paymail&utm_term=go-paymail&utm_content=go-paymail) to ensure this journey continues indefinitely! :rocket:
 
-[![Stars](https://img.shields.io/github/stars/tonicpow/go-paymail?label=Please%20like%20us&style=social)](https://github.com/tonicpow/go-paymail/stargazers)
+[![Stars](https://img.shields.io/github/stars/tonicpow/go-paymail?label=Please%20like%20us&style=social&v=4)](https://github.com/tonicpow/go-paymail/stargazers)
 
 
 <br/>
 
 ## License
 
-[![License](https://img.shields.io/github/license/tonicpow/go-paymail.svg?style=flat&v=3)](LICENSE)
+[![License](https://img.shields.io/github/license/tonicpow/go-paymail.svg?style=flat&v=4)](LICENSE)
