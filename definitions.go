@@ -18,7 +18,7 @@ const (
 	defaultSSLTimeout        = 10 * time.Second         // Default timeout in seconds
 	defaultUserAgent         = "go-paymail: " + version // Default user agent
 	defaultNetwork           = byte(Mainnet)            // Default network
-	version                  = "v0.7.6"                 // Go-Paymail version
+	version                  = "v0.7.7"                 // Go-Paymail version
 )
 
 // Public defaults for paymail specs
