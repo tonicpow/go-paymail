@@ -9,7 +9,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/libsv/go-bk v0.1.6
 	github.com/libsv/go-bt/v2 v2.1.0-beta.3
-	github.com/miekg/dns v1.1.48
+	github.com/miekg/dns v1.1.49
 	github.com/mrz1836/go-api-router v0.4.13
 	github.com/mrz1836/go-logger v0.2.5
 	github.com/mrz1836/go-sanitize v1.1.5
