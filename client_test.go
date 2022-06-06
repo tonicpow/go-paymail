@@ -205,7 +205,7 @@ func ExampleNewClient() {
 		return
 	}
 	fmt.Printf("loaded client: %s", client.GetOptions().userAgent)
-	// Output:loaded client: go-paymail: v0.7.7
+	// Output:loaded client: go-paymail: v0.7.8
 }
 
 // BenchmarkNewClient benchmarks the method NewClient()
