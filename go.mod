@@ -16,7 +16,7 @@ require (
 	github.com/mrz1836/go-validate v0.2.0
 	github.com/newrelic/go-agent/v3 v3.16.1 // indirect
 	github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.1
-	github.com/stretchr/testify v1.7.5
+	github.com/stretchr/testify v1.8.0
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
 	golang.org/x/net v0.0.0-20220531201128-c960675eff93
 	golang.org/x/tools v0.1.10 // indirect
