@@ -11,7 +11,7 @@ require (
 	github.com/libsv/go-bt/v2 v2.1.0-beta.4
 	github.com/miekg/dns v1.1.50
 	github.com/mrz1836/go-api-router v0.4.14
-	github.com/mrz1836/go-logger v0.2.6
+	github.com/mrz1836/go-logger v0.3.1
 	github.com/mrz1836/go-sanitize v1.1.5
 	github.com/mrz1836/go-validate v0.2.0
 	github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.1
