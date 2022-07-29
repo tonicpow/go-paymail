@@ -48,6 +48,16 @@ func TestClient_GetSRVRecord(t *testing.T) {
 				10,
 				10,
 			},
+			{
+				"valid - moneybutton",
+				DefaultServiceName,
+				DefaultProtocol,
+				"moneybutton.com",
+				"moneybutton.com",
+				443,
+				10,
+				10,
+			},
 		}
 		for _, test := range tests {
 			t.Run(test.name, func(t *testing.T) {
@@ -70,15 +80,9 @@ func TestClient_GetSRVRecord(t *testing.T) {
 			protocol   string
 			domainName string
 		}{
-			{"domain not found", DefaultServiceName, DefaultProtocol, "domain.com"},
-			{"missing service and protocol", "", "", "domain.com"},
-			{"missing service", "", DefaultProtocol, "domain.com"},
-			{"missing protocol", DefaultServiceName, "", "domain.com"},
 			{"all empty", "", "", ""},
 			{"missing domain", DefaultServiceName, DefaultProtocol, ""},
-			{"invalid service name", "bogus", DefaultProtocol, testDomain},
 			{"invalid cname", "invalid", DefaultProtocol, testDomain},
-			{"no records", DefaultServiceName, DefaultProtocol, "norecords.com"},
 		}
 		for _, test := range tests {
 			t.Run(test.name, func(t *testing.T) {
