@@ -32,7 +32,7 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 	// Invalid parameters?
 	if len(service) == 0 { // Use the default from paymail specs
 		service = DefaultServiceName
-	} 
+	}
 	if len(protocol) == 0 { // Use the default from paymail specs
 		protocol = DefaultProtocol
 	}
@@ -53,14 +53,14 @@ func (c *Client) GetSRVRecord(service, protocol, domainName string) (srv *net.SR
 	if cname, records, err = c.resolver.LookupSRV(
 		context.Background(), service, protocol, domainName,
 	); err != nil || len(records) == 0 {
-		// Paymail spec says if SRV record doesn't exist, assume it is <domain>.<tld> and port of 443
-		err = nil
-		cname = cnameCheck
+		// @rohenaz: Paymail spec says if SRV record doesn't exist, assume it is <domain>.<tld> and port of 443
+		err = nil          // Hack
+		cname = cnameCheck // Hack
 		records = append(records, &net.SRV{
-			Target: domainName,
-			Port: 443,
+			Port:     DefaultPort,
 			Priority: DefaultPriority,
-			Weight: DefaultWeight,
+			Target:   domainName,
+			Weight:   DefaultWeight,
 		})
 	}
 
