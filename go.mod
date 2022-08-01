@@ -10,7 +10,7 @@ require (
 	github.com/libsv/go-bk v0.1.6
 	github.com/libsv/go-bt/v2 v2.1.0-beta.4
 	github.com/miekg/dns v1.1.50
-	github.com/mrz1836/go-api-router v0.4.14
+	github.com/mrz1836/go-api-router v0.4.15
 	github.com/mrz1836/go-logger v0.3.1
 	github.com/mrz1836/go-sanitize v1.1.5
 	github.com/mrz1836/go-validate v0.2.0
@@ -20,6 +20,4 @@ require (
 	golang.org/x/net v0.0.0-20220728211354-c7608f3a8462
 	golang.org/x/tools v0.1.12 // indirect
 	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
-	google.golang.org/genproto v0.0.0-20220728213248-dd149ef739b9 // indirect
-	google.golang.org/protobuf v1.28.1 // indirect
 )
