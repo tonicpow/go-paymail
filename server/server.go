@@ -1,3 +1,4 @@
+// Package server is the server package for Paymail
 package server
 
 import (

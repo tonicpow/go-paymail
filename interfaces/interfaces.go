@@ -1,3 +1,4 @@
+// Package interfaces is the custom interface
 package interfaces
 
 import (

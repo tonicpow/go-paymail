@@ -260,50 +260,50 @@ func BenchmarkValidateTimestamp(b *testing.B) {
 
 func TestValidateAndSanitisePaymail(t *testing.T) {
 	t.Parallel()
-	tests := map[string]struct{
-		paymail string
-		isBeta bool
+	tests := map[string]struct {
+		paymail  string
+		isBeta   bool
 		expected *SanitisedPaymail
-		error error
+		error    error
 	}{
 		"valid paymail address should be allowed": {
-			paymail:  "test@domain.com",
+			paymail: "test@domain.com",
 			isBeta:  false,
 			expected: &SanitisedPaymail{
 				Alias:   "test",
 				Domain:  "domain.com",
 				Address: "test@domain.com",
 			},
-		},"invalid paymail address should error": {
-			paymail:  "test@domain",
+		}, "invalid paymail address should error": {
+			paymail: "test@domain",
 			isBeta:  false,
-			error:errors.New("paymail address failed format validation: email is not a valid address format"),
-		},"handcash should convert and return": {
-			paymail:  "$test",
+			error:   errors.New("paymail address failed format validation: email is not a valid address format"),
+		}, "handcash should convert and return": {
+			paymail: "$test",
 			isBeta:  false,
 			expected: &SanitisedPaymail{
 				Alias:   "test",
 				Domain:  "handcash.io",
 				Address: "test@handcash.io",
 			},
-		},"handcash beta should convert and return": {
-			paymail:  "$test",
+		}, "handcash beta should convert and return": {
+			paymail: "$test",
 			isBeta:  true,
 			expected: &SanitisedPaymail{
 				Alias:   "test",
 				Domain:  "beta.handcash.io",
 				Address: "test@beta.handcash.io",
 			},
-		},"mad casing should standardize": {
-			paymail:  "TeST@tEsT.cOM",
+		}, "mad casing should standardize": {
+			paymail: "TeST@tEsT.cOM",
 			isBeta:  true,
 			expected: &SanitisedPaymail{
 				Alias:   "test",
 				Domain:  "test.com",
 				Address: "test@test.com",
 			},
-		},"relayx should convert and return": {
-			paymail:  "1test",
+		}, "relayx should convert and return": {
+			paymail: "1test",
 			isBeta:  false,
 			expected: &SanitisedPaymail{
 				Alias:   "test",
@@ -312,21 +312,20 @@ func TestValidateAndSanitisePaymail(t *testing.T) {
 			},
 		},
 	}
-	for name, test := range tests{
+	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
 			s, err := ValidateAndSanitisePaymail(test.paymail, test.isBeta)
-			if test.error != nil{
-				if err == nil || err.Error() != test.error.Error(){
+			if test.error != nil {
+				if err == nil || err.Error() != test.error.Error() {
 					t.Errorf("expected error [%s] does not match actual [%s]", test.error, err)
 				}
 			}
-			if !reflect.DeepEqual(test.expected,s){
+			if !reflect.DeepEqual(test.expected, s) {
 				t.Errorf("expected result [%+v] \n does not match actual [%+v]\n", test.expected, s)
 			}
 		})
 	}
 }
-
 
 // BenchmarkTestValidateAndSanitisePaymail benchmarks the method ValidateTimestamp()
 func BenchmarkTestValidateAndSanitisePaymail(b *testing.B) {

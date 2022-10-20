@@ -1,3 +1,4 @@
+// Package tester is the testing package
 package tester
 
 import (
