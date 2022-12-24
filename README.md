@@ -2,7 +2,7 @@
 > Paymail client & server library for Golang
 
 [![Release](https://img.shields.io/github/release-pre/tonicpow/go-paymail.svg?logo=github&style=flat&v=4)](https://github.com/tonicpow/go-paymail/releases)
-[![Build Status](https://img.shields.io/github/workflow/status/tonicpow/go-paymail/run-go-tests?logo=github&v=4)](https://github.com/tonicpow/go-paymail/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/tonicpow/go-paymail/run-tests.yml?branch=master&logo=github&v=4)](https://github.com/tonicpow/go-paymail/actions)
 [![Report](https://goreportcard.com/badge/github.com/tonicpow/go-paymail?style=flat&v=4)](https://goreportcard.com/report/github.com/tonicpow/go-paymail)
 [![codecov](https://codecov.io/gh/tonicpow/go-paymail/branch/master/graph/badge.svg?v=4)](https://codecov.io/gh/tonicpow/go-paymail)
 [![Go](https://img.shields.io/github/go-mod/go-version/tonicpow/go-paymail?v=4)](https://golang.org/)
