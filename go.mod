@@ -3,7 +3,7 @@ module github.com/tonicpow/go-paymail
 go 1.17
 
 require (
-	github.com/bitcoinschema/go-bitcoin/v2 v2.0.0-alpha.3
+	github.com/bitcoinschema/go-bitcoin/v2 v2.0.2
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/jarcoal/httpmock v1.3.0
 	github.com/julienschmidt/httprouter v1.3.0
