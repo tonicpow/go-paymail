@@ -8,7 +8,7 @@ require (
 	github.com/jarcoal/httpmock v1.3.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/libsv/go-bk v0.1.6
-	github.com/libsv/go-bt/v2 v2.1.1
+	github.com/libsv/go-bt/v2 v2.2.0
 	github.com/miekg/dns v1.1.51
 	github.com/mrz1836/go-api-router v0.5.1
 	github.com/mrz1836/go-logger v0.3.2
@@ -26,11 +26,13 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
+	github.com/kr/text v0.2.0 // indirect
 	github.com/matryer/respond v1.0.1 // indirect
 	github.com/mrz1836/go-parameters v0.3.1 // indirect
 	github.com/newrelic/go-agent/v3 v3.20.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	github.com/ugorji/go/codec v1.2.10 // indirect
 	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/mod v0.9.0 // indirect
