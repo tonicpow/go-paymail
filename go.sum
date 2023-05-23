@@ -747,8 +747,8 @@ github.com/mrz1836/go-logger v0.3.2/go.mod h1:8gWPdqxOAFNJOHDXS2ducgsokUOf0wWtAA
 github.com/mrz1836/go-parameters v0.3.0/go.mod h1:E3qlPxhpR/nAMsmNqAR9vi0PBYfiz/wpB6m+iNZstJM=
 github.com/mrz1836/go-parameters v0.3.1 h1:tGfDEMnzqKfI5x0y+ZwMYfSSjQm0NFoaEcESGnbFYr4=
 github.com/mrz1836/go-parameters v0.3.1/go.mod h1:ceRTTC2WzJqSCproV8+smxvUgTSqQGNGjqYFPDiUq0k=
-github.com/mrz1836/go-sanitize v1.2.1 h1:wbie2mroEMUtICMwjfllww/TTxIv8h9aESKU7S6Vuq0=
-github.com/mrz1836/go-sanitize v1.2.1/go.mod h1:/WBhD7PAHL1tz1OljwA2t+k4ne0FF+OCS2p96jOtX00=
+github.com/mrz1836/go-sanitize v1.3.0 h1:ExJE6BCn1YWdopt1NPyMTfxDdTMxOMs8WsJ2GrfN1zo=
+github.com/mrz1836/go-sanitize v1.3.0/go.mod h1:oakqgm7YGr+k591N0m8FVx7cOywaHr95FWmI4cDYkIc=
 github.com/mrz1836/go-validate v0.2.0 h1:F8AcgJRW0B/hUNFAXijrN/EGqYlAIkIIpMDkIMMRUho=
 github.com/mrz1836/go-validate v0.2.0/go.mod h1:IoGAb4rTAL6KgAxOiWL4ICwLqxGbKCKT1GyaSuE/4bk=
 github.com/newrelic/go-agent/v3 v3.0.0/go.mod h1:H28zDNUC0U/b7kLoY4EFOhuth10Xu/9dchozUiOseQQ=
