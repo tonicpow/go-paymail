@@ -45,7 +45,7 @@ install-releaser: ## Install the GoReleaser application
 	@echo "installing GoReleaser..."
 	@curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sh
 
-release:: ## Full production release (creates release in Github)
+release:: ## Full production release (creates release in GitHub)
 	@echo "releasing..."
 	@test $(github_token)
 	@export GITHUB_TOKEN=$(github_token) && goreleaser --rm-dist
