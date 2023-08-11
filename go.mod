@@ -14,7 +14,7 @@ require (
 	github.com/mrz1836/go-logger v0.3.2
 	github.com/mrz1836/go-sanitize v1.3.0
 	github.com/mrz1836/go-validate v0.2.0
-	github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.1
+	github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.2
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/net v0.14.0
 )
@@ -28,7 +28,7 @@ require (
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/matryer/respond v1.0.1 // indirect
 	github.com/mrz1836/go-parameters v0.3.1 // indirect
-	github.com/newrelic/go-agent/v3 v3.24.0 // indirect
+	github.com/newrelic/go-agent/v3 v3.24.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
