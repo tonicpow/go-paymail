@@ -1,6 +1,7 @@
 package server
 
 import (
+	"net"
 	"net/http"
 	"time"
 
@@ -142,11 +143,19 @@ func getSenderPubKey(senderPaymailAddress string) (*bec.PublicKey, error) {
 		return nil, err
 	}
 
+	// Get the SRV record
+	var srv *net.SRV
+	if srv, err = client.GetSRVRecord(
+		paymail.DefaultServiceName, paymail.DefaultProtocol, domain,
+	); err != nil {
+		return nil, err
+	}
+
 	// Get the capabilities
 	// This is required first to get the corresponding PKI endpoint url
 	var capabilities *paymail.CapabilitiesResponse
 	if capabilities, err = client.GetCapabilities(
-		domain, paymail.DefaultPort,
+		srv.Target, paymail.DefaultPort,
 	); err != nil {
 		return nil, err
 	}

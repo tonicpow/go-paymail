@@ -17,7 +17,7 @@ func Test_getSenderPubKey(t *testing.T) {
 	})
 
 	t.Run("valid - good paymail", func(t *testing.T) {
-		key, err := getSenderPubKey("mrz@moneybutton.com")
+		key, err := getSenderPubKey("mrzz@handcash.io")
 		require.NoError(t, err)
 		require.NotNil(t, key)
 	})
