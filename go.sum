@@ -37,8 +37,8 @@ github.com/matryer/respond v1.0.1/go.mod h1:XHpqRsK4LZQgk6twGA/CrtxNBaayoYiKUqj0
 github.com/maxatome/go-testdeep v1.12.0 h1:Ql7Go8Tg0C1D/uMMX59LAoYK7LffeJQ6X2T04nTH68g=
 github.com/miekg/dns v1.1.56 h1:5imZaSeoRNvpM9SzWNhEcP9QliKiz20/dA2QabIGVnE=
 github.com/miekg/dns v1.1.56/go.mod h1:cRm6Oo2C8TY9ZS/TqsSrseAcncm74lfK5G+ikN2SWWY=
-github.com/mrz1836/go-api-router v0.5.2 h1:ssPASiHDxWUkHkvuE4hFnukZMVPWBEx+7V6S1ZaXD4I=
-github.com/mrz1836/go-api-router v0.5.2/go.mod h1:p11Ggz69rImuQ3Wv693ZxeLOMX08fanz5OOzdHBmovE=
+github.com/mrz1836/go-api-router v0.5.3 h1:LqwkkNNSvRCme8+4FKlLNdMsTlGOdUElaM1Ieo7V9qM=
+github.com/mrz1836/go-api-router v0.5.3/go.mod h1:RzPR3M/2SuezbSsEVGO6N4h/JHluK9VqgpbjBIkPOXg=
 github.com/mrz1836/go-logger v0.3.2 h1:bjd23NwVaLWncXgXAyxAwWLQ02of0Ci3iJIZZEakkFU=
 github.com/mrz1836/go-logger v0.3.2/go.mod h1:8gWPdqxOAFNJOHDXS2ducgsokUOf0wWtAAM3LXPrhYo=
 github.com/mrz1836/go-parameters v0.3.1 h1:tGfDEMnzqKfI5x0y+ZwMYfSSjQm0NFoaEcESGnbFYr4=
@@ -47,8 +47,8 @@ github.com/mrz1836/go-sanitize v1.3.1 h1:bTxpzDXzGh9cp3XLTeVKgL2iLqEwCaLqqe+3Bmp
 github.com/mrz1836/go-sanitize v1.3.1/go.mod h1:Js6Gq1uiarNReoOeOKxPXxNpKy1FRlbgDDZnJG4THdM=
 github.com/mrz1836/go-validate v0.2.0 h1:F8AcgJRW0B/hUNFAXijrN/EGqYlAIkIIpMDkIMMRUho=
 github.com/mrz1836/go-validate v0.2.0/go.mod h1:IoGAb4rTAL6KgAxOiWL4ICwLqxGbKCKT1GyaSuE/4bk=
-github.com/newrelic/go-agent/v3 v3.25.1 h1:Fa+4apO08bcGJk9aOB0TlnacAOrXS4FzMYJzoG0ihA8=
-github.com/newrelic/go-agent/v3 v3.25.1/go.mod h1:MANAXqchXM8ko+EXPZ+6mzX243/lehYwJWq8HOV2ytc=
+github.com/newrelic/go-agent/v3 v3.26.0 h1:xJkqiQgLtC3ys5zoBxD91ITm7sVHZNEF+7/mqmFjnl0=
+github.com/newrelic/go-agent/v3 v3.26.0/go.mod h1:sE2WdlLF3B/xI5HUuIHTa7Aht1gpcIY65pzaUoN1pJs=
 github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.2 h1:Y+bKuryqCg+TAvBkBaEKwak+Boy5OdosQNdDGFwyDLo=
 github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.2/go.mod h1:lhRXsOMo2UYHbtvb2xdtbTdBaL4ovLAdhW8ky3NNyAQ=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
