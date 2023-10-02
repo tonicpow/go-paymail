@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/bitcoinschema/go-bitcoin/v2 v2.0.5
-	github.com/go-resty/resty/v2 v2.8.0
+	github.com/go-resty/resty/v2 v2.9.1
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/libsv/go-bk v0.1.6
