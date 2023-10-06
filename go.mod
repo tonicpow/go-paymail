@@ -16,7 +16,7 @@ require (
 	github.com/mrz1836/go-validate v0.2.0
 	github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.2
 	github.com/stretchr/testify v1.8.4
-	golang.org/x/net v0.15.0
+	golang.org/x/net v0.16.0
 )
 
 require (
@@ -36,9 +36,9 @@ require (
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.50.0 // indirect
-	golang.org/x/crypto v0.13.0 // indirect
+	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/mod v0.12.0 // indirect
-	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	golang.org/x/tools v0.13.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230920204549-e6e6cdab5c13 // indirect
