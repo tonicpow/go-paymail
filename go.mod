@@ -10,7 +10,7 @@ require (
 	github.com/libsv/go-bk v0.1.6
 	github.com/libsv/go-bt/v2 v2.2.5
 	github.com/miekg/dns v1.1.57
-	github.com/mrz1836/go-api-router v0.6.4
+	github.com/mrz1836/go-api-router v0.7.0
 	github.com/mrz1836/go-logger v0.3.2
 	github.com/mrz1836/go-sanitize v1.3.1
 	github.com/mrz1836/go-validate v0.2.0
@@ -28,7 +28,7 @@ require (
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/matryer/respond v1.0.1 // indirect
 	github.com/mrz1836/go-parameters v0.4.1 // indirect
-	github.com/newrelic/go-agent/v3 v3.28.0 // indirect
+	github.com/newrelic/go-agent/v3 v3.28.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
