@@ -29,7 +29,7 @@ func TestCreateServer(t *testing.T) {
 
 // TestStart will test the method Start()
 func TestStart(t *testing.T) {
-	t.Run("run server", func(t *testing.T) {
+	t.Run("run server", func(_ *testing.T) {
 		/*
 			// todo: run in a non-blocking way to test
 				config := &Configuration{

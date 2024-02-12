@@ -14,7 +14,7 @@ func (c *Client) defaultResolver() net.Resolver {
 	return net.Resolver{
 		PreferGo:     true,
 		StrictErrors: false,
-		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+		Dial: func(ctx context.Context, _, _ string) (net.Conn, error) {
 			d := net.Dialer{
 				Timeout: c.options.dnsTimeout,
 			}
