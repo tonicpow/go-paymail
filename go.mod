@@ -16,7 +16,7 @@ require (
 	github.com/mrz1836/go-validate v0.2.1
 	github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.2
 	github.com/stretchr/testify v1.9.0
-	golang.org/x/net v0.22.0
+	golang.org/x/net v0.23.0
 )
 
 require (
