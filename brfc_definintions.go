@@ -4,7 +4,7 @@ package paymail
 const (
 	BRFCBasicAddressResolution         = "759684b1a19a"       // more info: http://bsvalias.org/04-01-basic-address-resolution.html
 	BRFCP2PPaymentDestination          = "2a40af698840"       // more info: https://docs.moneybutton.com/docs/paymail/paymail-07-p2p-payment-destination.html
-	BRFCP2PPaymentDestinationWithToken = "f792b6eff07a"       // more info: https://docs.moneybutton.com/docs/paymail/paymail-11-p2p-payment-destination-tokens.html
+	BRFCP2PPaymentDestinationWithToken = "f792b6eff07a"       //nolint:gosec // more info: https://docs.moneybutton.com/docs/paymail/paymail-11-p2p-payment-destination-tokens.html
 	BRFCP2PTransactions                = "5f1323cddf31"       // more info: https://docs.moneybutton.com/docs/paymail/paymail-06-p2p-transactions.html
 	BRFCPaymentDestination             = "paymentDestination" // more info: http://bsvalias.org/04-01-basic-address-resolution.html
 	BRFCPayToProtocolPrefix            = "7bd25e5a1fc6"       // more info: http://bsvalias.org/04-04-payto-protocol-prefix.html

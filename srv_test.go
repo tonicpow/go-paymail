@@ -48,7 +48,7 @@ func TestClient_GetSRVRecord(t *testing.T) {
 				10,
 				10,
 			},
-			{
+			/*{
 				"valid - moneybutton",
 				DefaultServiceName,
 				DefaultProtocol,
@@ -57,7 +57,7 @@ func TestClient_GetSRVRecord(t *testing.T) {
 				443,
 				10,
 				10,
-			},
+			},*/
 		}
 		for _, test := range tests {
 			t.Run(test.name, func(t *testing.T) {

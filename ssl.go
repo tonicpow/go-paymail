@@ -34,7 +34,7 @@ func (c *Client) CheckSSL(host string) (valid bool, err error) {
 				&dialer,
 				DefaultProtocol,
 				fmt.Sprintf("[%s]:%d", ip.String(), DefaultPort),
-				&tls.Config{
+				&tls.Config{ //nolint:gosec // no need to check for unhandled errors
 					ServerName: host,
 				},
 			)

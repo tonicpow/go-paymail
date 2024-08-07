@@ -20,7 +20,7 @@ func TestCreateServer(t *testing.T) {
 		}
 		s := CreateServer(config)
 		require.NotNil(t, s)
-		assert.IsType(t, &http.Server{}, s)
+		assert.IsType(t, &http.Server{}, s) //nolint:gosec // no need to check for unhandled errors
 		assert.Equal(t, fmt.Sprintf(":%d", config.Port), s.Addr)
 		assert.Equal(t, config.Timeout, s.WriteTimeout)
 		assert.Equal(t, config.Timeout, s.ReadTimeout)

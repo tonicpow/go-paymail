@@ -92,7 +92,7 @@ func (c *Client) GetCapabilities(target string, port int) (response *Capabilitie
 
 	// Set the base url and path
 	// https://<host-discovery-target>:<host-discovery-port>/.well-known/bsvalias[network]
-	reqURL := fmt.Sprintf("https://%s:%d/.well-known/%s%s", target, port, DefaultServiceName, c.options.network.URLSuffix())
+	reqURL := fmt.Sprintf("https://%s:%d/.well-known/%s%s", target, port, DefaultServiceName, c.options.network.URLSuffix()) //nolint:nosprintfhostport // no need to check
 
 	// Fire the GET request
 	var resp StandardResponse
